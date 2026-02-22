@@ -1,4 +1,4 @@
 export enum PanelMode {
-	Compact,
-	Full
+  Compact,
+  Full,
 }

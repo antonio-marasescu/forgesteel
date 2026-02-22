@@ -17,163 +17,176 @@ import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 interface InfoProps {
-	data: FeatureTitleChoiceData;
-	feature: Feature;
-	hero?: Hero;
-	sourcebooks?: Sourcebook[];
-	options: Options;
+  data: FeatureTitleChoiceData;
+  feature: Feature;
+  hero?: Hero;
+  sourcebooks?: Sourcebook[];
+  options: Options;
 }
 
 export const InfoTitleChoice = (props: InfoProps) => {
-	if (props.data.selected.length > 0) {
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				{
-					props.data.selected.map(t => <TitlePanel key={t.id} title={t} sourcebooks={props.sourcebooks || []} options={props.options} />)
-				}
-			</Space>
-		);
-	}
+  if (props.data.selected.length > 0) {
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        {props.data.selected.map(t => (
+          <TitlePanel
+            key={t.id}
+            title={t}
+            sourcebooks={props.sourcebooks || []}
+            options={props.options}
+          />
+        ))}
+      </Space>
+    );
+  }
 
-	if (!props.feature.description) {
-		return (
-			<div className='ds-text'>Choose {props.data.count > 1 ? props.data.count : 'a'} {props.data.count > 1 ? 'titles' : 'title'}.</div>
-		);
-	}
+  if (!props.feature.description) {
+    return (
+      <div className="ds-text">
+        Choose {props.data.count > 1 ? props.data.count : 'a'}{' '}
+        {props.data.count > 1 ? 'titles' : 'title'}.
+      </div>
+    );
+  }
 
-	return null;
+  return null;
 };
 
 interface EditProps {
-	data: FeatureTitleChoiceData;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setData: (data: FeatureTitleChoiceData) => void;
+  data: FeatureTitleChoiceData;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setData: (data: FeatureTitleChoiceData) => void;
 }
 
 export const EditTitleChoice = (props: EditProps) => {
-	const [ data, setData ] = useState<FeatureTitleChoiceData>(Utils.copy(props.data));
+  const [data, setData] = useState<FeatureTitleChoiceData>(Utils.copy(props.data));
 
-	const setCount = (value: number) => {
-		const copy = Utils.copy(data);
-		copy.count = value;
-		setData(copy);
-		props.setData(copy);
-	};
+  const setCount = (value: number) => {
+    const copy = Utils.copy(data);
+    copy.count = value;
+    setData(copy);
+    props.setData(copy);
+  };
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			<HeaderText>Count</HeaderText>
-			<NumberSpin min={1} value={data.count} onChange={setCount} />
-		</Space>
-	);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      <HeaderText>Count</HeaderText>
+      <NumberSpin min={1} value={data.count} onChange={setCount} />
+    </Space>
+  );
 };
 
 interface ConfigProps {
-	data: FeatureTitleChoiceData;
-	feature: Feature;
-	hero: Hero;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setData: (data: FeatureTitleChoiceData) => void;
+  data: FeatureTitleChoiceData;
+  feature: Feature;
+  hero: Hero;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setData: (data: FeatureTitleChoiceData) => void;
 }
 
 export const ConfigTitleChoice = (props: ConfigProps) => {
-	const [ titleSelectorOpen, setTitleSelectorOpen ] = useState<boolean>(false);
-	const [ selectedTitle, setSelectedTitle ] = useState<Title | null>(null);
+  const [titleSelectorOpen, setTitleSelectorOpen] = useState<boolean>(false);
+  const [selectedTitle, setSelectedTitle] = useState<Title | null>(null);
 
-	const getAddButton = () => {
-		return (
-			<Button className='status-warning' block={true} onClick={() => setTitleSelectorOpen(true)}>
-				Choose a title
-			</Button>
-		);
-	};
+  const getAddButton = () => {
+    return (
+      <Button className="status-warning" block={true} onClick={() => setTitleSelectorOpen(true)}>
+        Choose a title
+      </Button>
+    );
+  };
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			{props.data.count > 1 ? <div className='ds-text'>Choose {props.data.count}:</div> : null}
-			{
-				props.data.selected.map(t => {
-					const feature = t.features.find(f => f.id === t.selectedFeatureID);
-					if (!feature) {
-						return null;
-					}
-					return (
-						<Flex key={t.id} className='selection-box' align='center' gap={10}>
-							<Flex vertical={true} style={{ flex: '1 1 0' }}>
-								<Field
-									label={t.name}
-									value={<Markdown text={t.description} useSpan={true} />}
-								/>
-								<Field
-									label={feature.name}
-									value={<Markdown text={feature.description} useSpan={true} />}
-								/>
-							</Flex>
-							<Flex vertical={true}>
-								<Button
-									style={{ flex: '0 0 auto' }}
-									type='text'
-									title='Show details'
-									icon={<InfoCircleOutlined />}
-									onClick={() => setSelectedTitle(t)}
-								/>
-								<Button
-									style={{ flex: '0 0 auto' }}
-									type='text'
-									title='Remove'
-									icon={<CloseOutlined />}
-									onClick={() => {
-										const dataCopy = Utils.copy(props.data);
-										dataCopy.selected = dataCopy.selected.filter(x => x.id !== t.id);
-										props.setData(dataCopy);
-									}}
-								/>
-							</Flex>
-						</Flex>
-					);
-				})
-			}
-			{props.data.selected.length < props.data.count ? getAddButton() : null}
-			<Drawer open={titleSelectorOpen} onClose={() => setTitleSelectorOpen(false)} closeIcon={null} size={500}>
-				<TitleSelectModal
-					hero={props.hero}
-					sourcebooks={props.sourcebooks}
-					options={props.options}
-					onSelect={title => {
-						setTitleSelectorOpen(false);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      {props.data.count > 1 ? <div className="ds-text">Choose {props.data.count}:</div> : null}
+      {props.data.selected.map(t => {
+        const feature = t.features.find(f => f.id === t.selectedFeatureID);
+        if (!feature) {
+          return null;
+        }
+        return (
+          <Flex key={t.id} className="selection-box" align="center" gap={10}>
+            <Flex vertical={true} style={{ flex: '1 1 0' }}>
+              <Field label={t.name} value={<Markdown text={t.description} useSpan={true} />} />
+              <Field
+                label={feature.name}
+                value={<Markdown text={feature.description} useSpan={true} />}
+              />
+            </Flex>
+            <Flex vertical={true}>
+              <Button
+                style={{ flex: '0 0 auto' }}
+                type="text"
+                title="Show details"
+                icon={<InfoCircleOutlined />}
+                onClick={() => setSelectedTitle(t)}
+              />
+              <Button
+                style={{ flex: '0 0 auto' }}
+                type="text"
+                title="Remove"
+                icon={<CloseOutlined />}
+                onClick={() => {
+                  const dataCopy = Utils.copy(props.data);
+                  dataCopy.selected = dataCopy.selected.filter(x => x.id !== t.id);
+                  props.setData(dataCopy);
+                }}
+              />
+            </Flex>
+          </Flex>
+        );
+      })}
+      {props.data.selected.length < props.data.count ? getAddButton() : null}
+      <Drawer
+        open={titleSelectorOpen}
+        onClose={() => setTitleSelectorOpen(false)}
+        closeIcon={null}
+        size={500}
+      >
+        <TitleSelectModal
+          hero={props.hero}
+          sourcebooks={props.sourcebooks}
+          options={props.options}
+          onSelect={title => {
+            setTitleSelectorOpen(false);
 
-						const dataCopy = Utils.copy(props.data);
-						dataCopy.selected.push(title);
-						props.setData(dataCopy);
-					}}
-					onClose={() => setTitleSelectorOpen(false)}
-				/>
-			</Drawer>
-			<Drawer open={!!selectedTitle} onClose={() => setSelectedTitle(null)} closeIcon={null} size={500}>
-				<Modal
-					content={
-						selectedTitle ?
-							<TitlePanel
-								title={selectedTitle}
-								options={props.options}
-								sourcebooks={props.sourcebooks}
-								mode={PanelMode.Full}
-								onChange={title => {
-									const dataCopy = Utils.copy(props.data);
-									const index = dataCopy.selected.findIndex(t => t.id === title.id);
-									if (index !== -1) {
-										dataCopy.selected[index] = title;
-										props.setData(dataCopy);
-									}
-								}}
-							/>
-							: null
-					}
-					onClose={() => setSelectedTitle(null)}
-				/>
-			</Drawer>
-		</Space>
-	);
+            const dataCopy = Utils.copy(props.data);
+            dataCopy.selected.push(title);
+            props.setData(dataCopy);
+          }}
+          onClose={() => setTitleSelectorOpen(false)}
+        />
+      </Drawer>
+      <Drawer
+        open={!!selectedTitle}
+        onClose={() => setSelectedTitle(null)}
+        closeIcon={null}
+        size={500}
+      >
+        <Modal
+          content={
+            selectedTitle ? (
+              <TitlePanel
+                title={selectedTitle}
+                options={props.options}
+                sourcebooks={props.sourcebooks}
+                mode={PanelMode.Full}
+                onChange={title => {
+                  const dataCopy = Utils.copy(props.data);
+                  const index = dataCopy.selected.findIndex(t => t.id === title.id);
+                  if (index !== -1) {
+                    dataCopy.selected[index] = title;
+                    props.setData(dataCopy);
+                  }
+                }}
+              />
+            ) : null
+          }
+          onClose={() => setSelectedTitle(null)}
+        />
+      </Drawer>
+    </Space>
+  );
 };

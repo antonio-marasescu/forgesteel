@@ -16,94 +16,104 @@ import { useMemo } from 'react';
 import './encounter-sheet-page.scss';
 
 interface Props {
-	encounter: Encounter;
-	sourcebooks: Sourcebook[];
-	heroes: Hero[];
-	options: Options;
+  encounter: Encounter;
+  sourcebooks: Sourcebook[];
+  heroes: Hero[];
+  options: Options;
 }
 
 export const EncounterSheetPage = (props: Props) => {
-	const encounter = useMemo(
-		() => EncounterSheetBuilder.buildEncounterSheet(props.encounter, props.sourcebooks, props.heroes, props.options),
-		[ props.encounter, props.sourcebooks, props.heroes, props.options ]
-	);
+  const encounter = useMemo(
+    () =>
+      EncounterSheetBuilder.buildEncounterSheet(
+        props.encounter,
+        props.sourcebooks,
+        props.heroes,
+        props.options,
+      ),
+    [props.encounter, props.sourcebooks, props.heroes, props.options],
+  );
 
-	const getMonsterCards = () => {
-		const layout = SheetLayout.getFollowerCardsLayout(props.options, true);
+  const getMonsterCards = () => {
+    const layout = SheetLayout.getFollowerCardsLayout(props.options, true);
 
-		const requiredCards: FillerCard[] = [];
+    const requiredCards: FillerCard[] = [];
 
-		if (encounter.notes?.length) {
-			let nH = Math.max(20, SheetFormatter.calculateNotesCardSize(encounter.notes, layout.cardLineLen));
-			nH = Math.min(layout.linesY, nH);
-			requiredCards.push({
-				element: <NotesCard notes={encounter.notes} key='notes' />,
-				width: 1,
-				height: nH,
-				shown: false
-			});
-		}
+    if (encounter.notes?.length) {
+      let nH = Math.max(
+        20,
+        SheetFormatter.calculateNotesCardSize(encounter.notes, layout.cardLineLen),
+      );
+      nH = Math.min(layout.linesY, nH);
+      requiredCards.push({
+        element: <NotesCard notes={encounter.notes} key="notes" />,
+        width: 1,
+        height: nH,
+        shown: false,
+      });
+    }
 
-		if (props.options.debugClassicSheet) {
-			requiredCards.push({
-				element: <DebugCard options={props.options} key='debug' />,
-				width: 1,
-				height: 15,
-				shown: false
-			});
-		}
+    if (props.options.debugClassicSheet) {
+      requiredCards.push({
+        element: <DebugCard options={props.options} key="debug" />,
+        width: 1,
+        height: 15,
+        shown: false,
+      });
+    }
 
-		if (encounter.monsters?.length) {
-			encounter.monsters?.forEach(ms => {
-				let mH = SheetFormatter.calculateMonsterSize(ms, layout.cardLineLen);
-				let mW = 1;
-				if (mH > layout.linesY) {
-					mW = 2;
-					mH = SheetFormatter.calculateMonsterSize(ms, layout.cardLineLen, 2);
-					if (mH > layout.linesY) {
-						console.warn('Card still larger than a full page!', ms.name, mH);
-						mH = layout.linesY;
-					}
-				}
-				requiredCards.push({
-					element: <MonsterCard monster={ms} columns={mW} options={props.options} key={ms.id} />,
-					width: mW,
-					height: mH,
-					shown: false
-				});
-			});
-		}
+    if (encounter.monsters?.length) {
+      encounter.monsters?.forEach(ms => {
+        let mH = SheetFormatter.calculateMonsterSize(ms, layout.cardLineLen);
+        let mW = 1;
+        if (mH > layout.linesY) {
+          mW = 2;
+          mH = SheetFormatter.calculateMonsterSize(ms, layout.cardLineLen, 2);
+          if (mH > layout.linesY) {
+            console.warn('Card still larger than a full page!', ms.name, mH);
+            mH = layout.linesY;
+          }
+        }
+        requiredCards.push({
+          element: <MonsterCard monster={ms} columns={mW} options={props.options} key={ms.id} />,
+          width: mW,
+          height: mH,
+          shown: false,
+        });
+      });
+    }
 
-		requiredCards.sort((a, b) => a.height - b.height);
+    requiredCards.sort((a, b) => a.height - b.height);
 
-		return SheetLayout.getMonsterCardPages(requiredCards, encounter, layout, 'monsters');
-	};
+    return SheetLayout.getMonsterCardPages(requiredCards, encounter, layout, 'monsters');
+  };
 
-	const sheetClasses = useMemo(
-		() => {
-			const classes = [
-				'encounter-sheet',
-				props.options.classicSheetPageSize.toLowerCase()
-			];
-			if (props.options.colorSheet) {
-				classes.push('color');
-				classes.push(`colors-${props.options.colorScheme}`);
-			}
-			return classes;
-		},
-		[ props.options.classicSheetPageSize, props.options.colorSheet, props.options.colorScheme ]
-	);
+  const sheetClasses = useMemo(() => {
+    const classes = ['encounter-sheet', props.options.classicSheetPageSize.toLowerCase()];
+    if (props.options.colorSheet) {
+      classes.push('color');
+      classes.push(`colors-${props.options.colorScheme}`);
+    }
+    return classes;
+  }, [props.options.classicSheetPageSize, props.options.colorSheet, props.options.colorScheme]);
 
-	return (
-		<main id='classic-sheet'>
-			<div className={sheetClasses.join(' ')}>
-				<div className={`page page-1 ${props.options.pageOrientation}`} id={SheetFormatter.getPageId('encounter', encounter.id)}>
-					<EncounterHeaderCard encounter={encounter} options={props.options} />
-					<MaliceCard encounter={encounter} options={props.options} />
-					<EncounterRosterCard encounter={encounter} sourcebooks={props.sourcebooks} options={props.options} />
-				</div>
-				{getMonsterCards()}
-			</div>
-		</main>
-	);
+  return (
+    <main id="classic-sheet">
+      <div className={sheetClasses.join(' ')}>
+        <div
+          className={`page page-1 ${props.options.pageOrientation}`}
+          id={SheetFormatter.getPageId('encounter', encounter.id)}
+        >
+          <EncounterHeaderCard encounter={encounter} options={props.options} />
+          <MaliceCard encounter={encounter} options={props.options} />
+          <EncounterRosterCard
+            encounter={encounter}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+          />
+        </div>
+        {getMonsterCards()}
+      </div>
+    </main>
+  );
 };

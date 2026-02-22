@@ -1,5 +1,10 @@
 import { Button, Space, Tabs } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  PlusOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import { Collections } from '@/utils/collections';
 import { DangerButton } from '@/components/controls/danger-button/danger-button';
 import { Empty } from '@/components/controls/empty/empty';
@@ -25,194 +30,214 @@ import { useState } from 'react';
 import './subclass-edit-panel.scss';
 
 interface Props {
-	subClass: SubClass;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	mode?: PanelMode;
-	onChange: (subClass: SubClass) => void;
+  subClass: SubClass;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  mode?: PanelMode;
+  onChange: (subClass: SubClass) => void;
 }
 
 export const SubClassEditPanel = (props: Props) => {
-	const [ subClass, setSubClass ] = useState<SubClass>(props.subClass);
+  const [subClass, setSubClass] = useState<SubClass>(props.subClass);
 
-	const getNameAndDescriptionSection = () => {
-		const setName = (value: string) => {
-			const copy = Utils.copy(subClass);
-			copy.name = value;
-			setSubClass(copy);
-			props.onChange(copy);
-		};
+  const getNameAndDescriptionSection = () => {
+    const setName = (value: string) => {
+      const copy = Utils.copy(subClass);
+      copy.name = value;
+      setSubClass(copy);
+      props.onChange(copy);
+    };
 
-		const setDescription = (value: string) => {
-			const copy = Utils.copy(subClass);
-			copy.description = value;
-			setSubClass(copy);
-			props.onChange(copy);
-		};
+    const setDescription = (value: string) => {
+      const copy = Utils.copy(subClass);
+      copy.description = value;
+      setSubClass(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>Name</HeaderText>
-				<Space.Compact style={{ width: '100%' }}>
-					<TextInput
-						status={subClass.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						value={subClass.name}
-						onChange={setName}
-					/>
-					<Button icon={<ThunderboltOutlined />} onClick={() => setName(NameGenerator.generateName())} />
-				</Space.Compact>
-				<HeaderText>Description</HeaderText>
-				<MarkdownEditor value={subClass.description} onChange={setDescription} />
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Name</HeaderText>
+        <Space.Compact style={{ width: '100%' }}>
+          <TextInput
+            status={subClass.name === '' ? 'warning' : ''}
+            placeholder="Name"
+            allowClear={true}
+            value={subClass.name}
+            onChange={setName}
+          />
+          <Button
+            icon={<ThunderboltOutlined />}
+            onClick={() => setName(NameGenerator.generateName())}
+          />
+        </Space.Compact>
+        <HeaderText>Description</HeaderText>
+        <MarkdownEditor value={subClass.description} onChange={setDescription} />
+      </Space>
+    );
+  };
 
-	const getFeaturesByLevelEditSection = () => {
-		const addFeature = (level: number) => {
-			const copy = Utils.copy(subClass);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					lvl.features.push(FactoryLogic.feature.create({
-						id: Utils.guid(),
-						name: '',
-						description: ''
-					}));
-				});
-			setSubClass(copy);
-			props.onChange(copy);
-		};
+  const getFeaturesByLevelEditSection = () => {
+    const addFeature = (level: number) => {
+      const copy = Utils.copy(subClass);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          lvl.features.push(
+            FactoryLogic.feature.create({
+              id: Utils.guid(),
+              name: '',
+              description: '',
+            }),
+          );
+        });
+      setSubClass(copy);
+      props.onChange(copy);
+    };
 
-		const changeFeature = (level: number, feature: Feature) => {
-			const copy = Utils.copy(subClass);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					const index = lvl.features.findIndex(f => f.id === feature.id);
-					if (index !== -1) {
-						lvl.features[index] = feature;
-					}
-				});
-			setSubClass(copy);
-			props.onChange(copy);
-		};
+    const changeFeature = (level: number, feature: Feature) => {
+      const copy = Utils.copy(subClass);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          const index = lvl.features.findIndex(f => f.id === feature.id);
+          if (index !== -1) {
+            lvl.features[index] = feature;
+          }
+        });
+      setSubClass(copy);
+      props.onChange(copy);
+    };
 
-		const moveFeature = (level: number, feature: Feature, direction: 'up' | 'down') => {
-			const copy = Utils.copy(subClass);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					const index = lvl.features.findIndex(f => f.id === feature.id);
-					lvl.features = Collections.move(lvl.features, index, direction);
-				});
-			setSubClass(copy);
-			props.onChange(copy);
-		};
+    const moveFeature = (level: number, feature: Feature, direction: 'up' | 'down') => {
+      const copy = Utils.copy(subClass);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          const index = lvl.features.findIndex(f => f.id === feature.id);
+          lvl.features = Collections.move(lvl.features, index, direction);
+        });
+      setSubClass(copy);
+      props.onChange(copy);
+    };
 
-		const deleteFeature = (level: number, feature: Feature) => {
-			const copy = Utils.copy(subClass);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					lvl.features = lvl.features.filter(f => f.id !== feature.id);
-				});
-			setSubClass(copy);
-			props.onChange(copy);
-		};
+    const deleteFeature = (level: number, feature: Feature) => {
+      const copy = Utils.copy(subClass);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          lvl.features = lvl.features.filter(f => f.id !== feature.id);
+        });
+      setSubClass(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				{
-					subClass.featuresByLevel.map(lvl => (
-						<div key={lvl.level}>
-							<HeaderText
-								extra={
-									<Button type='text' icon={<PlusOutlined />} onClick={() => addFeature(lvl.level)} />
-								}
-							>
-								Level {lvl.level.toString()}
-							</HeaderText>
-							<Space orientation='vertical' style={{ width: '100%' }}>
-								{
-									lvl.features.map(f => (
-										<Expander
-											key={f.id}
-											title={f.name || 'Unnamed Feature'}
-											tags={[ FeatureLogic.getFeatureTag(f) ]}
-											extra={[
-												<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveFeature(lvl.level, f, 'up'); }} />,
-												<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveFeature(lvl.level, f, 'down'); }} />,
-												<DangerButton key='delete' mode='clear' onConfirm={e => { e.stopPropagation(); deleteFeature(lvl.level, f); }} />
-											]}
-										>
-											<FeatureEditPanel
-												feature={f}
-												sourcebooks={props.sourcebooks}
-												options={props.options}
-												onChange={feature => changeFeature(lvl.level, feature)}
-											/>
-										</Expander>
-									))
-								}
-								{
-									lvl.features.length === 0 ?
-										<Empty />
-										: null
-								}
-							</Space>
-						</div>
-					))
-				}
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        {subClass.featuresByLevel.map(lvl => (
+          <div key={lvl.level}>
+            <HeaderText
+              extra={
+                <Button type="text" icon={<PlusOutlined />} onClick={() => addFeature(lvl.level)} />
+              }
+            >
+              Level {lvl.level.toString()}
+            </HeaderText>
+            <Space orientation="vertical" style={{ width: '100%' }}>
+              {lvl.features.map(f => (
+                <Expander
+                  key={f.id}
+                  title={f.name || 'Unnamed Feature'}
+                  tags={[FeatureLogic.getFeatureTag(f)]}
+                  extra={[
+                    <Button
+                      key="up"
+                      type="text"
+                      title="Move Up"
+                      icon={<CaretUpOutlined />}
+                      onClick={e => {
+                        e.stopPropagation();
+                        moveFeature(lvl.level, f, 'up');
+                      }}
+                    />,
+                    <Button
+                      key="down"
+                      type="text"
+                      title="Move Down"
+                      icon={<CaretDownOutlined />}
+                      onClick={e => {
+                        e.stopPropagation();
+                        moveFeature(lvl.level, f, 'down');
+                      }}
+                    />,
+                    <DangerButton
+                      key="delete"
+                      mode="clear"
+                      onConfirm={e => {
+                        e.stopPropagation();
+                        deleteFeature(lvl.level, f);
+                      }}
+                    />,
+                  ]}
+                >
+                  <FeatureEditPanel
+                    feature={f}
+                    sourcebooks={props.sourcebooks}
+                    options={props.options}
+                    onChange={feature => changeFeature(lvl.level, feature)}
+                  />
+                </Expander>
+              ))}
+              {lvl.features.length === 0 ? <Empty /> : null}
+            </Space>
+          </div>
+        ))}
+      </Space>
+    );
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='subclass-edit-panel'>
-				<div className='subclass-workspace-column'>
-					<Tabs
-						items={[
-							{
-								key: '1',
-								label: 'Subclass',
-								children: getNameAndDescriptionSection()
-							},
-							{
-								key: '2',
-								label: 'Levels',
-								children: getFeaturesByLevelEditSection()
-							}
-						]}
-					/>
-				</div>
-				{
-					props.mode === PanelMode.Full ?
-						<div className='subclass-preview-column'>
-							<Tabs
-								items={[
-									{
-										key: '1',
-										label: 'Preview',
-										children: (
-											<SelectablePanel>
-												<SubclassPanel
-													subclass={subClass}
-													sourcebooks={props.sourcebooks}
-													options={props.options}
-													mode={PanelMode.Full}
-												/>
-											</SelectablePanel>
-										)
-									}
-								]}
-							/>
-						</div>
-						: null
-				}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="subclass-edit-panel">
+        <div className="subclass-workspace-column">
+          <Tabs
+            items={[
+              {
+                key: '1',
+                label: 'Subclass',
+                children: getNameAndDescriptionSection(),
+              },
+              {
+                key: '2',
+                label: 'Levels',
+                children: getFeaturesByLevelEditSection(),
+              },
+            ]}
+          />
+        </div>
+        {props.mode === PanelMode.Full ? (
+          <div className="subclass-preview-column">
+            <Tabs
+              items={[
+                {
+                  key: '1',
+                  label: 'Preview',
+                  children: (
+                    <SelectablePanel>
+                      <SubclassPanel
+                        subclass={subClass}
+                        sourcebooks={props.sourcebooks}
+                        options={props.options}
+                        mode={PanelMode.Full}
+                      />
+                    </SelectablePanel>
+                  ),
+                },
+              ]}
+            />
+          </div>
+        ) : null}
+      </div>
+    </ErrorBoundary>
+  );
 };

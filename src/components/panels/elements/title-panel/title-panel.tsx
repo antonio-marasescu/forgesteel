@@ -21,103 +21,109 @@ import { useState } from 'react';
 import './title-panel.scss';
 
 interface Props {
-	title: Title;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	hero?: Hero;
-	mode?: PanelMode;
-	onChange?: (title: Title) => void;
+  title: Title;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  hero?: Hero;
+  mode?: PanelMode;
+  onChange?: (title: Title) => void;
 }
 
 export const TitlePanel = (props: Props) => {
-	const [ title, setTitle ] = useState<Title>(Utils.copy(props.title));
-	const [ editing, setEditing ] = useState<boolean>(false);
+  const [title, setTitle] = useState<Title>(Utils.copy(props.title));
+  const [editing, setEditing] = useState<boolean>(false);
 
-	const selectedFeature = title.features.find(f => f.id === title.selectedFeatureID);
-	const editable = selectedFeature && (selectedFeature.type === FeatureType.Text);
+  const selectedFeature = title.features.find(f => f.id === title.selectedFeatureID);
+  const editable = selectedFeature && selectedFeature.type === FeatureType.Text;
 
-	const setFeatureName = (value: string) => {
-		const copy = Utils.copy(title);
-		copy.name = value;
-		copy.features
-			.filter(f => f.id === title.selectedFeatureID)
-			.forEach(f => f.name = value);
-		setTitle(copy);
-		if (props.onChange) {
-			props.onChange(copy);
-		}
-	};
+  const setFeatureName = (value: string) => {
+    const copy = Utils.copy(title);
+    copy.name = value;
+    copy.features.filter(f => f.id === title.selectedFeatureID).forEach(f => (f.name = value));
+    setTitle(copy);
+    if (props.onChange) {
+      props.onChange(copy);
+    }
+  };
 
-	const setFeatureDescription = (value: string) => {
-		const copy = Utils.copy(title);
-		copy.features
-			.filter(f => f.id === title.selectedFeatureID)
-			.forEach(f => f.description = value);
-		setTitle(copy);
-		if (props.onChange) {
-			props.onChange(copy);
-		}
-	};
+  const setFeatureDescription = (value: string) => {
+    const copy = Utils.copy(title);
+    copy.features
+      .filter(f => f.id === title.selectedFeatureID)
+      .forEach(f => (f.description = value));
+    setTitle(copy);
+    if (props.onChange) {
+      props.onChange(copy);
+    }
+  };
 
-	const tags = [ `Echelon ${title.echelon}` ];
-	if (props.sourcebooks.length > 0) {
-		const sourcebookType = SourcebookLogic.getTitleSourcebook(props.sourcebooks, title)?.type || SourcebookType.Official;
-		if (sourcebookType !== SourcebookType.Official) {
-			tags.push(sourcebookType);
-		}
-	}
+  const tags = [`Echelon ${title.echelon}`];
+  if (props.sourcebooks.length > 0) {
+    const sourcebookType =
+      SourcebookLogic.getTitleSourcebook(props.sourcebooks, title)?.type || SourcebookType.Official;
+    if (sourcebookType !== SourcebookType.Official) {
+      tags.push(sourcebookType);
+    }
+  }
 
-	return (
-		<ErrorBoundary>
-			<div className={props.mode === PanelMode.Full ? 'title-panel' : 'title-panel compact'} id={props.mode === PanelMode.Full ? SheetFormatter.getPageId('title', title.id) : undefined}>
-				<HeaderText
-					level={1}
-					tags={tags}
-					extra={
-						editable ?
-							<Button type='text' icon={editing ? <CheckCircleOutlined /> : <EditOutlined />} onClick={() => setEditing(!editing)} />
-							: null
-					}
-				>
-					{title.name || 'Unnamed Title'}
-				</HeaderText>
-				<Markdown text={title.description} />
-				{title.prerequisites ? <Field label='Prerequisites' value={title.prerequisites} /> : null}
-				{
-					props.mode === PanelMode.Full ?
-						selectedFeature && editing ?
-							<div className='features'>
-								<HeaderText>Name</HeaderText>
-								<TextInput
-									status={selectedFeature.name === '' ? 'warning' : ''}
-									placeholder='Name'
-									allowClear={true}
-									value={selectedFeature.name}
-									onChange={setFeatureName}
-								/>
-								<HeaderText>Description</HeaderText>
-								<MarkdownEditor value={selectedFeature.description} onChange={setFeatureDescription} />
-							</div>
-							:
-							<div className='features'>
-								{
-									title.features
-										.filter(f => title.selectedFeatureID ? (f.id === title.selectedFeatureID) : true)
-										.map(f => (
-											<FeaturePanel
-												key={f.id}
-												feature={f}
-												options={props.options}
-												hero={props.hero}
-												sourcebooks={props.sourcebooks}
-												mode={PanelMode.Full}
-											/>
-										))
-								}
-							</div>
-						: null
-				}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div
+        className={props.mode === PanelMode.Full ? 'title-panel' : 'title-panel compact'}
+        id={props.mode === PanelMode.Full ? SheetFormatter.getPageId('title', title.id) : undefined}
+      >
+        <HeaderText
+          level={1}
+          tags={tags}
+          extra={
+            editable ? (
+              <Button
+                type="text"
+                icon={editing ? <CheckCircleOutlined /> : <EditOutlined />}
+                onClick={() => setEditing(!editing)}
+              />
+            ) : null
+          }
+        >
+          {title.name || 'Unnamed Title'}
+        </HeaderText>
+        <Markdown text={title.description} />
+        {title.prerequisites ? <Field label="Prerequisites" value={title.prerequisites} /> : null}
+        {props.mode === PanelMode.Full ? (
+          selectedFeature && editing ? (
+            <div className="features">
+              <HeaderText>Name</HeaderText>
+              <TextInput
+                status={selectedFeature.name === '' ? 'warning' : ''}
+                placeholder="Name"
+                allowClear={true}
+                value={selectedFeature.name}
+                onChange={setFeatureName}
+              />
+              <HeaderText>Description</HeaderText>
+              <MarkdownEditor
+                value={selectedFeature.description}
+                onChange={setFeatureDescription}
+              />
+            </div>
+          ) : (
+            <div className="features">
+              {title.features
+                .filter(f => (title.selectedFeatureID ? f.id === title.selectedFeatureID : true))
+                .map(f => (
+                  <FeaturePanel
+                    key={f.id}
+                    feature={f}
+                    options={props.options}
+                    hero={props.hero}
+                    sourcebooks={props.sourcebooks}
+                    mode={PanelMode.Full}
+                  />
+                ))}
+            </div>
+          )
+        ) : null}
+      </div>
+    </ErrorBoundary>
+  );
 };

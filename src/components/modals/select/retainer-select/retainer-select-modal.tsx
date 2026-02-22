@@ -21,66 +21,51 @@ import { useState } from 'react';
 import './retainer-select-modal.scss';
 
 interface Props {
-	monsters: Monster[];
-	sourcebooks: Sourcebook[];
-	options: Options;
-	onClose: () => void;
-	onSelect: (monster: Monster) => void;
+  monsters: Monster[];
+  sourcebooks: Sourcebook[];
+  options: Options;
+  onClose: () => void;
+  onSelect: (monster: Monster) => void;
 }
 
 export const RetainerSelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
-	const [ filter, setFilter ] = useState<MonsterFilter>(FactoryLogic.createMonsterFilter());
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [filter, setFilter] = useState<MonsterFilter>(FactoryLogic.createMonsterFilter());
 
-	const monsters = props.monsters
-		.filter(m => m.role.organization === MonsterOrganizationType.Retainer)
-		.filter(m => MonsterLogic.matches(m, filter))
-		.filter(m => Utils.textMatches([
-			m.name,
-			m.description,
-			...m.keywords
-		], searchTerm));
+  const monsters = props.monsters
+    .filter(m => m.role.organization === MonsterOrganizationType.Retainer)
+    .filter(m => MonsterLogic.matches(m, filter))
+    .filter(m => Utils.textMatches([m.name, m.description, ...m.keywords], searchTerm));
 
-	const sortedMonsters = Collections.sort(monsters, m => MonsterLogic.getMonsterName(m));
+  const sortedMonsters = Collections.sort(monsters, m => MonsterLogic.getMonsterName(m));
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='retainer-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<Expander title='Filter'>
-							<HeaderText>Filter</HeaderText>
-							<MonsterFilterPanel
-								monsterFilter={filter}
-								monsters={props.monsters}
-								includeNameFilter={false}
-								includeOrgFilter={false}
-								includeEVFilter={false}
-								onChange={setFilter}
-							/>
-						</Expander>
-						{
-							sortedMonsters.map(m => (
-								<SelectablePanel
-									key={m.id}
-									onSelect={() => props.onSelect(m)}
-								>
-									<MonsterPanel monster={m} sourcebooks={props.sourcebooks} options={props.options} />
-								</SelectablePanel>
-							))
-						}
-						{
-							sortedMonsters.length === 0 ?
-								<Empty />
-								: null
-						}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="retainer-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <Expander title="Filter">
+              <HeaderText>Filter</HeaderText>
+              <MonsterFilterPanel
+                monsterFilter={filter}
+                monsters={props.monsters}
+                includeNameFilter={false}
+                includeOrgFilter={false}
+                includeEVFilter={false}
+                onChange={setFilter}
+              />
+            </Expander>
+            {sortedMonsters.map(m => (
+              <SelectablePanel key={m.id} onSelect={() => props.onSelect(m)}>
+                <MonsterPanel monster={m} sourcebooks={props.sourcebooks} options={props.options} />
+              </SelectablePanel>
+            ))}
+            {sortedMonsters.length === 0 ? <Empty /> : null}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

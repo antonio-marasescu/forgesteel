@@ -4,30 +4,24 @@ import { ErrorBoundary } from '@/components/controls/error-boundary/error-bounda
 import './label-control.scss';
 
 interface Props {
-	label: ReactNode;
-	control: ReactNode;
-	disabled?: boolean;
-	style?: CSSProperties;
-};
+  label: ReactNode;
+  control: ReactNode;
+  disabled?: boolean;
+  style?: CSSProperties;
+}
 
 export const LabelControl = (props: Props) => {
-	let className = 'label-control';
-	if (props.disabled) {
-		className += ' disabled';
-	}
+  let className = 'label-control';
+  if (props.disabled) {
+    className += ' disabled';
+  }
 
-	return (
-		<ErrorBoundary>
-			<div className={className} style={props.style}>
-				<span className='label-control-label'>
-					{
-						props.label
-					}
-				</span>
-				<span className='label-control-control'>
-					{props.control}
-				</span>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className={className} style={props.style}>
+        <span className="label-control-label">{props.label}</span>
+        <span className="label-control-control">{props.control}</span>
+      </div>
+    </ErrorBoundary>
+  );
 };

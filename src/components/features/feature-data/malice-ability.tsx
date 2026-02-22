@@ -11,39 +11,36 @@ import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 interface EditProps {
-	data: FeatureMaliceAbilityData;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setData: (data: FeatureMaliceAbilityData) => void;
+  data: FeatureMaliceAbilityData;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setData: (data: FeatureMaliceAbilityData) => void;
 }
 
 export const EditMaliceAbility = (props: EditProps) => {
-	const [ data, setData ] = useState<FeatureMaliceAbilityData>(Utils.copy(props.data));
+  const [data, setData] = useState<FeatureMaliceAbilityData>(Utils.copy(props.data));
 
-	const setEchelon = (value: number) => {
-		const copy = Utils.copy(data);
-		copy.echelon = value;
-		setData(copy);
-		props.setData(copy);
-	};
+  const setEchelon = (value: number) => {
+    const copy = Utils.copy(data);
+    copy.echelon = value;
+    setData(copy);
+    props.setData(copy);
+  };
 
-	const setAbility = (value: Ability) => {
-		const copy = Utils.copy(data);
-		copy.ability = value;
-		setData(copy);
-		props.setData(copy);
-	};
+  const setAbility = (value: Ability) => {
+    const copy = Utils.copy(data);
+    copy.ability = value;
+    setData(copy);
+    props.setData(copy);
+  };
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			<HeaderText>Echelon</HeaderText>
-			<NumberSpin min={1} max={4} value={data.echelon} onChange={setEchelon} />
-			<Expander title={data.ability.name || 'Unnamed Ability'}>
-				<AbilityEditPanel
-					ability={data.ability}
-					onChange={setAbility}
-				/>
-			</Expander>
-		</Space>
-	);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      <HeaderText>Echelon</HeaderText>
+      <NumberSpin min={1} max={4} value={data.echelon} onChange={setEchelon} />
+      <Expander title={data.ability.name || 'Unnamed Ability'}>
+        <AbilityEditPanel ability={data.ability} onChange={setAbility} />
+      </Expander>
+    </Space>
+  );
 };

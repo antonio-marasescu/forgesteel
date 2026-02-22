@@ -18,111 +18,115 @@ import { useState } from 'react';
 import './career-panel.scss';
 
 interface Props {
-	career: Career;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	hero?: Hero;
-	mode?: PanelMode;
+  career: Career;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  hero?: Hero;
+  mode?: PanelMode;
 }
 
 export const CareerPanel = (props: Props) => {
-	const [ page, setPage ] = useState<string>('overview');
+  const [page, setPage] = useState<string>('overview');
 
-	const getOverview = () => {
-		return (
-			<Markdown text={props.career.description} />
-		);
-	};
+  const getOverview = () => {
+    return <Markdown text={props.career.description} />;
+  };
 
-	const getFeatures = () => {
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				{
-					props.career.features.map(f => (
-						<SelectablePanel key={f.id}>
-							<FeaturePanel feature={f} options={props.options} hero={props.hero} sourcebooks={props.sourcebooks} mode={PanelMode.Full} />
-						</SelectablePanel>
-					))
-				}
-			</Space>
-		);
-	};
+  const getFeatures = () => {
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        {props.career.features.map(f => (
+          <SelectablePanel key={f.id}>
+            <FeaturePanel
+              feature={f}
+              options={props.options}
+              hero={props.hero}
+              sourcebooks={props.sourcebooks}
+              mode={PanelMode.Full}
+            />
+          </SelectablePanel>
+        ))}
+      </Space>
+    );
+  };
 
-	const getIncidents = () => {
-		const option = props.career.incitingIncidents.selected;
-		if (option) {
-			return (
-				<Field key={option.id} label={option.name} value={option.description} />
-			);
-		}
+  const getIncidents = () => {
+    const option = props.career.incitingIncidents.selected;
+    if (option) {
+      return <Field key={option.id} label={option.name} value={option.description} />;
+    }
 
-		return (
-			<div>
-				{props.career.incitingIncidents.options.map(option => <Field key={option.id} label={option.name} value={option.description} />)}
-			</div>
-		);
-	};
+    return (
+      <div>
+        {props.career.incitingIncidents.options.map(option => (
+          <Field key={option.id} label={option.name} value={option.description} />
+        ))}
+      </div>
+    );
+  };
 
-	const getContent = () => {
-		let content = null;
-		switch (page) {
-			case 'overview':
-				content = getOverview();
-				break;
-			case 'features':
-				content = getFeatures();
-				break;
-			case 'incidents':
-				content = getIncidents();
-				break;
-		}
+  const getContent = () => {
+    let content = null;
+    switch (page) {
+      case 'overview':
+        content = getOverview();
+        break;
+      case 'features':
+        content = getFeatures();
+        break;
+      case 'incidents':
+        content = getIncidents();
+        break;
+    }
 
-		return (
-			<>
-				<Segmented
-					style={{ marginBottom: '20px' }}
-					block={true}
-					options={[
-						{ value: 'overview', label: 'Overview' },
-						{ value: 'features', label: 'Features' },
-						{ value: 'incidents', label: 'Inciting Incidents' }
-					]}
-					value={page}
-					onChange={setPage}
-					onClick={e => e.stopPropagation()}
-				/>
-				{content}
-			</>
-		);
-	};
+    return (
+      <>
+        <Segmented
+          style={{ marginBottom: '20px' }}
+          block={true}
+          options={[
+            { value: 'overview', label: 'Overview' },
+            { value: 'features', label: 'Features' },
+            { value: 'incidents', label: 'Inciting Incidents' },
+          ]}
+          value={page}
+          onChange={setPage}
+          onClick={e => e.stopPropagation()}
+        />
+        {content}
+      </>
+    );
+  };
 
-	const tags = [];
-	if (props.sourcebooks.length > 0) {
-		const sourcebookType = SourcebookLogic.getCareerSourcebook(props.sourcebooks, props.career)?.type || SourcebookType.Official;
-		if (sourcebookType !== SourcebookType.Official) {
-			tags.push(sourcebookType);
-		}
-	}
+  const tags = [];
+  if (props.sourcebooks.length > 0) {
+    const sourcebookType =
+      SourcebookLogic.getCareerSourcebook(props.sourcebooks, props.career)?.type ||
+      SourcebookType.Official;
+    if (sourcebookType !== SourcebookType.Official) {
+      tags.push(sourcebookType);
+    }
+  }
 
-	if (props.mode !== PanelMode.Full) {
-		return (
-			<div className='career-panel compact'>
-				<HeaderText level={1} tags={tags}>
-					{props.career.name || 'Unnamed Career'}
-				</HeaderText>
-				<Markdown text={props.career.description} />
-			</div>
-		);
-	}
+  if (props.mode !== PanelMode.Full) {
+    return (
+      <div className="career-panel compact">
+        <HeaderText level={1} tags={tags}>
+          {props.career.name || 'Unnamed Career'}
+        </HeaderText>
+        <Markdown text={props.career.description} />
+      </div>
+    );
+  }
 
-	return (
-		<ErrorBoundary>
-			<div className='class-panel' id={SheetFormatter.getPageId('career', props.career.id)}>
-				<HeaderText level={1} tags={tags}>
-					{props.career.name || 'Unnamed Career'}
-				</HeaderText>
-				{getContent()}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="class-panel" id={SheetFormatter.getPageId('career', props.career.id)}>
+        <HeaderText level={1} tags={tags}>
+          {props.career.name || 'Unnamed Career'}
+        </HeaderText>
+        {getContent()}
+      </div>
+    </ErrorBoundary>
+  );
 };

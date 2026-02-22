@@ -20,112 +20,123 @@ import { useState } from 'react';
 import './adventure-panel.scss';
 
 interface Props {
-	adventure: Adventure;
-	sourcebooks: Sourcebook[];
-	heroes: Hero[];
-	options: Options;
-	mode?: PanelMode;
-	onStart?: (kind: SourcebookElementKind, element: Element, party: string) => void;
+  adventure: Adventure;
+  sourcebooks: Sourcebook[];
+  heroes: Hero[];
+  options: Options;
+  mode?: PanelMode;
+  onStart?: (kind: SourcebookElementKind, element: Element, party: string) => void;
 }
 
 export const AdventurePanel = (props: Props) => {
-	const [ currentPlot, setCurrentPlot ] = useState<Plot>(props.adventure.plot);
-	const [ selectedPlot, setSelectedPlot ] = useState<Plot | null>(null);
+  const [currentPlot, setCurrentPlot] = useState<Plot>(props.adventure.plot);
+  const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null);
 
-	const getPreview = () => {
-		if (selectedPlot) {
-			return (
-				<PlotPanel
-					plot={selectedPlot}
-					adventure={props.adventure}
-					sourcebooks={props.sourcebooks}
-					heroes={props.heroes}
-					options={props.options}
-					mode={PanelMode.Full}
-					onSelect={setSelectedPlot}
-					onStart={props.onStart!}
-				/>
-			);
-		}
+  const getPreview = () => {
+    if (selectedPlot) {
+      return (
+        <PlotPanel
+          plot={selectedPlot}
+          adventure={props.adventure}
+          sourcebooks={props.sourcebooks}
+          heroes={props.heroes}
+          options={props.options}
+          mode={PanelMode.Full}
+          onSelect={setSelectedPlot}
+          onStart={props.onStart!}
+        />
+      );
+    }
 
-		if (currentPlot !== props.adventure.plot) {
-			return (
-				<PlotPanel
-					plot={currentPlot}
-					adventure={props.adventure}
-					sourcebooks={props.sourcebooks}
-					heroes={props.heroes}
-					options={props.options}
-					mode={PanelMode.Full}
-					onSelect={setSelectedPlot}
-					onStart={props.onStart!}
-				/>
-			);
-		}
+    if (currentPlot !== props.adventure.plot) {
+      return (
+        <PlotPanel
+          plot={currentPlot}
+          adventure={props.adventure}
+          sourcebooks={props.sourcebooks}
+          heroes={props.heroes}
+          options={props.options}
+          mode={PanelMode.Full}
+          onSelect={setSelectedPlot}
+          onStart={props.onStart!}
+        />
+      );
+    }
 
-		return (
-			<div className='adventure-preview'>
-				<Markdown text={props.adventure.description} />
-				{props.adventure.description ? <Divider /> : null}
-				<div className='ds-text'>
-					A <b>DRAW STEEL</b> adventure for <b>{props.adventure.party.count} heroes of level {props.adventure.party.level}</b>, containing <b>{AdventureLogic.getVictories(props.adventure, props.sourcebooks)} victories</b>.
-				</div>
-				{props.adventure.introduction.length > 0 ? <Divider /> : null}
-				{
-					props.adventure.introduction.map(section => (
-						<div key={section.id}>
-							<HeaderText>{section.name}</HeaderText>
-							{
-								section.description ?
-									<Markdown text={section.description} />
-									:
-									<div className='ds-text dimmed-text'>No details</div>
-							}
-						</div>
-					))
-				}
-			</div>
-		);
-	};
+    return (
+      <div className="adventure-preview">
+        <Markdown text={props.adventure.description} />
+        {props.adventure.description ? <Divider /> : null}
+        <div className="ds-text">
+          A <b>DRAW STEEL</b> adventure for{' '}
+          <b>
+            {props.adventure.party.count} heroes of level {props.adventure.party.level}
+          </b>
+          , containing{' '}
+          <b>{AdventureLogic.getVictories(props.adventure, props.sourcebooks)} victories</b>.
+        </div>
+        {props.adventure.introduction.length > 0 ? <Divider /> : null}
+        {props.adventure.introduction.map(section => (
+          <div key={section.id}>
+            <HeaderText>{section.name}</HeaderText>
+            {section.description ? (
+              <Markdown text={section.description} />
+            ) : (
+              <div className="ds-text dimmed-text">No details</div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
-	const tags = [];
-	if (props.sourcebooks.length > 0) {
-		const sourcebookType = SourcebookLogic.getAdventureSourcebook(props.sourcebooks, props.adventure)?.type || SourcebookType.Official;
-		if (sourcebookType !== SourcebookType.Official) {
-			tags.push(sourcebookType);
-		}
-	}
+  const tags = [];
+  if (props.sourcebooks.length > 0) {
+    const sourcebookType =
+      SourcebookLogic.getAdventureSourcebook(props.sourcebooks, props.adventure)?.type ||
+      SourcebookType.Official;
+    if (sourcebookType !== SourcebookType.Official) {
+      tags.push(sourcebookType);
+    }
+  }
 
-	if (props.mode !== PanelMode.Full) {
-		return (
-			<div className='adventure-panel compact'>
-				<HeaderText level={1} tags={tags}>
-					{props.adventure.name || 'Unnamed Adventure'}
-				</HeaderText>
-				<Markdown text={props.adventure.description} />
-			</div>
-		);
-	}
+  if (props.mode !== PanelMode.Full) {
+    return (
+      <div className="adventure-panel compact">
+        <HeaderText level={1} tags={tags}>
+          {props.adventure.name || 'Unnamed Adventure'}
+        </HeaderText>
+        <Markdown text={props.adventure.description} />
+      </div>
+    );
+  }
 
-	return (
-		<ErrorBoundary>
-			<div className='adventure-panel' id={SheetFormatter.getPageId('adventure', props.adventure.id)}>
-				<div className='plot-workspace'>
-					<PlotGraphPanel
-						label={currentPlot === props.adventure.plot ? props.adventure.name || 'Unnamed Adventure' : currentPlot.name || 'Unnamed Plot Point'}
-						tags={tags}
-						plot={currentPlot}
-						adventure={props.adventure}
-						selectedPlot={selectedPlot || undefined}
-						onSelect={setSelectedPlot}
-						onOpen={plot => {
-							setSelectedPlot(null);
-							setCurrentPlot(plot);
-						}}
-					/>
-				</div>
-				{getPreview()}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div
+        className="adventure-panel"
+        id={SheetFormatter.getPageId('adventure', props.adventure.id)}
+      >
+        <div className="plot-workspace">
+          <PlotGraphPanel
+            label={
+              currentPlot === props.adventure.plot
+                ? props.adventure.name || 'Unnamed Adventure'
+                : currentPlot.name || 'Unnamed Plot Point'
+            }
+            tags={tags}
+            plot={currentPlot}
+            adventure={props.adventure}
+            selectedPlot={selectedPlot || undefined}
+            onSelect={setSelectedPlot}
+            onOpen={plot => {
+              setSelectedPlot(null);
+              setCurrentPlot(plot);
+            }}
+          />
+        </div>
+        {getPreview()}
+      </div>
+    </ErrorBoundary>
+  );
 };

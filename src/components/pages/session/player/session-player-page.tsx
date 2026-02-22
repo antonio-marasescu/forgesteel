@@ -17,101 +17,89 @@ import { TacticalMapPanel } from '@/components/panels/elements/tactical-map-pane
 import './session-player-page.scss';
 
 interface Props {
-	heroes: Hero[];
-	sourcebooks: Sourcebook[];
-	session: Session;
-	options: Options;
-	highlightAbout: boolean;
-	showReference: () => void;
-	showRoll: () => void;
-	showAbout: () => void;
-	showSettings: () => void;
+  heroes: Hero[];
+  sourcebooks: Sourcebook[];
+  session: Session;
+  options: Options;
+  highlightAbout: boolean;
+  showReference: () => void;
+  showRoll: () => void;
+  showAbout: () => void;
+  showSettings: () => void;
 }
 
 export const SessionPlayerPage = (props: Props) => {
-	const getContent = () => {
-		const encounter = props.session.encounters.find(e => e.id === props.session.playerViewID);
-		if (encounter) {
-			return (
-				<EncounterRunPanel
-					encounter={encounter}
-					sourcebooks={props.sourcebooks}
-					heroes={props.heroes}
-					options={props.options}
-					onChange={() => null}
-				/>
-			);
-		}
+  const getContent = () => {
+    const encounter = props.session.encounters.find(e => e.id === props.session.playerViewID);
+    if (encounter) {
+      return (
+        <EncounterRunPanel
+          encounter={encounter}
+          sourcebooks={props.sourcebooks}
+          heroes={props.heroes}
+          options={props.options}
+          onChange={() => null}
+        />
+      );
+    }
 
-		const montage = props.session.montages.find(m => m.id === props.session.playerViewID);
-		if (montage) {
-			return (
-				<MontageRunPanel
-					montage={montage}
-					heroes={props.heroes}
-					options={props.options}
-					onChange={() => null}
-				/>
-			);
-		}
+    const montage = props.session.montages.find(m => m.id === props.session.playerViewID);
+    if (montage) {
+      return (
+        <MontageRunPanel
+          montage={montage}
+          heroes={props.heroes}
+          options={props.options}
+          onChange={() => null}
+        />
+      );
+    }
 
-		const negotiation = props.session.negotiations.find(n => n.id === props.session.playerViewID);
-		if (negotiation) {
-			return (
-				<NegotiationRunPanel
-					negotiation={negotiation}
-					onChange={() => null}
-				/>
-			);
-		}
+    const negotiation = props.session.negotiations.find(n => n.id === props.session.playerViewID);
+    if (negotiation) {
+      return <NegotiationRunPanel negotiation={negotiation} onChange={() => null} />;
+    }
 
-		const map = props.session.tacticalMaps.find(tm => tm.id === props.session.playerViewID);
-		if (map) {
-			return (
-				<TacticalMapPanel
-					key={JSON.stringify(map)}
-					map={map}
-					display={TacticalMapDisplayType.Player}
-					options={props.options}
-					heroes={props.heroes}
-					encounters={props.session.encounters}
-					sourcebooks={props.sourcebooks}
-					mode={PanelMode.Full}
-				/>
-			);
-		}
+    const map = props.session.tacticalMaps.find(tm => tm.id === props.session.playerViewID);
+    if (map) {
+      return (
+        <TacticalMapPanel
+          key={JSON.stringify(map)}
+          map={map}
+          display={TacticalMapDisplayType.Player}
+          options={props.options}
+          heroes={props.heroes}
+          encounters={props.session.encounters}
+          sourcebooks={props.sourcebooks}
+          mode={PanelMode.Full}
+        />
+      );
+    }
 
-		const counter = props.session.counters.find(c => c.id === props.session.playerViewID);
-		if (counter) {
-			return (
-				<CounterRunPanel
-					counter={counter}
-					onChange={() => null}
-				/>
-			);
-		}
+    const counter = props.session.counters.find(c => c.id === props.session.playerViewID);
+    if (counter) {
+      return <CounterRunPanel counter={counter} onChange={() => null} />;
+    }
 
-		return <Empty text='Your director is not currently sharing anything with you.' />;
-	};
+    return <Empty text="Your director is not currently sharing anything with you." />;
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='session-player-page'>
-				<AppHeader subheader='Forge Steel' />
-				<ErrorBoundary>
-					<div className='session-player-page-content'>
-						{getContent()}
-					</div>
-				</ErrorBoundary>
-				<AppFooter
-					page='player-view'
-					highlightAbout={props.highlightAbout}
-					showReference={props.showReference}
-					showRoll={props.showRoll}
-					showAbout={props.showAbout}
-					showSettings={props.showSettings}
-				/>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="session-player-page">
+        <AppHeader subheader="Forge Steel" />
+        <ErrorBoundary>
+          <div className="session-player-page-content">{getContent()}</div>
+        </ErrorBoundary>
+        <AppFooter
+          page="player-view"
+          highlightAbout={props.highlightAbout}
+          showReference={props.showReference}
+          showRoll={props.showRoll}
+          showAbout={props.showAbout}
+          showSettings={props.showSettings}
+        />
+      </div>
+    </ErrorBoundary>
+  );
 };

@@ -16,142 +16,140 @@ import { useState } from 'react';
 import './feature-modal.scss';
 
 interface Props {
-	feature: Feature;
-	hero: Hero;
-	options: Options;
-	sourcebooks: Sourcebook[];
-	onClose: () => void;
-	updateHero?: (hero: Hero) => void;
+  feature: Feature;
+  hero: Hero;
+  options: Options;
+  sourcebooks: Sourcebook[];
+  onClose: () => void;
+  updateHero?: (hero: Hero) => void;
 }
 
 export const FeatureModal = (props: Props) => {
-	const [ hero, setHero ] = useState<Hero>(Utils.copy(props.hero));
-	const [ page, setPage ] = useState<string>('Feature');
+  const [hero, setHero] = useState<Hero>(Utils.copy(props.hero));
+  const [page, setPage] = useState<string>('Feature');
 
-	const customization = hero ? hero.abilityCustomizations.find(ac => ac.abilityID === props.feature.id) : undefined;
+  const customization = hero
+    ? hero.abilityCustomizations.find(ac => ac.abilityID === props.feature.id)
+    : undefined;
 
-	const setName = (value: string) => {
-		const copy = Utils.copy(hero) as Hero;
+  const setName = (value: string) => {
+    const copy = Utils.copy(hero) as Hero;
 
-		let ac = copy.abilityCustomizations.find(ac => ac.abilityID === props.feature.id);
-		if (!ac) {
-			ac = createCustomization();
-			copy.abilityCustomizations.push(ac);
-		} else {
-			ac.name = value;
-		}
+    let ac = copy.abilityCustomizations.find(ac => ac.abilityID === props.feature.id);
+    if (!ac) {
+      ac = createCustomization();
+      copy.abilityCustomizations.push(ac);
+    } else {
+      ac.name = value;
+    }
 
-		setHero(copy);
-		if (props.updateHero) {
-			props.updateHero(copy);
-		}
-	};
+    setHero(copy);
+    if (props.updateHero) {
+      props.updateHero(copy);
+    }
+  };
 
-	const setDescription = (value: string) => {
-		const copy = Utils.copy(hero) as Hero;
+  const setDescription = (value: string) => {
+    const copy = Utils.copy(hero) as Hero;
 
-		let ac = copy.abilityCustomizations.find(ac => ac.abilityID === props.feature.id);
-		if (!ac) {
-			ac = createCustomization();
-			copy.abilityCustomizations.push(ac);
-		} else {
-			ac.description = value;
-		}
+    let ac = copy.abilityCustomizations.find(ac => ac.abilityID === props.feature.id);
+    if (!ac) {
+      ac = createCustomization();
+      copy.abilityCustomizations.push(ac);
+    } else {
+      ac.description = value;
+    }
 
-		setHero(copy);
-		if (props.updateHero) {
-			props.updateHero(copy);
-		}
-	};
+    setHero(copy);
+    if (props.updateHero) {
+      props.updateHero(copy);
+    }
+  };
 
-	const setNotes = (value: string) => {
-		const copy = Utils.copy(hero) as Hero;
+  const setNotes = (value: string) => {
+    const copy = Utils.copy(hero) as Hero;
 
-		let ac = copy.abilityCustomizations.find(ac => ac.abilityID === props.feature.id);
-		if (!ac) {
-			ac = createCustomization();
-			copy.abilityCustomizations.push(ac);
-		} else {
-			ac.notes = value;
-		}
+    let ac = copy.abilityCustomizations.find(ac => ac.abilityID === props.feature.id);
+    if (!ac) {
+      ac = createCustomization();
+      copy.abilityCustomizations.push(ac);
+    } else {
+      ac.notes = value;
+    }
 
-		setHero(copy);
-		if (props.updateHero) {
-			props.updateHero(copy);
-		}
-	};
+    setHero(copy);
+    if (props.updateHero) {
+      props.updateHero(copy);
+    }
+  };
 
-	const createCustomization = (): AbilityCustomization => {
-		return {
-			abilityID: props.feature.id,
-			name: '',
-			description: '',
-			notes: '',
-			costModifier: 0,
-			distanceBonus: 0,
-			damageBonus: 0,
-			characteristic: null
-		};
-	};
+  const createCustomization = (): AbilityCustomization => {
+    return {
+      abilityID: props.feature.id,
+      name: '',
+      description: '',
+      notes: '',
+      costModifier: 0,
+      distanceBonus: 0,
+      damageBonus: 0,
+      characteristic: null,
+    };
+  };
 
-	const getContent = () => {
-		switch (page) {
-			case 'Feature': {
-				return (
-					<div className='feature-section'>
-						<FeaturePanel
-							feature={props.feature}
-							options={props.options}
-							hero={props.hero}
-							sourcebooks={props.sourcebooks}
-							mode={PanelMode.Full}
-						/>
-					</div>
-				);
-			}
-			case 'Customize':
-				return (
-					<div className='customize-section'>
-						<Expander title='Name and Description'>
-							<HeaderText>Name</HeaderText>
-							<TextInput
-								placeholder={props.feature.name}
-								allowClear={true}
-								value={customization?.name || ''}
-								onChange={setName}
-							/>
-							<HeaderText>Description</HeaderText>
-							<MarkdownEditor value={customization?.description || ''} onChange={setDescription} />
-						</Expander>
-						<Expander title='Notes'>
-							<HeaderText>Notes</HeaderText>
-							<MarkdownEditor value={customization?.notes || ''} onChange={setNotes} />
-						</Expander>
-					</div>
-				);
-		}
-	};
+  const getContent = () => {
+    switch (page) {
+      case 'Feature': {
+        return (
+          <div className="feature-section">
+            <FeaturePanel
+              feature={props.feature}
+              options={props.options}
+              hero={props.hero}
+              sourcebooks={props.sourcebooks}
+              mode={PanelMode.Full}
+            />
+          </div>
+        );
+      }
+      case 'Customize':
+        return (
+          <div className="customize-section">
+            <Expander title="Name and Description">
+              <HeaderText>Name</HeaderText>
+              <TextInput
+                placeholder={props.feature.name}
+                allowClear={true}
+                value={customization?.name || ''}
+                onChange={setName}
+              />
+              <HeaderText>Description</HeaderText>
+              <MarkdownEditor value={customization?.description || ''} onChange={setDescription} />
+            </Expander>
+            <Expander title="Notes">
+              <HeaderText>Notes</HeaderText>
+              <MarkdownEditor value={customization?.notes || ''} onChange={setNotes} />
+            </Expander>
+          </div>
+        );
+    }
+  };
 
-	return (
-		<Modal
-			toolbar={
-				props.updateHero ?
-					<div style={{ width: '100%', textAlign: 'center' }}>
-						<Segmented
-							name='tabs'
-							options={[ 'Feature', 'Customize' ]}
-							value={page}
-							onChange={setPage}
-						/>
-					</div>
-					: null
-			}
-			content={
-				<div className='feature-modal'>
-					{getContent()}
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={
+        props.updateHero ? (
+          <div style={{ width: '100%', textAlign: 'center' }}>
+            <Segmented
+              name="tabs"
+              options={['Feature', 'Customize']}
+              value={page}
+              onChange={setPage}
+            />
+          </div>
+        ) : null
+      }
+      content={<div className="feature-modal">{getContent()}</div>}
+      onClose={props.onClose}
+    />
+  );
 };

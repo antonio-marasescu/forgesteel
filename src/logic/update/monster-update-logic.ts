@@ -10,84 +10,84 @@ import { MonsterOrganizationType } from '@/enums/monster-organization-type';
 import { Utils } from '@/utils/utils';
 
 export class MonsterUpdateLogic {
-	static updateMonsterGroup = (monsterGroup: MonsterGroup) => {
-		if (monsterGroup.picture === undefined) {
-			monsterGroup.picture = null;
-		}
+  static updateMonsterGroup = (monsterGroup: MonsterGroup) => {
+    if (monsterGroup.picture === undefined) {
+      monsterGroup.picture = null;
+    }
 
-		monsterGroup.malice.forEach(f => {
-			if (f.type.toString() === 'Ability') {
-				f.type = FeatureType.MaliceAbility;
-			}
+    monsterGroup.malice.forEach(f => {
+      if (f.type.toString() === 'Ability') {
+        f.type = FeatureType.MaliceAbility;
+      }
 
-			if (f.type === FeatureType.MaliceAbility) {
-				if (!f.data) {
-					const data: FeatureMaliceAbilityData = {
-						ability: FactoryLogic.createAbility({
-							id: Utils.guid(),
-							name: '',
-							description: '',
-							type: FactoryLogic.type.createMain(),
-							distance: [ FactoryLogic.distance.createMelee() ],
-							target: '',
-							sections: []
-						}),
-						echelon: 0
-					};
-					f.data = data;
-				}
-			}
+      if (f.type === FeatureType.MaliceAbility) {
+        if (!f.data) {
+          const data: FeatureMaliceAbilityData = {
+            ability: FactoryLogic.createAbility({
+              id: Utils.guid(),
+              name: '',
+              description: '',
+              type: FactoryLogic.type.createMain(),
+              distance: [FactoryLogic.distance.createMelee()],
+              target: '',
+              sections: [],
+            }),
+            echelon: 0,
+          };
+          f.data = data;
+        }
+      }
 
-			if (f.data.echelon === undefined) {
-				f.data.echelon = 1;
-			}
-		});
+      if (f.data.echelon === undefined) {
+        f.data.echelon = 1;
+      }
+    });
 
-		if (monsterGroup.addOns === undefined) {
-			monsterGroup.addOns = [];
-		}
-	};
+    if (monsterGroup.addOns === undefined) {
+      monsterGroup.addOns = [];
+    }
+  };
 
-	static updateMonster = (monster: Monster) => {
-		if (monster.picture === undefined) {
-			monster.picture = null;
-		}
+  static updateMonster = (monster: Monster) => {
+    if (monster.picture === undefined) {
+      monster.picture = null;
+    }
 
-		if (monster.role.organization === undefined) {
-			monster.role.organization = MonsterOrganizationType.Platoon;
-		}
-		if (monster.role.organization.toString() === 'Band') {
-			monster.role.organization = MonsterOrganizationType.Horde;
-		}
-		if (monster.role.organization.toString() === 'Troop') {
-			monster.role.organization = MonsterOrganizationType.Elite;
-		}
+    if (monster.role.organization === undefined) {
+      monster.role.organization = MonsterOrganizationType.Platoon;
+    }
+    if (monster.role.organization.toString() === 'Band') {
+      monster.role.organization = MonsterOrganizationType.Horde;
+    }
+    if (monster.role.organization.toString() === 'Troop') {
+      monster.role.organization = MonsterOrganizationType.Elite;
+    }
 
-		if (monster.freeStrikeType === undefined) {
-			monster.freeStrikeType = DamageType.Damage;
-		}
+    if (monster.freeStrikeType === undefined) {
+      monster.freeStrikeType = DamageType.Damage;
+    }
 
-		if (typeof monster.speed.modes === 'string') {
-			monster.speed.modes = monster.speed.modes ? [ monster.speed.modes ] : [];
-		}
+    if (typeof monster.speed.modes === 'string') {
+      monster.speed.modes = monster.speed.modes ? [monster.speed.modes] : [];
+    }
 
-		if (monster.state === undefined) {
-			monster.state = {
-				staminaDamage: 0,
-				staminaTemp: 0,
-				recoveriesUsed: 0,
-				conditions: [],
-				reactionUsed: false,
-				hidden: false,
-				defeated: false,
-				captainID: undefined
-			};
-		}
+    if (monster.state === undefined) {
+      monster.state = {
+        staminaDamage: 0,
+        staminaTemp: 0,
+        recoveriesUsed: 0,
+        conditions: [],
+        reactionUsed: false,
+        hidden: false,
+        defeated: false,
+        captainID: undefined,
+      };
+    }
 
-		monster.features.forEach(FeatureUpdateLogic.updateFeature);
-		monster.features
-			.filter(f => f.type === FeatureType.Ability)
-			.map(f => f.data.ability)
-			.forEach(AbilityUpdateLogic.updateAbility);
-	};
+    monster.features.forEach(FeatureUpdateLogic.updateFeature);
+    monster.features
+      .filter(f => f.type === FeatureType.Ability)
+      .map(f => f.data.ability)
+      .forEach(AbilityUpdateLogic.updateAbility);
+  };
 }

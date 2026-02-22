@@ -16,114 +16,96 @@ import { useState } from 'react';
 import './subclass-select-modal.scss';
 
 interface Props {
-	subClasses: SubClass[];
-	classID: string;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	onClose: () => void;
-	onSelect: (subClass: SubClass) => void;
+  subClasses: SubClass[];
+  classID: string;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  onClose: () => void;
+  onSelect: (subClass: SubClass) => void;
 }
 
 export const SubClassSelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-	const subClasses = props.subClasses
-		.filter(l => Utils.textMatches([
-			l.name,
-			l.description
-		], searchTerm));
+  const subClasses = props.subClasses.filter(l =>
+    Utils.textMatches([l.name, l.description], searchTerm),
+  );
 
-	const customSubclasses = Collections.sort(
-		props.sourcebooks.flatMap(sb => sb.subclasses),
-		sc => sc.name)
-		.filter(l => Utils.textMatches([
-			l.name,
-			l.description
-		], searchTerm));
+  const customSubclasses = Collections.sort(
+    props.sourcebooks.flatMap(sb => sb.subclasses),
+    sc => sc.name,
+  ).filter(l => Utils.textMatches([l.name, l.description], searchTerm));
 
-	const otherSubclasses = Collections.sort(
-		props.sourcebooks
-			.flatMap(sb => sb.classes)
-			.filter(c => c.id !== props.classID)
-			.flatMap(c => c.subclasses),
-		sc => sc.name)
-		.filter(l => Utils.textMatches([
-			l.name,
-			l.description
-		], searchTerm));
+  const otherSubclasses = Collections.sort(
+    props.sourcebooks
+      .flatMap(sb => sb.classes)
+      .filter(c => c.id !== props.classID)
+      .flatMap(c => c.subclasses),
+    sc => sc.name,
+  ).filter(l => Utils.textMatches([l.name, l.description], searchTerm));
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='subclass-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						{
-							subClasses.map(sc => (
-								<SelectablePanel
-									key={sc.id}
-									onSelect={() => props.onSelect(sc)}
-								>
-									<SubclassPanel subclass={sc} sourcebooks={props.sourcebooks} options={props.options} mode={PanelMode.Compact} />
-								</SelectablePanel>
-							))
-						}
-						{
-							subClasses.length === 0 ?
-								<Empty />
-								: null
-						}
-						{
-							customSubclasses.length > 0 ?
-								<>
-									<Divider />
-									<Space orientation='vertical' style={{ width: '100%' }}>
-										{
-											customSubclasses.map(sc => (
-												<SelectablePanel
-													key={sc.id}
-													onSelect={() => props.onSelect(sc)}
-												>
-													<SubclassPanel subclass={sc} sourcebooks={props.sourcebooks} options={props.options} mode={PanelMode.Compact} />
-												</SelectablePanel>
-											))
-										}
-									</Space>
-								</>
-								: null
-						}
-						{
-							otherSubclasses.length > 0 ?
-								<>
-									<Divider />
-									<Expander title='From other classes'>
-										<Space orientation='vertical' style={{ width: '100%' }}>
-											<Alert
-												type='warning'
-												showIcon={true}
-												title='Selecting a subclass from a different class is typically against the rules.'
-											/>
-											{
-												otherSubclasses.map(sc => (
-													<SelectablePanel
-														key={sc.id}
-														onSelect={() => props.onSelect(sc)}
-													>
-														<SubclassPanel subclass={sc} sourcebooks={props.sourcebooks} options={props.options} mode={PanelMode.Compact} />
-													</SelectablePanel>
-												))
-											}
-										</Space>
-									</Expander>
-								</>
-								: null
-						}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="subclass-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            {subClasses.map(sc => (
+              <SelectablePanel key={sc.id} onSelect={() => props.onSelect(sc)}>
+                <SubclassPanel
+                  subclass={sc}
+                  sourcebooks={props.sourcebooks}
+                  options={props.options}
+                  mode={PanelMode.Compact}
+                />
+              </SelectablePanel>
+            ))}
+            {subClasses.length === 0 ? <Empty /> : null}
+            {customSubclasses.length > 0 ? (
+              <>
+                <Divider />
+                <Space orientation="vertical" style={{ width: '100%' }}>
+                  {customSubclasses.map(sc => (
+                    <SelectablePanel key={sc.id} onSelect={() => props.onSelect(sc)}>
+                      <SubclassPanel
+                        subclass={sc}
+                        sourcebooks={props.sourcebooks}
+                        options={props.options}
+                        mode={PanelMode.Compact}
+                      />
+                    </SelectablePanel>
+                  ))}
+                </Space>
+              </>
+            ) : null}
+            {otherSubclasses.length > 0 ? (
+              <>
+                <Divider />
+                <Expander title="From other classes">
+                  <Space orientation="vertical" style={{ width: '100%' }}>
+                    <Alert
+                      type="warning"
+                      showIcon={true}
+                      title="Selecting a subclass from a different class is typically against the rules."
+                    />
+                    {otherSubclasses.map(sc => (
+                      <SelectablePanel key={sc.id} onSelect={() => props.onSelect(sc)}>
+                        <SubclassPanel
+                          subclass={sc}
+                          sourcebooks={props.sourcebooks}
+                          options={props.options}
+                          mode={PanelMode.Compact}
+                        />
+                      </SelectablePanel>
+                    ))}
+                  </Space>
+                </Expander>
+              </>
+            ) : null}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

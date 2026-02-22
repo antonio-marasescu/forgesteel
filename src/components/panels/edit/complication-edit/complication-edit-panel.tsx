@@ -1,5 +1,10 @@
 import { Button, Space, Tabs } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  PlusOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import { Collections } from '@/utils/collections';
 import { Complication } from '@/models/complication';
 import { ComplicationPanel } from '@/components/panels/elements/complication-panel/complication-panel';
@@ -25,170 +30,188 @@ import { useState } from 'react';
 import './complication-edit-panel.scss';
 
 interface Props {
-	complication: Complication;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	mode?: PanelMode;
-	onChange: (complication: Complication) => void;
+  complication: Complication;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  mode?: PanelMode;
+  onChange: (complication: Complication) => void;
 }
 
 export const ComplicationEditPanel = (props: Props) => {
-	const [ complication, setComplication ] = useState<Complication>(props.complication);
+  const [complication, setComplication] = useState<Complication>(props.complication);
 
-	const getNameAndDescriptionSection = () => {
-		const setName = (value: string) => {
-			const copy = Utils.copy(complication);
-			copy.name = value;
-			setComplication(copy);
-			props.onChange(copy);
-		};
+  const getNameAndDescriptionSection = () => {
+    const setName = (value: string) => {
+      const copy = Utils.copy(complication);
+      copy.name = value;
+      setComplication(copy);
+      props.onChange(copy);
+    };
 
-		const setDescription = (value: string) => {
-			const copy = Utils.copy(complication);
-			copy.description = value;
-			setComplication(copy);
-			props.onChange(copy);
-		};
+    const setDescription = (value: string) => {
+      const copy = Utils.copy(complication);
+      copy.description = value;
+      setComplication(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>Name</HeaderText>
-				<Space.Compact style={{ width: '100%' }}>
-					<TextInput
-						status={complication.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						value={complication.name}
-						onChange={setName}
-					/>
-					<Button icon={<ThunderboltOutlined />} onClick={() => setName(NameGenerator.generateName())} />
-				</Space.Compact>
-				<HeaderText>Description</HeaderText>
-				<MarkdownEditor value={complication.description} onChange={setDescription} />
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Name</HeaderText>
+        <Space.Compact style={{ width: '100%' }}>
+          <TextInput
+            status={complication.name === '' ? 'warning' : ''}
+            placeholder="Name"
+            allowClear={true}
+            value={complication.name}
+            onChange={setName}
+          />
+          <Button
+            icon={<ThunderboltOutlined />}
+            onClick={() => setName(NameGenerator.generateName())}
+          />
+        </Space.Compact>
+        <HeaderText>Description</HeaderText>
+        <MarkdownEditor value={complication.description} onChange={setDescription} />
+      </Space>
+    );
+  };
 
-	const getFeaturesEditSection = () => {
-		const addFeature = () => {
-			const copy = Utils.copy(complication);
-			copy.features.push(FactoryLogic.feature.create({
-				id: Utils.guid(),
-				name: '',
-				description: ''
-			}));
-			setComplication(copy);
-			props.onChange(copy);
-		};
+  const getFeaturesEditSection = () => {
+    const addFeature = () => {
+      const copy = Utils.copy(complication);
+      copy.features.push(
+        FactoryLogic.feature.create({
+          id: Utils.guid(),
+          name: '',
+          description: '',
+        }),
+      );
+      setComplication(copy);
+      props.onChange(copy);
+    };
 
-		const changeFeature = (feature: Feature) => {
-			const copy = Utils.copy(complication);
-			const index = copy.features.findIndex(f => f.id === feature.id);
-			if (index !== -1) {
-				copy.features[index] = feature;
-			}
-			setComplication(copy);
-			props.onChange(copy);
-		};
+    const changeFeature = (feature: Feature) => {
+      const copy = Utils.copy(complication);
+      const index = copy.features.findIndex(f => f.id === feature.id);
+      if (index !== -1) {
+        copy.features[index] = feature;
+      }
+      setComplication(copy);
+      props.onChange(copy);
+    };
 
-		const moveFeature = (feature: Feature, direction: 'up' | 'down') => {
-			const copy = Utils.copy(complication);
-			const index = copy.features.findIndex(f => f.id === feature.id);
-			copy.features = Collections.move(copy.features, index, direction);
-			setComplication(copy);
-			props.onChange(copy);
-		};
+    const moveFeature = (feature: Feature, direction: 'up' | 'down') => {
+      const copy = Utils.copy(complication);
+      const index = copy.features.findIndex(f => f.id === feature.id);
+      copy.features = Collections.move(copy.features, index, direction);
+      setComplication(copy);
+      props.onChange(copy);
+    };
 
-		const deleteFeature = (feature: Feature) => {
-			const copy = Utils.copy(complication);
-			copy.features = copy.features.filter(f => f.id !== feature.id);
-			setComplication(copy);
-			props.onChange(copy);
-		};
+    const deleteFeature = (feature: Feature) => {
+      const copy = Utils.copy(complication);
+      copy.features = copy.features.filter(f => f.id !== feature.id);
+      setComplication(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText
-					extra={
-						<Button type='text' icon={<PlusOutlined />} onClick={addFeature} />
-					}
-				>
-					Features
-				</HeaderText>
-				{
-					complication.features.map(f => (
-						<Expander
-							key={f.id}
-							title={f.name || 'Unnamed Feature'}
-							tags={[ FeatureLogic.getFeatureTag(f) ]}
-							extra={[
-								<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveFeature(f, 'up'); }} />,
-								<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveFeature(f, 'down'); }} />,
-								<DangerButton key='delete' mode='clear' onConfirm={e => { e.stopPropagation(); deleteFeature(f); }} />
-							]}
-						>
-							<FeatureEditPanel
-								feature={f}
-								sourcebooks={props.sourcebooks}
-								options={props.options}
-								onChange={changeFeature}
-							/>
-						</Expander>
-					))
-				}
-				{
-					complication.features.length === 0 ?
-						<Empty />
-						: null
-				}
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText extra={<Button type="text" icon={<PlusOutlined />} onClick={addFeature} />}>
+          Features
+        </HeaderText>
+        {complication.features.map(f => (
+          <Expander
+            key={f.id}
+            title={f.name || 'Unnamed Feature'}
+            tags={[FeatureLogic.getFeatureTag(f)]}
+            extra={[
+              <Button
+                key="up"
+                type="text"
+                title="Move Up"
+                icon={<CaretUpOutlined />}
+                onClick={e => {
+                  e.stopPropagation();
+                  moveFeature(f, 'up');
+                }}
+              />,
+              <Button
+                key="down"
+                type="text"
+                title="Move Down"
+                icon={<CaretDownOutlined />}
+                onClick={e => {
+                  e.stopPropagation();
+                  moveFeature(f, 'down');
+                }}
+              />,
+              <DangerButton
+                key="delete"
+                mode="clear"
+                onConfirm={e => {
+                  e.stopPropagation();
+                  deleteFeature(f);
+                }}
+              />,
+            ]}
+          >
+            <FeatureEditPanel
+              feature={f}
+              sourcebooks={props.sourcebooks}
+              options={props.options}
+              onChange={changeFeature}
+            />
+          </Expander>
+        ))}
+        {complication.features.length === 0 ? <Empty /> : null}
+      </Space>
+    );
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='complication-edit-panel'>
-				<div className='complication-workspace-column'>
-					<Tabs
-						items={[
-							{
-								key: '1',
-								label: 'Complication',
-								children: getNameAndDescriptionSection()
-							},
-							{
-								key: '2',
-								label: 'Features',
-								children: getFeaturesEditSection()
-							}
-						]}
-					/>
-				</div>
-				{
-					props.mode === PanelMode.Full ?
-						<div className='complication-preview-column'>
-							<Tabs
-								items={[
-									{
-										key: '1',
-										label: 'Preview',
-										children: (
-											<SelectablePanel>
-												<ComplicationPanel
-													complication={complication}
-													sourcebooks={props.sourcebooks}
-													options={props.options}
-													mode={PanelMode.Full}
-												/>
-											</SelectablePanel>
-										)
-									}
-								]}
-							/>
-						</div>
-						: null
-				}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="complication-edit-panel">
+        <div className="complication-workspace-column">
+          <Tabs
+            items={[
+              {
+                key: '1',
+                label: 'Complication',
+                children: getNameAndDescriptionSection(),
+              },
+              {
+                key: '2',
+                label: 'Features',
+                children: getFeaturesEditSection(),
+              },
+            ]}
+          />
+        </div>
+        {props.mode === PanelMode.Full ? (
+          <div className="complication-preview-column">
+            <Tabs
+              items={[
+                {
+                  key: '1',
+                  label: 'Preview',
+                  children: (
+                    <SelectablePanel>
+                      <ComplicationPanel
+                        complication={complication}
+                        sourcebooks={props.sourcebooks}
+                        options={props.options}
+                        mode={PanelMode.Full}
+                      />
+                    </SelectablePanel>
+                  ),
+                },
+              ]}
+            />
+          </div>
+        ) : null}
+      </div>
+    </ErrorBoundary>
+  );
 };

@@ -15,93 +15,90 @@ import { useState } from 'react';
 import './skill-select-modal.scss';
 
 interface Props {
-	skills: Skill[];
-	sourcebooks: Sourcebook[];
-	onClose: () => void;
-	onSelect: (skill: Skill) => void;
+  skills: Skill[];
+  sourcebooks: Sourcebook[];
+  onClose: () => void;
+  onSelect: (skill: Skill) => void;
 }
 
 export const SkillSelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
-	const [ customSkill, setCustomSkill ] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [customSkill, setCustomSkill] = useState<string>('');
 
-	const skills = props.skills
-		.filter(s => Utils.textMatches([
-			s.name,
-			s.description
-		], searchTerm));
+  const skills = props.skills.filter(s => Utils.textMatches([s.name, s.description], searchTerm));
 
-	const otherSkills = SourcebookLogic.getSkills(props.sourcebooks)
-		.filter(os => !props.skills.map(s => s.name).includes(os.name))
-		.filter(os => Utils.textMatches([
-			os.name,
-			os.description
-		], searchTerm));
+  const otherSkills = SourcebookLogic.getSkills(props.sourcebooks)
+    .filter(os => !props.skills.map(s => s.name).includes(os.name))
+    .filter(os => Utils.textMatches([os.name, os.description], searchTerm));
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='skill-select-modal'>
-					{
-						[ SkillList.Crafting, SkillList.Exploration, SkillList.Interpersonal, SkillList.Intrigue, SkillList.Lore ].map(list => {
-							const subset = skills.filter(s => s.list === list);
-							if (subset.length === 0) {
-								return null;
-							}
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="skill-select-modal">
+          {[
+            SkillList.Crafting,
+            SkillList.Exploration,
+            SkillList.Interpersonal,
+            SkillList.Intrigue,
+            SkillList.Lore,
+          ].map(list => {
+            const subset = skills.filter(s => s.list === list);
+            if (subset.length === 0) {
+              return null;
+            }
 
-							return (
-								<Space key={list} orientation='vertical' style={{ width: '100%' }}>
-									<HeaderText level={1}>{list}</HeaderText>
-									{
-										subset.map((s, n) => (
-											<SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
-												<HeaderText tags={[ s.list ]}>{s.name}</HeaderText>
-												<Markdown text={s.description} />
-											</SelectablePanel>
-										))
-									}
-								</Space>
-							);
-						})
-					}
-					{
-						otherSkills.length > 0 ?
-							<>
-								<Divider />
-								<Expander title='Other skills'>
-									<Space orientation='vertical' style={{ width: '100%' }}>
-										{
-											otherSkills.map((s, n) => (
-												<SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
-													<HeaderText tags={[ s.list ]}>{s.name}</HeaderText>
-													<Markdown text={s.description} />
-												</SelectablePanel>
-											))
-										}
-									</Space>
-								</Expander>
-							</>
-							: null
-					}
-					<Divider />
-					<Expander title='Add a custom skill'>
-						<Space orientation='vertical' style={{ width: '100%' }}>
-							<HeaderText>Custom Skill</HeaderText>
-							<TextInput
-								placeholder='Custom Skill Name'
-								allowClear={true}
-								value={customSkill}
-								onChange={setCustomSkill}
-							/>
-							<Button block={true} disabled={!customSkill} onClick={() => props.onSelect({ name: customSkill, description: '', list: SkillList.Custom })}>Select</Button>
-						</Space>
-					</Expander>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+            return (
+              <Space key={list} orientation="vertical" style={{ width: '100%' }}>
+                <HeaderText level={1}>{list}</HeaderText>
+                {subset.map((s, n) => (
+                  <SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
+                    <HeaderText tags={[s.list]}>{s.name}</HeaderText>
+                    <Markdown text={s.description} />
+                  </SelectablePanel>
+                ))}
+              </Space>
+            );
+          })}
+          {otherSkills.length > 0 ? (
+            <>
+              <Divider />
+              <Expander title="Other skills">
+                <Space orientation="vertical" style={{ width: '100%' }}>
+                  {otherSkills.map((s, n) => (
+                    <SelectablePanel key={n} onSelect={() => props.onSelect(s)}>
+                      <HeaderText tags={[s.list]}>{s.name}</HeaderText>
+                      <Markdown text={s.description} />
+                    </SelectablePanel>
+                  ))}
+                </Space>
+              </Expander>
+            </>
+          ) : null}
+          <Divider />
+          <Expander title="Add a custom skill">
+            <Space orientation="vertical" style={{ width: '100%' }}>
+              <HeaderText>Custom Skill</HeaderText>
+              <TextInput
+                placeholder="Custom Skill Name"
+                allowClear={true}
+                value={customSkill}
+                onChange={setCustomSkill}
+              />
+              <Button
+                block={true}
+                disabled={!customSkill}
+                onClick={() =>
+                  props.onSelect({ name: customSkill, description: '', list: SkillList.Custom })
+                }
+              >
+                Select
+              </Button>
+            </Space>
+          </Expander>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

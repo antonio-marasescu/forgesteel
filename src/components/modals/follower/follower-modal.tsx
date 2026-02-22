@@ -6,19 +6,19 @@ import { PanelMode } from '@/enums/panel-mode';
 import './follower-modal.scss';
 
 interface Props {
-	follower: Follower;
-	onClose: () => void;
+  follower: Follower;
+  onClose: () => void;
 }
 
 export const FollowerModal = (props: Props) => {
-	return (
-		<Modal
-			content={
-				<div className='follower-modal'>
-					<FollowerPanel follower={props.follower} mode={PanelMode.Full} />
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      content={
+        <div className="follower-modal">
+          <FollowerPanel follower={props.follower} mode={PanelMode.Full} />
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

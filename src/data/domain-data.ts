@@ -12,16 +12,16 @@ import { trickery } from '@/data/domains/trickery';
 import { war } from '@/data/domains/war';
 
 export class DomainData {
-	static creation = creation;
-	static death = death;
-	static fate = fate;
-	static knowledge = knowledge;
-	static life = life;
-	static love = love;
-	static nature = nature;
-	static protection = protection;
-	static storm = storm;
-	static sun = sun;
-	static trickery = trickery;
-	static war = war;
+  static creation = creation;
+  static death = death;
+  static fate = fate;
+  static knowledge = knowledge;
+  static life = life;
+  static love = love;
+  static nature = nature;
+  static protection = protection;
+  static storm = storm;
+  static sun = sun;
+  static trickery = trickery;
+  static war = war;
 }

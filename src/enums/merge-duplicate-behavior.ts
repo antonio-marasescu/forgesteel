@@ -1,4 +1,4 @@
 export enum MergeDuplicateBehavior {
-	Replace = 'Replace',
-	Skip = 'Skip'
-};
+  Replace = 'Replace',
+  Skip = 'Skip',
+}

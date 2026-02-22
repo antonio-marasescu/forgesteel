@@ -12,47 +12,46 @@ import './index.scss';
 initializeTheme();
 
 const unregisterServiceWorker = async () => {
-	if ('serviceWorker' in navigator) {
-		const registrations = await navigator.serviceWorker.getRegistrations();
-		for (const registration of registrations) {
-			await registration.unregister();
-		}
-	}
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (const registration of registrations) {
+      await registration.unregister();
+    }
+  }
 };
 
 const onDataLoaded = (data: LoadedData) => {
-	if ('serviceWorker' in navigator) {
-		if (ServiceWorkerLogic.shouldDisableServiceWorker(data.connectionSettings)) {
-			unregisterServiceWorker();
-		} else {
-			window.addEventListener('load', () => {
-				navigator.serviceWorker.register('/forgesteel/sw.js')
-					.catch(registrationError => {
-						console.error('SW registration failed: ', registrationError);
-					});
-			});
-		}
-	}
-	root.render(
-		<StrictMode>
-			<HashRouter>
-				<Main
-					heroes={data.heroes}
-					homebrewSourcebooks={data.homebrew}
-					hiddenSourcebookIDs={data.hiddenSourcebookIDs}
-					session={data.session}
-					options={data.options}
-					connectionSettings={data.connectionSettings}
-					dataService={data.service}
-				/>
-			</HashRouter>
-		</StrictMode>
-	);
+  if ('serviceWorker' in navigator) {
+    if (ServiceWorkerLogic.shouldDisableServiceWorker(data.connectionSettings)) {
+      unregisterServiceWorker();
+    } else {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/forgesteel/sw.js').catch(registrationError => {
+          console.error('SW registration failed: ', registrationError);
+        });
+      });
+    }
+  }
+  root.render(
+    <StrictMode>
+      <HashRouter>
+        <Main
+          heroes={data.heroes}
+          homebrewSourcebooks={data.homebrew}
+          hiddenSourcebookIDs={data.hiddenSourcebookIDs}
+          session={data.session}
+          options={data.options}
+          connectionSettings={data.connectionSettings}
+          dataService={data.service}
+        />
+      </HashRouter>
+    </StrictMode>,
+  );
 };
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
-	<ErrorBoundary>
-		<DataLoader onComplete={onDataLoaded} />
-	</ErrorBoundary>
+  <ErrorBoundary>
+    <DataLoader onComplete={onDataLoaded} />
+  </ErrorBoundary>,
 );

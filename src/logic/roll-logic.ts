@@ -2,64 +2,67 @@ import { Collections } from '@/utils/collections';
 import { RollState } from '@/enums/roll-state';
 
 export class RollLogic {
-	static getOdds = (modifiers: number[], rollState: RollState, rollType: string = 'Power Roll') => {
-		const results = [];
+  static getOdds = (modifiers: number[], rollState: RollState, rollType: string = 'Power Roll') => {
+    const results = [];
 
-		for (let a = 1; a <= 10; ++a) {
-			for (let b = 1; b <= 10; ++b) {
-				const total = Collections.sum([ a, b, ...modifiers, RollLogic.getBonus(rollState, rollType) ], r => r);
-				if (total >= 17) {
-					// Tier 3
-					switch (rollState) {
-						case RollState.DoubleBane:
-							results.push(2);
-							break;
-						default:
-							results.push(3);
-							break;
-					}
-				} else if (total >= 12) {
-					// Tier 2
-					switch (rollState) {
-						case RollState.DoubleBane:
-							results.push(1);
-							break;
-						case RollState.DoubleEdge:
-							results.push(3);
-							break;
-						default:
-							results.push(2);
-							break;
-					}
-				} else {
-					// Tier 1
-					switch (rollState) {
-						case RollState.DoubleEdge:
-							results.push(2);
-							break;
-						default:
-							results.push(1);
-							break;
-					}
-				}
-			}
-		}
+    for (let a = 1; a <= 10; ++a) {
+      for (let b = 1; b <= 10; ++b) {
+        const total = Collections.sum(
+          [a, b, ...modifiers, RollLogic.getBonus(rollState, rollType)],
+          r => r,
+        );
+        if (total >= 17) {
+          // Tier 3
+          switch (rollState) {
+            case RollState.DoubleBane:
+              results.push(2);
+              break;
+            default:
+              results.push(3);
+              break;
+          }
+        } else if (total >= 12) {
+          // Tier 2
+          switch (rollState) {
+            case RollState.DoubleBane:
+              results.push(1);
+              break;
+            case RollState.DoubleEdge:
+              results.push(3);
+              break;
+            default:
+              results.push(2);
+              break;
+          }
+        } else {
+          // Tier 1
+          switch (rollState) {
+            case RollState.DoubleEdge:
+              results.push(2);
+              break;
+            default:
+              results.push(1);
+              break;
+          }
+        }
+      }
+    }
 
-		return results;
-	};
+    return results;
+  };
 
-	static getBonus = (rollState: RollState, type: string = 'Power Roll') => {
-		if (type == 'Saving Throw') {
-			return 0;
-		}
+  static getBonus = (rollState: RollState, type: string = 'Power Roll') => {
+    if (type == 'Saving Throw') {
+      return 0;
+    }
 
-		switch (rollState) {
-			case RollState.Edge:
-				return 2;
-			case RollState.Bane:
-				return -2;
-		}
+    switch (rollState) {
+      case RollState.Edge:
+        return 2;
+      case RollState.Bane:
+        return -2;
+    }
 
-		return 0;
-	};
+    return 0;
+  };
 }

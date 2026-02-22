@@ -9,13 +9,13 @@ import { polderShadow } from '@/data/heroes/polder-shadow';
 import { wodeElfTroubadour } from '@/data/heroes/wode-elf-troubadour';
 
 export class HeroData {
-	static dwarfFury = dwarfFury;
-	static highElfTactician = highElfTactician;
-	static humanCensor = humanCensor;
-	static humanNull = humanNull;
-	static humanTalent = humanTalent;
-	static orcConduit = orcConduit;
-	static polderElementalist = polderElementalist;
-	static polderShadow = polderShadow;
-	static wodeElfTroubadour = wodeElfTroubadour;
+  static dwarfFury = dwarfFury;
+  static highElfTactician = highElfTactician;
+  static humanCensor = humanCensor;
+  static humanNull = humanNull;
+  static humanTalent = humanTalent;
+  static orcConduit = orcConduit;
+  static polderElementalist = polderElementalist;
+  static polderShadow = polderShadow;
+  static wodeElfTroubadour = wodeElfTroubadour;
 }

@@ -4,30 +4,30 @@ import { Feature } from '@/models/feature';
 
 // #region Monster
 export interface MonsterSheet {
-	id: string;
-	name: string;
-	type: string;
-	role: string;
-	cost?: string;
+  id: string;
+  name: string;
+  type: string;
+  role: string;
+  cost?: string;
 
-	characteristics: CharacteristicsSheet;
+  characteristics: CharacteristicsSheet;
 
-	keywords: string;
+  keywords: string;
 
-	size: string;
-	speed: number;
-	stamina: number;
-	stability: number;
-	freeStrike: number;
-	freeStrikeDamageType?: string;
+  size: string;
+  speed: number;
+  stamina: number;
+  stability: number;
+  freeStrike: number;
+  freeStrikeDamageType?: string;
 
-	immunity: string;
-	weakness: string;
-	movement: string;
+  immunity: string;
+  weakness: string;
+  movement: string;
 
-	withCaptain: string;
+  withCaptain: string;
 
-	features?: Feature[];
-	abilities?: AbilitySheet[];
-};
+  features?: Feature[];
+  abilities?: AbilitySheet[];
+}
 // #endregion

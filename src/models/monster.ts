@@ -9,23 +9,23 @@ import { Size } from '@/models/size';
 import { Speed } from '@/models/speed';
 
 export interface Monster extends Element {
-	picture: string | null;
-	level: number;
-	role: MonsterRole;
-	keywords: string[];
-	encounterValue: number;
-	size: Size;
-	speed: Speed;
-	stamina: number;
-	stability: number;
-	freeStrikeDamage: number;
-	freeStrikeType: DamageType;
-	characteristics: {
-		characteristic: Characteristic;
-		value: number;
-	}[];
-	withCaptain: string;
-	features: Feature[];
-	retainer: RetainerInfo | null;
-	state: MonsterState;
-};
+  picture: string | null;
+  level: number;
+  role: MonsterRole;
+  keywords: string[];
+  encounterValue: number;
+  size: Size;
+  speed: Speed;
+  stamina: number;
+  stability: number;
+  freeStrikeDamage: number;
+  freeStrikeType: DamageType;
+  characteristics: {
+    characteristic: Characteristic;
+    value: number;
+  }[];
+  withCaptain: string;
+  features: Feature[];
+  retainer: RetainerInfo | null;
+  state: MonsterState;
+}

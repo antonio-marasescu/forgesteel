@@ -1,4 +1,4 @@
 export enum SheetPageSize {
-	Letter = 'Letter',
-	A4 = 'A4'
+  Letter = 'Letter',
+  A4 = 'A4',
 }

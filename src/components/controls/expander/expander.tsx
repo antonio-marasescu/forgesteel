@@ -5,35 +5,39 @@ import { ReactNode } from 'react';
 import './expander.scss';
 
 interface Props {
-	title: ReactNode;
-	tags?: string[];
-	children: ReactNode;
-	expandedByDefault?: boolean;
-	extra?: ReactNode[];
+  title: ReactNode;
+  tags?: string[];
+  children: ReactNode;
+  expandedByDefault?: boolean;
+  extra?: ReactNode[];
 }
 
 export const Expander = (props: Props) => {
-	return (
-		<ErrorBoundary>
-			<Collapse
-				items={[
-					{
-						key: '1',
-						label: props.tags ?
-							<Flex align='center' gap={5}>
-								{props.title}
-								{props.tags.map((t, n) => <Tag key={n} variant='outlined'>{t}</Tag>)}
-							</Flex>
-							: props.title,
-						children: props.children,
-						extra: props.extra ?
-							<>{props.extra}</>
-							: null
-					}
-				]}
-				defaultActiveKey={props.expandedByDefault ? '1' : undefined}
-				expandIconPlacement='end'
-			/>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <Collapse
+        items={[
+          {
+            key: '1',
+            label: props.tags ? (
+              <Flex align="center" gap={5}>
+                {props.title}
+                {props.tags.map((t, n) => (
+                  <Tag key={n} variant="outlined">
+                    {t}
+                  </Tag>
+                ))}
+              </Flex>
+            ) : (
+              props.title
+            ),
+            children: props.children,
+            extra: props.extra ? <>{props.extra}</> : null,
+          },
+        ]}
+        defaultActiveKey={props.expandedByDefault ? '1' : undefined}
+        expandIconPlacement="end"
+      />
+    </ErrorBoundary>
+  );
 };

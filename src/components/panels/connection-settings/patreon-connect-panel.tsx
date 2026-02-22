@@ -12,106 +12,89 @@ import { Utils } from '@/utils/utils';
 import patreon from '@/assets/icons/patreon.svg';
 
 interface Props {
-	dataService: DataService;
-	connectionSettings: ConnectionSettings;
-	setConnectionSettings: (settings: ConnectionSettings) => void
+  dataService: DataService;
+  connectionSettings: ConnectionSettings;
+  setConnectionSettings: (settings: ConnectionSettings) => void;
 }
 
 export const PatreonConnectPanel = (props: Props) => {
-	const [ loadingSession, setLoadingSession ] = useState<boolean>(true);
-	const [ patreonSession, setPatreonSession ] = useState<PatreonSession | null>(null);
-	const [ notify, notifyContext ] = notification.useNotification();
+  const [loadingSession, setLoadingSession] = useState<boolean>(true);
+  const [patreonSession, setPatreonSession] = useState<PatreonSession | null>(null);
+  const [notify, notifyContext] = notification.useNotification();
 
-	const connectOAuth = () => {
-		props.dataService.getPatreonAuthUrl()
-			.then(authorizationUrl => {
-				window.location.href = authorizationUrl;
-			});
-	};
+  const connectOAuth = () => {
+    props.dataService.getPatreonAuthUrl().then(authorizationUrl => {
+      window.location.href = authorizationUrl;
+    });
+  };
 
-	const logout = () => {
-		props.dataService.logoutPatreon()
-			.then(() => {
-				const settingsCopy = Utils.copy(props.connectionSettings);
-				settingsCopy.patreonConnected = false;
-				props.setConnectionSettings(settingsCopy);
-				updateSession();
-			});
-	};
+  const logout = () => {
+    props.dataService.logoutPatreon().then(() => {
+      const settingsCopy = Utils.copy(props.connectionSettings);
+      settingsCopy.patreonConnected = false;
+      props.setConnectionSettings(settingsCopy);
+      updateSession();
+    });
+  };
 
-	const updateSession = () => {
-		setLoadingSession(true);
-		props.dataService.getPatreonSession()
-			.then(setPatreonSession)
-			.catch(err => {
-				console.error(err);
-				notify.error({
-					title: 'Error connecting with Patreon',
-					description: Utils.getErrorMessage(err),
-					placement: 'top'
-				});
-			})
-			.finally(() => {
-				setLoadingSession(false);
-			});
-	};
+  const updateSession = () => {
+    setLoadingSession(true);
+    props.dataService
+      .getPatreonSession()
+      .then(setPatreonSession)
+      .catch(err => {
+        console.error(err);
+        notify.error({
+          title: 'Error connecting with Patreon',
+          description: Utils.getErrorMessage(err),
+          placement: 'top',
+        });
+      })
+      .finally(() => {
+        setLoadingSession(false);
+      });
+  };
 
-	useEffect(updateSession, [ props.dataService, notify ]);
+  useEffect(updateSession, [props.dataService, notify]);
 
-	if (loadingSession) {
-		return (
-			<Flex align='center' justify='center'>
-				<Spin />
-			</Flex>
-		);
-	}
+  if (loadingSession) {
+    return (
+      <Flex align="center" justify="center">
+        <Spin />
+      </Flex>
+    );
+  }
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			{
-				Browser.isSafari() ?
-					<Alert
-						type='warning'
-						showIcon={true}
-						title='To  use this feature, you will need to disable "Prevent cross-site tracking" in Safari preferences.'
-					/>
-					: null
-			}
-			{
-				!patreonSession || !patreonSession.authenticated ?
-					<Button
-						block={true}
-						type='primary'
-						onClick={connectOAuth}
-					>
-						<img className='patreon-logo' src={patreon} style={{ width: '16px', height: '16px' }} />
-						Connect with Patreon
-					</Button>
-					: null
-			}
-			{
-				patreonSession?.connections.map((conn, i) => {
-					return (
-						<SelectablePanel key={`patreon-connection-${i}`}>
-							<PatreonStatusPanel
-								key={`patreon-connection-${i}`}
-								title={conn.name}
-								status={conn.status}
-							/>
-						</SelectablePanel>
-					);
-				})
-			}
-			{
-				patreonSession && patreonSession.authenticated ?
-					<DangerButton
-						mode='block'
-						label='Disconnect from Patreon'
-						onConfirm={logout}
-					/>
-					: null
-			}
-			{notifyContext}
-		</Space>
-	);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      {Browser.isSafari() ? (
+        <Alert
+          type="warning"
+          showIcon={true}
+          title='To  use this feature, you will need to disable "Prevent cross-site tracking" in Safari preferences.'
+        />
+      ) : null}
+      {!patreonSession || !patreonSession.authenticated ? (
+        <Button block={true} type="primary" onClick={connectOAuth}>
+          <img className="patreon-logo" src={patreon} style={{ width: '16px', height: '16px' }} />
+          Connect with Patreon
+        </Button>
+      ) : null}
+      {patreonSession?.connections.map((conn, i) => {
+        return (
+          <SelectablePanel key={`patreon-connection-${i}`}>
+            <PatreonStatusPanel
+              key={`patreon-connection-${i}`}
+              title={conn.name}
+              status={conn.status}
+            />
+          </SelectablePanel>
+        );
+      })}
+      {patreonSession && patreonSession.authenticated ? (
+        <DangerButton mode="block" label="Disconnect from Patreon" onConfirm={logout} />
+      ) : null}
+      {notifyContext}
+    </Space>
+  );
 };

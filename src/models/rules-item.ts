@@ -1,4 +1,4 @@
 export interface RulesItem {
-	label: string;
-	content: string;
+  label: string;
+  content: string;
 }

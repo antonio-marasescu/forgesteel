@@ -23,196 +23,222 @@ import { useState } from 'react';
 import './class-panel.scss';
 
 interface Props {
-	heroClass: HeroClass;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	hero?: Hero;
-	mode?: PanelMode;
+  heroClass: HeroClass;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  hero?: Hero;
+  mode?: PanelMode;
 }
 
 export const ClassPanel = (props: Props) => {
-	const [ page, setPage ] = useState<string>('overview');
+  const [page, setPage] = useState<string>('overview');
 
-	const getOverview = () => {
-		return (
-			<>
-				<Markdown text={props.heroClass.description} />
-				{
-					props.heroClass.subclasses.length > 0 ?
-						<Field label={`${props.heroClass.subclassName}s`} value={props.heroClass.subclasses.map(c => c.name).join(', ')} />
-						: null
-				}
-				<Field label='Primary Characteristics' value={props.heroClass.primaryCharacteristics.join(', ') || props.heroClass.primaryCharacteristicsOptions.map(array => array.join(', ') || 'None').join(' or ') || 'None'} />
-			</>
-		);
-	};
+  const getOverview = () => {
+    return (
+      <>
+        <Markdown text={props.heroClass.description} />
+        {props.heroClass.subclasses.length > 0 ? (
+          <Field
+            label={`${props.heroClass.subclassName}s`}
+            value={props.heroClass.subclasses.map(c => c.name).join(', ')}
+          />
+        ) : null}
+        <Field
+          label="Primary Characteristics"
+          value={
+            props.heroClass.primaryCharacteristics.join(', ') ||
+            props.heroClass.primaryCharacteristicsOptions
+              .map(array => array.join(', ') || 'None')
+              .join(' or ') ||
+            'None'
+          }
+        />
+      </>
+    );
+  };
 
-	const getFeatures = () => {
-		return (
-			<div className='class-features-list'>
-				{
-					props.heroClass.featuresByLevel.filter(lvl => lvl.features.length > 0).map(lvl => {
-						return (
-							<Expander
-								key={lvl.level}
-								title={
-									<Field
-										label={`Level ${lvl.level.toString()}`}
-										value={lvl.features.map(f => f.name).join(', ')}
-									/>
-								}
-							>
-								{
-									lvl.features.map(f => <FeaturePanel key={f.id} feature={f} options={props.options} hero={props.hero} sourcebooks={props.sourcebooks} mode={PanelMode.Full} />)
-								}
-							</Expander>
-						);
-					})
-				}
-			</div>
-		);
-	};
+  const getFeatures = () => {
+    return (
+      <div className="class-features-list">
+        {props.heroClass.featuresByLevel
+          .filter(lvl => lvl.features.length > 0)
+          .map(lvl => {
+            return (
+              <Expander
+                key={lvl.level}
+                title={
+                  <Field
+                    label={`Level ${lvl.level.toString()}`}
+                    value={lvl.features.map(f => f.name).join(', ')}
+                  />
+                }
+              >
+                {lvl.features.map(f => (
+                  <FeaturePanel
+                    key={f.id}
+                    feature={f}
+                    options={props.options}
+                    hero={props.hero}
+                    sourcebooks={props.sourcebooks}
+                    mode={PanelMode.Full}
+                  />
+                ))}
+              </Expander>
+            );
+          })}
+      </div>
+    );
+  };
 
-	const getAbilities = () => {
-		const costs = Collections.distinct(
-			props.heroClass.abilities
-				.map(a => a.cost)
-				.filter(c => c !== 'signature')
-				.sort((a, b) => a - b),
-			x => x
-		);
+  const getAbilities = () => {
+    const costs = Collections.distinct(
+      props.heroClass.abilities
+        .map(a => a.cost)
+        .filter(c => c !== 'signature')
+        .sort((a, b) => a - b),
+      x => x,
+    );
 
-		return (
-			<div className='class-abilities-list'>
-				{
-					[ 'signature', ...costs ].map(cost => {
-						const abilities = props.heroClass.abilities.filter(a => a.cost === cost);
-						if (abilities.length === 0) {
-							return null;
-						}
-						return (
-							<Expander key={cost} title={cost === 'signature' ? 'Signature Abilities' : `${cost}pt Abilities`}>
-								<div className='class-abilities-grid'>
-									{
-										abilities.map(a => (
-											<SelectablePanel key={a.id}>
-												<AbilityPanel ability={a} hero={props.hero} mode={PanelMode.Full} />
-											</SelectablePanel>
-										))
-									}
-								</div>
-							</Expander>
-						);
-					})
-				}
-				{props.heroClass.abilities.length === 0 ? <Empty /> : null}
-			</div>
-		);
-	};
+    return (
+      <div className="class-abilities-list">
+        {['signature', ...costs].map(cost => {
+          const abilities = props.heroClass.abilities.filter(a => a.cost === cost);
+          if (abilities.length === 0) {
+            return null;
+          }
+          return (
+            <Expander
+              key={cost}
+              title={cost === 'signature' ? 'Signature Abilities' : `${cost}pt Abilities`}
+            >
+              <div className="class-abilities-grid">
+                {abilities.map(a => (
+                  <SelectablePanel key={a.id}>
+                    <AbilityPanel ability={a} hero={props.hero} mode={PanelMode.Full} />
+                  </SelectablePanel>
+                ))}
+              </div>
+            </Expander>
+          );
+        })}
+        {props.heroClass.abilities.length === 0 ? <Empty /> : null}
+      </div>
+    );
+  };
 
-	const getSubclasses = () => {
-		return (
-			<div className='class-subclasses-list'>
-				{
-					props.heroClass.subclasses.map(sc => (
-						<Expander key={sc.id} title={sc.name}>
-							<SubclassPanel key={sc.id} subclass={sc} sourcebooks={props.sourcebooks} options={props.options} hero={props.hero} mode={PanelMode.Full} style={{ padding: '5px' }} />
-						</Expander>
-					))
-				}
-				{
-					props.heroClass.subclasses.length === 0 ?
-						<Empty />
-						: null
-				}
-			</div>
-		);
-	};
+  const getSubclasses = () => {
+    return (
+      <div className="class-subclasses-list">
+        {props.heroClass.subclasses.map(sc => (
+          <Expander key={sc.id} title={sc.name}>
+            <SubclassPanel
+              key={sc.id}
+              subclass={sc}
+              sourcebooks={props.sourcebooks}
+              options={props.options}
+              hero={props.hero}
+              mode={PanelMode.Full}
+              style={{ padding: '5px' }}
+            />
+          </Expander>
+        ))}
+        {props.heroClass.subclasses.length === 0 ? <Empty /> : null}
+      </div>
+    );
+  };
 
-	const getContent = () => {
-		let content = null;
-		switch (page) {
-			case 'overview':
-				content = getOverview();
-				break;
-			case 'features':
-				content = getFeatures();
-				break;
-			case 'abilities':
-				content = getAbilities();
-				break;
-			case 'subclasses':
-				content = getSubclasses();
-				break;
-		}
+  const getContent = () => {
+    let content = null;
+    switch (page) {
+      case 'overview':
+        content = getOverview();
+        break;
+      case 'features':
+        content = getFeatures();
+        break;
+      case 'abilities':
+        content = getAbilities();
+        break;
+      case 'subclasses':
+        content = getSubclasses();
+        break;
+    }
 
-		const pages = [
-			{ value: 'overview', label: 'Overview' },
-			{ value: 'features', label: 'Features' }
-		];
+    const pages = [
+      { value: 'overview', label: 'Overview' },
+      { value: 'features', label: 'Features' },
+    ];
 
-		if (props.heroClass.abilities.length > 0) {
-			pages.push({ value: 'abilities', label: 'Abilities' });
-		}
+    if (props.heroClass.abilities.length > 0) {
+      pages.push({ value: 'abilities', label: 'Abilities' });
+    }
 
-		if (props.heroClass.subclasses.length > 0) {
-			pages.push({ value: 'subclasses', label: 'Subclasses' });
-		}
+    if (props.heroClass.subclasses.length > 0) {
+      pages.push({ value: 'subclasses', label: 'Subclasses' });
+    }
 
-		return (
-			<>
-				<Segmented
-					style={{ marginBottom: '20px' }}
-					block={true}
-					options={pages}
-					value={page}
-					onChange={setPage}
-					onClick={e => e.stopPropagation()}
-				/>
-				{content}
-			</>
-		);
-	};
+    return (
+      <>
+        <Segmented
+          style={{ marginBottom: '20px' }}
+          block={true}
+          options={pages}
+          value={page}
+          onChange={setPage}
+          onClick={e => e.stopPropagation()}
+        />
+        {content}
+      </>
+    );
+  };
 
-	const tags = [];
-	if (props.heroClass.type === 'master') {
-		tags.push('Master Class');
-	}
-	const minLevel = Collections.min(props.heroClass.featuresByLevel.filter(lvl => lvl.features.length > 0).map(lvl => lvl.level), x => x);
-	const maxLevel = Collections.max(props.heroClass.featuresByLevel.filter(lvl => lvl.features.length > 0).map(lvl => lvl.level), x => x);
-	if ((minLevel !== 1) || (maxLevel !== 10)) {
-		if (minLevel === maxLevel) {
-			tags.push(`Level ${minLevel}`);
-		} else {
-			tags.push(`Levels ${minLevel}-${maxLevel}`);
-		}
-	}
-	if (props.sourcebooks.length > 0) {
-		const sourcebookType = SourcebookLogic.getClassSourcebook(props.sourcebooks, props.heroClass)?.type || SourcebookType.Official;
-		if (sourcebookType !== SourcebookType.Official) {
-			tags.push(sourcebookType);
-		}
-	}
+  const tags = [];
+  if (props.heroClass.type === 'master') {
+    tags.push('Master Class');
+  }
+  const minLevel = Collections.min(
+    props.heroClass.featuresByLevel.filter(lvl => lvl.features.length > 0).map(lvl => lvl.level),
+    x => x,
+  );
+  const maxLevel = Collections.max(
+    props.heroClass.featuresByLevel.filter(lvl => lvl.features.length > 0).map(lvl => lvl.level),
+    x => x,
+  );
+  if (minLevel !== 1 || maxLevel !== 10) {
+    if (minLevel === maxLevel) {
+      tags.push(`Level ${minLevel}`);
+    } else {
+      tags.push(`Levels ${minLevel}-${maxLevel}`);
+    }
+  }
+  if (props.sourcebooks.length > 0) {
+    const sourcebookType =
+      SourcebookLogic.getClassSourcebook(props.sourcebooks, props.heroClass)?.type ||
+      SourcebookType.Official;
+    if (sourcebookType !== SourcebookType.Official) {
+      tags.push(sourcebookType);
+    }
+  }
 
-	if (props.mode !== PanelMode.Full) {
-		return (
-			<div className='class-panel compact'>
-				<HeaderText level={1} tags={tags}>
-					{props.heroClass.name || 'Unnamed Class'}
-				</HeaderText>
-				<Markdown text={props.heroClass.description} />
-			</div>
-		);
-	}
+  if (props.mode !== PanelMode.Full) {
+    return (
+      <div className="class-panel compact">
+        <HeaderText level={1} tags={tags}>
+          {props.heroClass.name || 'Unnamed Class'}
+        </HeaderText>
+        <Markdown text={props.heroClass.description} />
+      </div>
+    );
+  }
 
-	return (
-		<ErrorBoundary>
-			<div className='class-panel' id={SheetFormatter.getPageId('class', props.heroClass.id)}>
-				<HeaderText level={1} tags={tags}>
-					{props.heroClass.name || 'Unnamed Class'}
-				</HeaderText>
-				{getContent()}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="class-panel" id={SheetFormatter.getPageId('class', props.heroClass.id)}>
+        <HeaderText level={1} tags={tags}>
+          {props.heroClass.name || 'Unnamed Class'}
+        </HeaderText>
+        {getContent()}
+      </div>
+    </ErrorBoundary>
+  );
 };

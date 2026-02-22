@@ -21,110 +21,122 @@ import { useState } from 'react';
 import './item-select-modal.scss';
 
 interface Props {
-	types: ItemType[];
-	sourcebooks: Sourcebook[];
-	options: Options;
-	hero: Hero;
-	onClose: () => void;
-	onSelect: (item: Item) => void;
+  types: ItemType[];
+  sourcebooks: Sourcebook[];
+  options: Options;
+  hero: Hero;
+  onClose: () => void;
+  onSelect: (item: Item) => void;
 }
 
 export const ItemSelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
-	const [ showUsableOnly, setShowUsableOnly ] = useState<boolean>(true);
-	const [ showTypes, setShowTypes ] = useState<{ [ type: string ]: boolean }>(() => {
-		const types: { [ type: string ]: boolean } = {};
-		props.types.forEach(type => {
-			types[type] = true;
-		});
-		return types;
-	});
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showUsableOnly, setShowUsableOnly] = useState<boolean>(true);
+  const [showTypes, setShowTypes] = useState<{ [type: string]: boolean }>(() => {
+    const types: { [type: string]: boolean } = {};
+    props.types.forEach(type => {
+      types[type] = true;
+    });
+    return types;
+  });
 
-	const setShowEverything = (value: boolean) => {
-		const types = { ...showTypes };
-		props.types.forEach(type => {
-			types[type] = value;
-		});
-		setShowTypes(types);
-	};
+  const setShowEverything = (value: boolean) => {
+    const types = { ...showTypes };
+    props.types.forEach(type => {
+      types[type] = value;
+    });
+    setShowTypes(types);
+  };
 
-	const items = [ ...SourcebookLogic.getItems(props.sourcebooks), ImbuedItemData.imbuedArmor, ImbuedItemData.imbuedImplement, ImbuedItemData.imbuedWeapon ]
-		.filter(item => props.types.includes(item.type))
-		.filter(item => !showUsableOnly || HeroLogic.canUseItem(props.hero, item))
-		.filter(item => showTypes[item.type])
-		.filter(item => Utils.textMatches([
-			item.name,
-			item.description,
-			...item.keywords,
-			...item.featuresByLevel.flatMap(lvl => lvl.features.map(f => f.name))
-		], searchTerm));
+  const items = [
+    ...SourcebookLogic.getItems(props.sourcebooks),
+    ImbuedItemData.imbuedArmor,
+    ImbuedItemData.imbuedImplement,
+    ImbuedItemData.imbuedWeapon,
+  ]
+    .filter(item => props.types.includes(item.type))
+    .filter(item => !showUsableOnly || HeroLogic.canUseItem(props.hero, item))
+    .filter(item => showTypes[item.type])
+    .filter(item =>
+      Utils.textMatches(
+        [
+          item.name,
+          item.description,
+          ...item.keywords,
+          ...item.featuresByLevel.flatMap(lvl => lvl.features.map(f => f.name)),
+        ],
+        searchTerm,
+      ),
+    );
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='item-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<Expander title='Filter'>
-							<div className='item-type-filter-panel'>
-								{
-									props.types.length > 1 ?
-										<>
-											<Toggle label='Show everything' value={props.types.every(t => showTypes[t])} onChange={setShowEverything} />
-											<Divider />
-											{
-												props.types.map(type => (
-													<Toggle
-														key={type}
-														label={type}
-														value={showTypes[type]}
-														onChange={value => {
-															const newTypes = { ...showTypes };
-															newTypes[type] = value;
-															setShowTypes(newTypes);
-														}}
-													/>
-												))
-											}
-											<Divider />
-										</>
-										: null
-								}
-								<Toggle label='Only show items you can use' value={showUsableOnly} onChange={setShowUsableOnly} />
-							</div>
-						</Expander>
-						<Divider />
-						{
-							items.map(item => (
-								<Expander
-									key={item.id}
-									title={item.name}
-									tags={[ item.type ]}
-									extra={[
-										<Button
-											key='select'
-											type='text'
-											title='Select'
-											icon={<PlusOutlined />}
-											onClick={() => props.onSelect(item)}
-										/>
-									]}
-								>
-									<ItemPanel item={item} sourcebooks={props.sourcebooks} options={props.options} wielder={props.hero} mode={PanelMode.Full} />
-								</Expander>
-							))
-						}
-						{
-							items.length === 0 ?
-								<Empty />
-								: null
-						}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="item-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <Expander title="Filter">
+              <div className="item-type-filter-panel">
+                {props.types.length > 1 ? (
+                  <>
+                    <Toggle
+                      label="Show everything"
+                      value={props.types.every(t => showTypes[t])}
+                      onChange={setShowEverything}
+                    />
+                    <Divider />
+                    {props.types.map(type => (
+                      <Toggle
+                        key={type}
+                        label={type}
+                        value={showTypes[type]}
+                        onChange={value => {
+                          const newTypes = { ...showTypes };
+                          newTypes[type] = value;
+                          setShowTypes(newTypes);
+                        }}
+                      />
+                    ))}
+                    <Divider />
+                  </>
+                ) : null}
+                <Toggle
+                  label="Only show items you can use"
+                  value={showUsableOnly}
+                  onChange={setShowUsableOnly}
+                />
+              </div>
+            </Expander>
+            <Divider />
+            {items.map(item => (
+              <Expander
+                key={item.id}
+                title={item.name}
+                tags={[item.type]}
+                extra={[
+                  <Button
+                    key="select"
+                    type="text"
+                    title="Select"
+                    icon={<PlusOutlined />}
+                    onClick={() => props.onSelect(item)}
+                  />,
+                ]}
+              >
+                <ItemPanel
+                  item={item}
+                  sourcebooks={props.sourcebooks}
+                  options={props.options}
+                  wielder={props.hero}
+                  mode={PanelMode.Full}
+                />
+              </Expander>
+            ))}
+            {items.length === 0 ? <Empty /> : null}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

@@ -8,32 +8,28 @@ import { useState } from 'react';
 import './minion-slot-modal.scss';
 
 interface Props {
-	slot: EncounterSlot;
-	encounter?: Encounter;
-	onClose: () => void;
-	updateSlot: (slot: EncounterSlot) => void;
+  slot: EncounterSlot;
+  encounter?: Encounter;
+  onClose: () => void;
+  updateSlot: (slot: EncounterSlot) => void;
 }
 
 export const MinionSlotModal = (props: Props) => {
-	const [ slot, setSlot ] = useState<EncounterSlot>(Utils.copy(props.slot));
+  const [slot, setSlot] = useState<EncounterSlot>(Utils.copy(props.slot));
 
-	const updateSlot = (slot: EncounterSlot) => {
-		setSlot(slot);
-		props.updateSlot(slot);
-	};
+  const updateSlot = (slot: EncounterSlot) => {
+    setSlot(slot);
+    props.updateSlot(slot);
+  };
 
-	return (
-		<Modal
-			content={
-				<div className='minion-slot-modal'>
-					<MinionGroupHealthPanel
-						slot={slot}
-						encounter={props.encounter}
-						onChange={updateSlot}
-					/>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      content={
+        <div className="minion-slot-modal">
+          <MinionGroupHealthPanel slot={slot} encounter={props.encounter} onChange={updateSlot} />
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

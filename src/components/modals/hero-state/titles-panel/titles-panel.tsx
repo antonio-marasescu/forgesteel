@@ -19,89 +19,119 @@ import { useState } from 'react';
 import './titles-panel.scss';
 
 interface Props {
-	hero: Hero;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	onChange: (hero: Hero) => void;
+  hero: Hero;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  onChange: (hero: Hero) => void;
 }
 
 export const TitlesPanel = (props: Props) => {
-	const [ hero, setHero ] = useState<Hero>(Utils.copy(props.hero));
-	const [ titlesVisible, setTitlesVisible ] = useState<boolean>(false);
+  const [hero, setHero] = useState<Hero>(Utils.copy(props.hero));
+  const [titlesVisible, setTitlesVisible] = useState<boolean>(false);
 
-	const addTitle = (title: Title) => {
-		const copy = Utils.copy(hero);
-		copy.state.titles.push(Utils.copy(title));
-		setHero(copy);
-		setTitlesVisible(false);
-		props.onChange(copy);
-	};
+  const addTitle = (title: Title) => {
+    const copy = Utils.copy(hero);
+    copy.state.titles.push(Utils.copy(title));
+    setHero(copy);
+    setTitlesVisible(false);
+    props.onChange(copy);
+  };
 
-	const changeTitle = (title: Title) => {
-		const copy = Utils.copy(hero);
-		const index = copy.state.titles.findIndex(t => t.id === title.id);
-		copy.state.titles[index] = title;
-		setHero(copy);
-		props.onChange(copy);
-	};
+  const changeTitle = (title: Title) => {
+    const copy = Utils.copy(hero);
+    const index = copy.state.titles.findIndex(t => t.id === title.id);
+    copy.state.titles[index] = title;
+    setHero(copy);
+    props.onChange(copy);
+  };
 
-	const moveTitle = (title: Title, direction: 'up' | 'down') => {
-		const copy = Utils.copy(hero);
-		const index = copy.state.titles.findIndex(p => p.id === title.id);
-		copy.state.titles = Collections.move(copy.state.titles, index, direction);
-		setHero(copy);
-		props.onChange(copy);
-	};
+  const moveTitle = (title: Title, direction: 'up' | 'down') => {
+    const copy = Utils.copy(hero);
+    const index = copy.state.titles.findIndex(p => p.id === title.id);
+    copy.state.titles = Collections.move(copy.state.titles, index, direction);
+    setHero(copy);
+    props.onChange(copy);
+  };
 
-	const deleteTitle = (title: Title) => {
-		const copy = Utils.copy(hero);
-		copy.state.titles = copy.state.titles.filter(p => p.id !== title.id);
-		setHero(copy);
-		props.onChange(copy);
-	};
+  const deleteTitle = (title: Title) => {
+    const copy = Utils.copy(hero);
+    copy.state.titles = copy.state.titles.filter(p => p.id !== title.id);
+    setHero(copy);
+    props.onChange(copy);
+  };
 
-	return (
-		<ErrorBoundary>
-			<Space orientation='vertical' style={{ width: '100%', paddingBottom: '20px' }}>
-				<HeaderText
-					extra={
-						<Button type='text' icon={<PlusOutlined />} onClick={() => setTitlesVisible(true)} />
-					}
-				>
-					Titles
-				</HeaderText>
-				{
-					hero.state.titles.map(title => (
-						<Expander
-							key={title.id}
-							title={title.name}
-							tags={[ `Echelon ${title.echelon}` ]}
-							extra={[
-								<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveTitle(title, 'up'); }} />,
-								<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveTitle(title, 'down'); }} />,
-								<DangerButton key='delete' mode='clear' onConfirm={e => { e.stopPropagation(); deleteTitle(title); }} />
-							]}
-						>
-							<TitlePanel
-								title={title}
-								hero={hero}
-								sourcebooks={props.sourcebooks}
-								options={props.options}
-								mode={PanelMode.Full}
-								onChange={changeTitle}
-							/>
-						</Expander>
-					))
-				}
-				{
-					hero.state.titles.length === 0 ?
-						<Empty text='You have no titles.' />
-						: null
-				}
-				<Drawer open={titlesVisible} onClose={() => setTitlesVisible(false)} closeIcon={null} size={500}>
-					<TitleSelectModal hero={props.hero} sourcebooks={props.sourcebooks} options={props.options} onSelect={addTitle} onClose={() => setTitlesVisible(false)} />
-				</Drawer>
-			</Space>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <Space orientation="vertical" style={{ width: '100%', paddingBottom: '20px' }}>
+        <HeaderText
+          extra={
+            <Button type="text" icon={<PlusOutlined />} onClick={() => setTitlesVisible(true)} />
+          }
+        >
+          Titles
+        </HeaderText>
+        {hero.state.titles.map(title => (
+          <Expander
+            key={title.id}
+            title={title.name}
+            tags={[`Echelon ${title.echelon}`]}
+            extra={[
+              <Button
+                key="up"
+                type="text"
+                title="Move Up"
+                icon={<CaretUpOutlined />}
+                onClick={e => {
+                  e.stopPropagation();
+                  moveTitle(title, 'up');
+                }}
+              />,
+              <Button
+                key="down"
+                type="text"
+                title="Move Down"
+                icon={<CaretDownOutlined />}
+                onClick={e => {
+                  e.stopPropagation();
+                  moveTitle(title, 'down');
+                }}
+              />,
+              <DangerButton
+                key="delete"
+                mode="clear"
+                onConfirm={e => {
+                  e.stopPropagation();
+                  deleteTitle(title);
+                }}
+              />,
+            ]}
+          >
+            <TitlePanel
+              title={title}
+              hero={hero}
+              sourcebooks={props.sourcebooks}
+              options={props.options}
+              mode={PanelMode.Full}
+              onChange={changeTitle}
+            />
+          </Expander>
+        ))}
+        {hero.state.titles.length === 0 ? <Empty text="You have no titles." /> : null}
+        <Drawer
+          open={titlesVisible}
+          onClose={() => setTitlesVisible(false)}
+          closeIcon={null}
+          size={500}
+        >
+          <TitleSelectModal
+            hero={props.hero}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            onSelect={addTitle}
+            onClose={() => setTitlesVisible(false)}
+          />
+        </Drawer>
+      </Space>
+    </ErrorBoundary>
+  );
 };

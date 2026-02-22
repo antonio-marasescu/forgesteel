@@ -13,66 +13,76 @@ import { useState } from 'react';
 import './language-select-modal.scss';
 
 interface Props {
-	languages: Language[];
-	onClose: () => void;
-	onSelect: (language: Language) => void;
+  languages: Language[];
+  onClose: () => void;
+  onSelect: (language: Language) => void;
 }
 
 export const LanguageSelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
-	const [ customLanguage, setCustomLanguage ] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [customLanguage, setCustomLanguage] = useState<string>('');
 
-	const languages = props.languages
-		.filter(l => Utils.textMatches([
-			l.name,
-			l.description
-		], searchTerm));
+  const languages = props.languages.filter(l =>
+    Utils.textMatches([l.name, l.description], searchTerm),
+  );
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='language-select-modal'>
-					{
-						[ LanguageType.Common, LanguageType.Cultural, LanguageType.Regional, LanguageType.Dead ].map(type => {
-							const subset = languages.filter(l => l.type === type);
-							if (subset.length === 0) {
-								return null;
-							}
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="language-select-modal">
+          {[
+            LanguageType.Common,
+            LanguageType.Cultural,
+            LanguageType.Regional,
+            LanguageType.Dead,
+          ].map(type => {
+            const subset = languages.filter(l => l.type === type);
+            if (subset.length === 0) {
+              return null;
+            }
 
-							return (
-								<Space key={type} orientation='vertical' style={{ width: '100%' }}>
-									<HeaderText level={1}>{type}</HeaderText>
-									{
-										subset.map((l, n) => (
-											<SelectablePanel key={n} onSelect={() => props.onSelect(l)}>
-												<HeaderText>{l.name}</HeaderText>
-												<Markdown text={l.description} />
-											</SelectablePanel>
-										))
-									}
-								</Space>
-							);
-						})
-					}
-					<Divider />
-					<Expander title='Add a custom language'>
-						<Space orientation='vertical' style={{ width: '100%' }}>
-							<HeaderText>Custom Language</HeaderText>
-							<TextInput
-								placeholder='Custom Language Name'
-								allowClear={true}
-								value={customLanguage}
-								onChange={setCustomLanguage}
-							/>
-							<Button block={true} disabled={!customLanguage} onClick={() => props.onSelect({ name: customLanguage, description: '', type: LanguageType.Cultural, related: [] })}>Select</Button>
-						</Space>
-					</Expander>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+            return (
+              <Space key={type} orientation="vertical" style={{ width: '100%' }}>
+                <HeaderText level={1}>{type}</HeaderText>
+                {subset.map((l, n) => (
+                  <SelectablePanel key={n} onSelect={() => props.onSelect(l)}>
+                    <HeaderText>{l.name}</HeaderText>
+                    <Markdown text={l.description} />
+                  </SelectablePanel>
+                ))}
+              </Space>
+            );
+          })}
+          <Divider />
+          <Expander title="Add a custom language">
+            <Space orientation="vertical" style={{ width: '100%' }}>
+              <HeaderText>Custom Language</HeaderText>
+              <TextInput
+                placeholder="Custom Language Name"
+                allowClear={true}
+                value={customLanguage}
+                onChange={setCustomLanguage}
+              />
+              <Button
+                block={true}
+                disabled={!customLanguage}
+                onClick={() =>
+                  props.onSelect({
+                    name: customLanguage,
+                    description: '',
+                    type: LanguageType.Cultural,
+                    related: [],
+                  })
+                }
+              >
+                Select
+              </Button>
+            </Space>
+          </Expander>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

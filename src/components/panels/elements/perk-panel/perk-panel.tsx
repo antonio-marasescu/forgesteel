@@ -10,19 +10,32 @@ import { Sourcebook } from '@/models/sourcebook';
 import './perk-panel.scss';
 
 interface Props {
-	perk: Perk;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	hero?: Hero;
-	mode?: PanelMode;
+  perk: Perk;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  hero?: Hero;
+  mode?: PanelMode;
 }
 
 export const PerkPanel = (props: Props) => {
-	return (
-		<ErrorBoundary>
-			<div className={props.mode === PanelMode.Full ? 'perk-panel' : 'perk-panel compact'} id={props.mode === PanelMode.Full ? SheetFormatter.getPageId('perk', props.perk.id) : undefined}>
-				<FeaturePanel feature={props.perk} options={props.options} hero={props.hero} sourcebooks={props.sourcebooks} mode={props.mode} />
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div
+        className={props.mode === PanelMode.Full ? 'perk-panel' : 'perk-panel compact'}
+        id={
+          props.mode === PanelMode.Full
+            ? SheetFormatter.getPageId('perk', props.perk.id)
+            : undefined
+        }
+      >
+        <FeaturePanel
+          feature={props.perk}
+          options={props.options}
+          hero={props.hero}
+          sourcebooks={props.sourcebooks}
+          mode={props.mode}
+        />
+      </div>
+    </ErrorBoundary>
+  );
 };

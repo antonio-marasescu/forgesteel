@@ -1,5 +1,7 @@
 # Forge Steel
 
+> This is a modified version of the original [ForgeSteel](https://github.com/andyaiken/forgesteel).
+
 **FORGE STEEL** is a hero builder app for **DRAW STEEL**, designed by [Andy Aiken](mailto:andy.aiken@live.co.uk).
 
 You can find it [here](https://andyaiken.github.io/forgesteel/).

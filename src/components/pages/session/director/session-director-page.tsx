@@ -37,396 +37,432 @@ import { useTitle } from '@/hooks/use-title';
 import './session-director-page.scss';
 
 interface Props {
-	heroes: Hero[];
-	sourcebooks: Sourcebook[];
-	session: Session;
-	options: Options;
-	highlightAbout: boolean;
-	showReference: () => void;
-	showRoll: () => void;
-	showAbout: () => void;
-	showSettings: () => void;
-	showPlayerView: () => void;
-	startEncounter: (encounter: Encounter) => Promise<string>;
-	startMontage: (montage: Montage) => Promise<string>;
-	startNegotiation: (negotiation: Negotiation) => Promise<string>;
-	startMap: (map: TacticalMap) => Promise<string>;
-	startCounter: (counter: Counter) => Promise<string>;
-	updateHero: (hero: Hero) => void;
-	updateEncounter: (encounter: Encounter) => void;
-	updateMontage: (montage: Montage) => void;
-	updateNegotiation: (negotiation: Negotiation) => void;
-	updateMap: (map: TacticalMap) => void;
-	updateCounter: (counter: Counter) => void;
-	finishSessionElement: (id: string) => string | null;
+  heroes: Hero[];
+  sourcebooks: Sourcebook[];
+  session: Session;
+  options: Options;
+  highlightAbout: boolean;
+  showReference: () => void;
+  showRoll: () => void;
+  showAbout: () => void;
+  showSettings: () => void;
+  showPlayerView: () => void;
+  startEncounter: (encounter: Encounter) => Promise<string>;
+  startMontage: (montage: Montage) => Promise<string>;
+  startNegotiation: (negotiation: Negotiation) => Promise<string>;
+  startMap: (map: TacticalMap) => Promise<string>;
+  startCounter: (counter: Counter) => Promise<string>;
+  updateHero: (hero: Hero) => void;
+  updateEncounter: (encounter: Encounter) => void;
+  updateMontage: (montage: Montage) => void;
+  updateNegotiation: (negotiation: Negotiation) => void;
+  updateMap: (map: TacticalMap) => void;
+  updateCounter: (counter: Counter) => void;
+  finishSessionElement: (id: string) => string | null;
 }
 
 export const SessionDirectorPage = (props: Props) => {
-	const navigation = useNavigation();
-	const [ selectedElementID, setSelectedElementID ] = useState<string | null>(() => {
-		const options = AdventureLogic.getContentOptions(props.session);
-		return options.length > 0 ? options[0].id : null;
-	});
-	const [ startElement, setStartElement ] = useState<string>('encounter');
-	const [ newCounterName, setNewCounterName ] = useState<string>('');
-	const [ newCounterValue, setNewCounterValue ] = useState<number>(0);
-	useTitle('Session');
+  const navigation = useNavigation();
+  const [selectedElementID, setSelectedElementID] = useState<string | null>(() => {
+    const options = AdventureLogic.getContentOptions(props.session);
+    return options.length > 0 ? options[0].id : null;
+  });
+  const [startElement, setStartElement] = useState<string>('encounter');
+  const [newCounterName, setNewCounterName] = useState<string>('');
+  const [newCounterValue, setNewCounterValue] = useState<number>(0);
+  useTitle('Session');
 
-	const getSelector = () => {
-		const options = AdventureLogic.getContentOptions(props.session).map(o => {
-			return {
-				value: o.id,
-				label: o.name
-			};
-		});
+  const getSelector = () => {
+    const options = AdventureLogic.getContentOptions(props.session).map(o => {
+      return {
+        value: o.id,
+        label: o.name,
+      };
+    });
 
-		if (options.length <= 1) {
-			return null;
-		}
+    if (options.length <= 1) {
+      return null;
+    }
 
-		return (
-			<div className='session-page-content-selector'>
-				<Segmented
-					options={options}
-					value={selectedElementID}
-					onChange={setSelectedElementID}
-				/>
-			</div>
-		);
-	};
+    return (
+      <div className="session-page-content-selector">
+        <Segmented options={options} value={selectedElementID} onChange={setSelectedElementID} />
+      </div>
+    );
+  };
 
-	const getSelectedContent = () => {
-		if (selectedElementID) {
-			const encounter = props.session.encounters.find(e => e.id === selectedElementID);
-			if (encounter) {
-				return (
-					<div className='session-page-content-container'>
-						<EncounterRunPanel
-							key={encounter.id}
-							encounter={encounter}
-							sourcebooks={props.sourcebooks}
-							heroes={props.heroes}
-							options={props.options}
-							onChange={props.updateEncounter}
-						/>
-					</div>
-				);
-			}
+  const getSelectedContent = () => {
+    if (selectedElementID) {
+      const encounter = props.session.encounters.find(e => e.id === selectedElementID);
+      if (encounter) {
+        return (
+          <div className="session-page-content-container">
+            <EncounterRunPanel
+              key={encounter.id}
+              encounter={encounter}
+              sourcebooks={props.sourcebooks}
+              heroes={props.heroes}
+              options={props.options}
+              onChange={props.updateEncounter}
+            />
+          </div>
+        );
+      }
 
-			const montage = props.session.montages.find(m => m.id === selectedElementID);
-			if (montage) {
-				return (
-					<div className='session-page-content-container'>
-						<MontageRunPanel
-							key={montage.id}
-							montage={montage}
-							heroes={props.heroes}
-							options={props.options}
-							onChange={props.updateMontage}
-						/>
-					</div>
-				);
-			}
+      const montage = props.session.montages.find(m => m.id === selectedElementID);
+      if (montage) {
+        return (
+          <div className="session-page-content-container">
+            <MontageRunPanel
+              key={montage.id}
+              montage={montage}
+              heroes={props.heroes}
+              options={props.options}
+              onChange={props.updateMontage}
+            />
+          </div>
+        );
+      }
 
-			const negotiation = props.session.negotiations.find(n => n.id === selectedElementID);
-			if (negotiation) {
-				return (
-					<div className='session-page-content-container'>
-						<NegotiationRunPanel
-							key={negotiation.id}
-							negotiation={negotiation}
-							onChange={props.updateNegotiation}
-						/>
-					</div>
-				);
-			}
+      const negotiation = props.session.negotiations.find(n => n.id === selectedElementID);
+      if (negotiation) {
+        return (
+          <div className="session-page-content-container">
+            <NegotiationRunPanel
+              key={negotiation.id}
+              negotiation={negotiation}
+              onChange={props.updateNegotiation}
+            />
+          </div>
+        );
+      }
 
-			const map = props.session.tacticalMaps.find(tm => tm.id === selectedElementID);
-			if (map) {
-				return (
-					<div className='session-page-content-container'>
-						<TacticalMapPanel
-							key={map.id}
-							map={map}
-							display={TacticalMapDisplayType.DirectorEdit}
-							options={props.options}
-							heroes={props.heroes}
-							encounters={props.session.encounters}
-							sourcebooks={props.sourcebooks}
-							mode={PanelMode.Full}
-							updateMap={props.updateMap}
-							updateHero={props.updateHero}
-							updateEncounter={props.updateEncounter}
-						/>
-					</div>
-				);
-			}
+      const map = props.session.tacticalMaps.find(tm => tm.id === selectedElementID);
+      if (map) {
+        return (
+          <div className="session-page-content-container">
+            <TacticalMapPanel
+              key={map.id}
+              map={map}
+              display={TacticalMapDisplayType.DirectorEdit}
+              options={props.options}
+              heroes={props.heroes}
+              encounters={props.session.encounters}
+              sourcebooks={props.sourcebooks}
+              mode={PanelMode.Full}
+              updateMap={props.updateMap}
+              updateHero={props.updateHero}
+              updateEncounter={props.updateEncounter}
+            />
+          </div>
+        );
+      }
 
-			const counter = props.session.counters.find(c => c.id === selectedElementID);
-			if (counter) {
-				return (
-					<div className='session-page-content-container'>
-						<CounterRunPanel
-							key={counter.id}
-							counter={counter}
-							onChange={props.updateCounter}
-						/>
-					</div>
-				);
-			}
-		}
+      const counter = props.session.counters.find(c => c.id === selectedElementID);
+      if (counter) {
+        return (
+          <div className="session-page-content-container">
+            <CounterRunPanel key={counter.id} counter={counter} onChange={props.updateCounter} />
+          </div>
+        );
+      }
+    }
 
-		const options = AdventureLogic.getContentOptions(props.session);
-		if (options.length === 0) {
-			return (
-				<Empty text='Nothing is currently in progress.' />
-			);
-		}
+    const options = AdventureLogic.getContentOptions(props.session);
+    if (options.length === 0) {
+      return <Empty text="Nothing is currently in progress." />;
+    }
 
-		return null;
-	};
+    return null;
+  };
 
-	const getStartContent = () => {
-		const startEncounter = (encounter: Encounter) => {
-			props.startEncounter(encounter).then(setSelectedElementID);
-		};
+  const getStartContent = () => {
+    const startEncounter = (encounter: Encounter) => {
+      props.startEncounter(encounter).then(setSelectedElementID);
+    };
 
-		const startMontage = (montage: Montage) => {
-			props.startMontage(montage).then(setSelectedElementID);
-		};
+    const startMontage = (montage: Montage) => {
+      props.startMontage(montage).then(setSelectedElementID);
+    };
 
-		const startNegotiation = (negotiation: Negotiation) => {
-			props.startNegotiation(negotiation).then(setSelectedElementID);
-		};
+    const startNegotiation = (negotiation: Negotiation) => {
+      props.startNegotiation(negotiation).then(setSelectedElementID);
+    };
 
-		const startMap = (map: TacticalMap) => {
-			props.startMap(map).then(setSelectedElementID);
-		};
+    const startMap = (map: TacticalMap) => {
+      props.startMap(map).then(setSelectedElementID);
+    };
 
-		const startCounter = () => {
-			const counter = {
-				id: Utils.guid(),
-				name: newCounterName || 'New Counter',
-				description: '',
-				value: newCounterValue
-			};
-			setNewCounterName('');
-			setNewCounterValue(0);
+    const startCounter = () => {
+      const counter = {
+        id: Utils.guid(),
+        name: newCounterName || 'New Counter',
+        description: '',
+        value: newCounterValue,
+      };
+      setNewCounterName('');
+      setNewCounterValue(0);
 
-			props.startCounter(counter).then(setSelectedElementID);
-		};
+      props.startCounter(counter).then(setSelectedElementID);
+    };
 
-		const exampleEncounters = [
-			EncounterData.goblinAmbush,
-			EncounterData.dragonAttack
-		];
+    const exampleEncounters = [EncounterData.goblinAmbush, EncounterData.dragonAttack];
 
-		const exampleMontages = [
-			MontageData.fightFire,
-			MontageData.infiltrateThePalace,
-			MontageData.prepareForBattle,
-			MontageData.trackTheFugitive,
-			MontageData.wildernessRace
-		];
+    const exampleMontages = [
+      MontageData.fightFire,
+      MontageData.infiltrateThePalace,
+      MontageData.prepareForBattle,
+      MontageData.trackTheFugitive,
+      MontageData.wildernessRace,
+    ];
 
-		const exampleNegotiations = [
-			NegotiationData.banditChief,
-			NegotiationData.knight,
-			NegotiationData.guildmaster,
-			NegotiationData.warlord,
-			NegotiationData.burgomaster,
-			NegotiationData.virtuoso,
-			NegotiationData.highPriest,
-			NegotiationData.duke,
-			NegotiationData.dragon,
-			NegotiationData.monarch,
-			NegotiationData.lich,
-			NegotiationData.deity
-		];
+    const exampleNegotiations = [
+      NegotiationData.banditChief,
+      NegotiationData.knight,
+      NegotiationData.guildmaster,
+      NegotiationData.warlord,
+      NegotiationData.burgomaster,
+      NegotiationData.virtuoso,
+      NegotiationData.highPriest,
+      NegotiationData.duke,
+      NegotiationData.dragon,
+      NegotiationData.monarch,
+      NegotiationData.lich,
+      NegotiationData.deity,
+    ];
 
-		switch (startElement) {
-			case 'encounter':
-				return (
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<div className='ds-text bold-text'>Your encounters:</div>
-						{
-							SourcebookLogic.getEncounters(props.sourcebooks).map(e => (
-								<Button key={e.id} block={true} onClick={() => startEncounter(e)}>{e.name || 'Unnamed Encounter'}</Button>
-							))
-						}
-						{
-							SourcebookLogic.getEncounters(props.sourcebooks).length === 0 ?
-								<Alert
-									type='warning'
-									showIcon={true}
-									title='You have not created any encounters.'
-									action={<Button type='text' title='Encounters' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('encounter')} />}
-								/>
-								: null
-						}
-						<div className='ds-text bold-text'>Example encounters:</div>
-						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px' }}>
-							{
-								exampleEncounters.map(e => (
-									<Button key={e.id} block={true} onClick={() => startEncounter(e)}>{e.name}</Button>
-								))
-							}
-						</div>
-					</Space>
-				);
-			case 'montage':
-				return (
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<div className='ds-text bold-text'>Your montages:</div>
-						{
-							SourcebookLogic.getMontages(props.sourcebooks).map(m => (
-								<Button key={m.id} block={true} onClick={() => startMontage(m)}>{m.name || 'Unnamed Montage'}</Button>
-							))
-						}
-						{
-							SourcebookLogic.getMontages(props.sourcebooks).length === 0 ?
-								<Alert
-									type='warning'
-									showIcon={true}
-									title='You have not created any montages.'
-									action={<Button type='text' title='Montages' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('montage')} />}
-								/>
-								: null
-						}
-						<div className='ds-text bold-text'>Example montages:</div>
-						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px' }}>
-							{
-								exampleMontages.map(m => (
-									<Button key={m.id} block={true} onClick={() => startMontage(m)}>{m.name}</Button>
-								))
-							}
-						</div>
-					</Space>
-				);
-			case 'negotiation':
-				return (
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<div className='ds-text bold-text'>Your negotiations:</div>
-						{
-							SourcebookLogic.getNegotiations(props.sourcebooks).map(n => (
-								<Button key={n.id} block={true} onClick={() => startNegotiation(n)}>{n.name || 'Unnamed Negotiation'}</Button>
-							))
-						}
-						{
-							SourcebookLogic.getNegotiations(props.sourcebooks).length === 0 ?
-								<Alert
-									type='warning'
-									showIcon={true}
-									title='You have not created any negotiations.'
-									action={<Button type='text' title='Negotiations' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('negotiation')} />}
-								/>
-								: null
-						}
-						<div className='ds-text bold-text'>Example negotiations:</div>
-						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px' }}>
-							{
-								exampleNegotiations.map(n => (
-									<Button key={n.id} block={true} onClick={() => startNegotiation(n)}>{n.name}</Button>
-								))
-							}
-						</div>
-					</Space>
-				);
-			case 'map':
-				return (
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<div className='ds-text bold-text'>Your maps:</div>
-						{
-							SourcebookLogic.getTacticalMaps(props.sourcebooks).map(tm => (
-								<Button key={tm.id} block={true} onClick={() => startMap(tm)}>{tm.name || 'Unnamed Map'}</Button>
-							))
-						}
-						{
-							SourcebookLogic.getTacticalMaps(props.sourcebooks).length === 0 ?
-								<Alert
-									type='warning'
-									showIcon={true}
-									title='You have not created any maps.'
-									action={<Button type='text' title='Maps' icon={<ReadOutlined />} onClick={() => navigation.goToLibrary('tactical-map')} />}
-								/>
-								: null
-						}
-					</Space>
-				);
-			case 'counter':
-				return (
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<div className='ds-text bold-text'>Create a new counter:</div>
-						<TextInput
-							placeholder='Counter Name'
-							allowClear={true}
-							value={newCounterName}
-							onChange={setNewCounterName}
-						/>
-						<NumberSpin label='Starting Value' value={newCounterValue} onChange={setNewCounterValue} />
-						<Button block={true} onClick={() => startCounter()}>Create counter</Button>
-					</Space>
-				);
-		}
-	};
+    switch (startElement) {
+      case 'encounter':
+        return (
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <div className="ds-text bold-text">Your encounters:</div>
+            {SourcebookLogic.getEncounters(props.sourcebooks).map(e => (
+              <Button key={e.id} block={true} onClick={() => startEncounter(e)}>
+                {e.name || 'Unnamed Encounter'}
+              </Button>
+            ))}
+            {SourcebookLogic.getEncounters(props.sourcebooks).length === 0 ? (
+              <Alert
+                type="warning"
+                showIcon={true}
+                title="You have not created any encounters."
+                action={
+                  <Button
+                    type="text"
+                    title="Encounters"
+                    icon={<ReadOutlined />}
+                    onClick={() => navigation.goToLibrary('encounter')}
+                  />
+                }
+              />
+            ) : null}
+            <div className="ds-text bold-text">Example encounters:</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                gap: '10px',
+              }}
+            >
+              {exampleEncounters.map(e => (
+                <Button key={e.id} block={true} onClick={() => startEncounter(e)}>
+                  {e.name}
+                </Button>
+              ))}
+            </div>
+          </Space>
+        );
+      case 'montage':
+        return (
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <div className="ds-text bold-text">Your montages:</div>
+            {SourcebookLogic.getMontages(props.sourcebooks).map(m => (
+              <Button key={m.id} block={true} onClick={() => startMontage(m)}>
+                {m.name || 'Unnamed Montage'}
+              </Button>
+            ))}
+            {SourcebookLogic.getMontages(props.sourcebooks).length === 0 ? (
+              <Alert
+                type="warning"
+                showIcon={true}
+                title="You have not created any montages."
+                action={
+                  <Button
+                    type="text"
+                    title="Montages"
+                    icon={<ReadOutlined />}
+                    onClick={() => navigation.goToLibrary('montage')}
+                  />
+                }
+              />
+            ) : null}
+            <div className="ds-text bold-text">Example montages:</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                gap: '10px',
+              }}
+            >
+              {exampleMontages.map(m => (
+                <Button key={m.id} block={true} onClick={() => startMontage(m)}>
+                  {m.name}
+                </Button>
+              ))}
+            </div>
+          </Space>
+        );
+      case 'negotiation':
+        return (
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <div className="ds-text bold-text">Your negotiations:</div>
+            {SourcebookLogic.getNegotiations(props.sourcebooks).map(n => (
+              <Button key={n.id} block={true} onClick={() => startNegotiation(n)}>
+                {n.name || 'Unnamed Negotiation'}
+              </Button>
+            ))}
+            {SourcebookLogic.getNegotiations(props.sourcebooks).length === 0 ? (
+              <Alert
+                type="warning"
+                showIcon={true}
+                title="You have not created any negotiations."
+                action={
+                  <Button
+                    type="text"
+                    title="Negotiations"
+                    icon={<ReadOutlined />}
+                    onClick={() => navigation.goToLibrary('negotiation')}
+                  />
+                }
+              />
+            ) : null}
+            <div className="ds-text bold-text">Example negotiations:</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                gap: '10px',
+              }}
+            >
+              {exampleNegotiations.map(n => (
+                <Button key={n.id} block={true} onClick={() => startNegotiation(n)}>
+                  {n.name}
+                </Button>
+              ))}
+            </div>
+          </Space>
+        );
+      case 'map':
+        return (
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <div className="ds-text bold-text">Your maps:</div>
+            {SourcebookLogic.getTacticalMaps(props.sourcebooks).map(tm => (
+              <Button key={tm.id} block={true} onClick={() => startMap(tm)}>
+                {tm.name || 'Unnamed Map'}
+              </Button>
+            ))}
+            {SourcebookLogic.getTacticalMaps(props.sourcebooks).length === 0 ? (
+              <Alert
+                type="warning"
+                showIcon={true}
+                title="You have not created any maps."
+                action={
+                  <Button
+                    type="text"
+                    title="Maps"
+                    icon={<ReadOutlined />}
+                    onClick={() => navigation.goToLibrary('tactical-map')}
+                  />
+                }
+              />
+            ) : null}
+          </Space>
+        );
+      case 'counter':
+        return (
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <div className="ds-text bold-text">Create a new counter:</div>
+            <TextInput
+              placeholder="Counter Name"
+              allowClear={true}
+              value={newCounterName}
+              onChange={setNewCounterName}
+            />
+            <NumberSpin
+              label="Starting Value"
+              value={newCounterValue}
+              onChange={setNewCounterValue}
+            />
+            <Button block={true} onClick={() => startCounter()}>
+              Create counter
+            </Button>
+          </Space>
+        );
+    }
+  };
 
-	const finish = () => {
-		if (selectedElementID) {
-			const id = props.finishSessionElement(selectedElementID);
-			setSelectedElementID(id);
-		}
-	};
+  const finish = () => {
+    if (selectedElementID) {
+      const id = props.finishSessionElement(selectedElementID);
+      setSelectedElementID(id);
+    }
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='session-director-page'>
-				<AppHeader subheader='Session'>
-					<Popover
-						trigger='click'
-						content={(
-							<div style={{ width: '500px', display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '500px', overflowY: 'auto' }}>
-								<Segmented
-									name='startelements'
-									block={true}
-									options={[ 'encounter', 'montage', 'negotiation', 'map', 'counter' ].map(o => ({ value: o, label: Format.capitalize(o) }))}
-									value={startElement}
-									onChange={setStartElement}
-								/>
-								{getStartContent()}
-							</div>
-						)}
-					>
-						<Button type='primary'>
-							Start
-							<DownOutlined />
-						</Button>
-					</Popover>
-					{
-						selectedElementID ?
-							<DangerButton
-								label='Finish'
-								onConfirm={finish}
-							/>
-							: null
-					}
-					<div className='divider' />
-					<Button onClick={props.showPlayerView}>Player View</Button>
-				</AppHeader>
-				<ErrorBoundary>
-					<div className='session-director-page-content'>
-						{getSelector()}
-						{getSelectedContent()}
-					</div>
-				</ErrorBoundary>
-				<AppFooter
-					page='session'
-					highlightAbout={props.highlightAbout}
-					showReference={props.showReference}
-					showRoll={props.showRoll}
-					showAbout={props.showAbout}
-					showSettings={props.showSettings}
-				/>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="session-director-page">
+        <AppHeader subheader="Session">
+          <Popover
+            trigger="click"
+            content={
+              <div
+                style={{
+                  width: '500px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  maxHeight: '500px',
+                  overflowY: 'auto',
+                }}
+              >
+                <Segmented
+                  name="startelements"
+                  block={true}
+                  options={['encounter', 'montage', 'negotiation', 'map', 'counter'].map(o => ({
+                    value: o,
+                    label: Format.capitalize(o),
+                  }))}
+                  value={startElement}
+                  onChange={setStartElement}
+                />
+                {getStartContent()}
+              </div>
+            }
+          >
+            <Button type="primary">
+              Start
+              <DownOutlined />
+            </Button>
+          </Popover>
+          {selectedElementID ? <DangerButton label="Finish" onConfirm={finish} /> : null}
+          <div className="divider" />
+          <Button onClick={props.showPlayerView}>Player View</Button>
+        </AppHeader>
+        <ErrorBoundary>
+          <div className="session-director-page-content">
+            {getSelector()}
+            {getSelectedContent()}
+          </div>
+        </ErrorBoundary>
+        <AppFooter
+          page="session"
+          highlightAbout={props.highlightAbout}
+          showReference={props.showReference}
+          showRoll={props.showRoll}
+          showAbout={props.showAbout}
+          showSettings={props.showSettings}
+        />
+      </div>
+    </ErrorBoundary>
+  );
 };

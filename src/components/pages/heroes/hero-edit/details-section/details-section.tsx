@@ -18,138 +18,139 @@ import { TextInput } from '@/components/controls/text-input/text-input';
 import './details-section.scss';
 
 interface DetailsSectionProps {
-	hero: Hero;
-	allHeroes: Hero[];
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setName: (value: string) => void;
-	setPicture: (value: string | null) => void;
-	setFolder: (value: string) => void;
-	setFeatureData: (featureID: string, data: FeatureData) => void;
+  hero: Hero;
+  allHeroes: Hero[];
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setName: (value: string) => void;
+  setPicture: (value: string | null) => void;
+  setFolder: (value: string) => void;
+  setFeatureData: (featureID: string, data: FeatureData) => void;
 }
 
 export const DetailsSection = (props: DetailsSectionProps) => {
-	const folders = props.allHeroes
-		.map(h => h.folder)
-		.filter(f => !!f)
-		.sort();
+  const folders = props.allHeroes
+    .map(h => h.folder)
+    .filter(f => !!f)
+    .sort();
 
-	return (
-		<div className='hero-edit-content details-section'>
-			<div className='hero-edit-content-column single-column choices' id='details-main'>
-				<HeaderText>Name</HeaderText>
-				<Space.Compact style={{ width: '100%' }}>
-					<TextInput
-						status={props.hero.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						value={props.hero.name}
-						onChange={props.setName}
-					/>
-					<Button icon={<ThunderboltOutlined />} onClick={() => props.setName(NameGenerator.generateName())} />
-				</Space.Compact>
-				<HeaderText>Portrait</HeaderText>
-				{
-					props.hero.picture ?
-						<Flex align='center' justify='center' gap={10}>
-							<img className='portrait-edit' src={props.hero.picture} title='Portrait' />
-							<DangerButton mode='clear' onConfirm={() => props.setPicture(null)} />
-						</Flex>
-						:
-						<Upload
-							style={{ width: '100%' }}
-							accept='.png,.webp,.gif,.jpg,.jpeg,.svg'
-							showUploadList={false}
-							beforeUpload={file => {
-								const reader = new FileReader();
-								reader.onload = progress => {
-									if (progress.target) {
-										const content = progress.target.result as string;
-										props.setPicture(content);
-									}
-								};
-								reader.readAsDataURL(file);
-								return false;
-							}}
-						>
-							<Button>
-								<DownloadOutlined />
-								Choose a picture
-							</Button>
-						</Upload>
-				}
-				<HeaderText>Folder</HeaderText>
-				<AutoComplete
-					value={props.hero.folder}
-					options={Collections.distinct(folders, f => f).map(option => ({ value: option, label: <div className='ds-text'>{option}</div> }))}
-					placeholder='Folder'
-					onSelect={value => props.setFolder(value)}
-					onChange={value => props.setFolder(value)}
-				/>
-				<Alert
-					type='info'
-					showIcon={true}
-					title='You can add your hero to a folder to group it with other heroes.'
-				/>
-				<Divider />
-				<Expander title='Language Choices'>
-					{
-						HeroLogic.getFeatures(props.hero)
-							.map(f => f.feature)
-							.filter(f => f.type === FeatureType.LanguageChoice)
-							.map(f => {
-								return FactoryLogic.feature.createLanguageChoice({
-									id: f.id,
-									name: f.name || 'Language',
-									description: `${f.data.options.length > 0 ? `**Skills**: ${f.data.options.join(', ')}` : ''}`,
-									options: [ ...f.data.options ],
-									count: f.data.count,
-									selected: [ ...f.data.selected ]
-								});
-							})
-							.map(f => (
-								<FeatureConfigPanel
-									key={f.id}
-									feature={f}
-									options={props.options}
-									hero={props.hero}
-									sourcebooks={props.sourcebooks}
-									setData={props.setFeatureData}
-								/>
-							))
-					}
-				</Expander>
-				<Expander title='Skill Choices'>
-					{
-						HeroLogic.getFeatures(props.hero)
-							.map(f => f.feature)
-							.filter(f => f.type === FeatureType.SkillChoice)
-							.map(f => {
-								return FactoryLogic.feature.createSkillChoice({
-									id: f.id,
-									name: 'Skill',
-									description: `
+  return (
+    <div className="hero-edit-content details-section">
+      <div className="hero-edit-content-column single-column choices" id="details-main">
+        <HeaderText>Name</HeaderText>
+        <Space.Compact style={{ width: '100%' }}>
+          <TextInput
+            status={props.hero.name === '' ? 'warning' : ''}
+            placeholder="Name"
+            allowClear={true}
+            value={props.hero.name}
+            onChange={props.setName}
+          />
+          <Button
+            icon={<ThunderboltOutlined />}
+            onClick={() => props.setName(NameGenerator.generateName())}
+          />
+        </Space.Compact>
+        <HeaderText>Portrait</HeaderText>
+        {props.hero.picture ? (
+          <Flex align="center" justify="center" gap={10}>
+            <img className="portrait-edit" src={props.hero.picture} title="Portrait" />
+            <DangerButton mode="clear" onConfirm={() => props.setPicture(null)} />
+          </Flex>
+        ) : (
+          <Upload
+            style={{ width: '100%' }}
+            accept=".png,.webp,.gif,.jpg,.jpeg,.svg"
+            showUploadList={false}
+            beforeUpload={file => {
+              const reader = new FileReader();
+              reader.onload = progress => {
+                if (progress.target) {
+                  const content = progress.target.result as string;
+                  props.setPicture(content);
+                }
+              };
+              reader.readAsDataURL(file);
+              return false;
+            }}
+          >
+            <Button>
+              <DownloadOutlined />
+              Choose a picture
+            </Button>
+          </Upload>
+        )}
+        <HeaderText>Folder</HeaderText>
+        <AutoComplete
+          value={props.hero.folder}
+          options={Collections.distinct(folders, f => f).map(option => ({
+            value: option,
+            label: <div className="ds-text">{option}</div>,
+          }))}
+          placeholder="Folder"
+          onSelect={value => props.setFolder(value)}
+          onChange={value => props.setFolder(value)}
+        />
+        <Alert
+          type="info"
+          showIcon={true}
+          title="You can add your hero to a folder to group it with other heroes."
+        />
+        <Divider />
+        <Expander title="Language Choices">
+          {HeroLogic.getFeatures(props.hero)
+            .map(f => f.feature)
+            .filter(f => f.type === FeatureType.LanguageChoice)
+            .map(f => {
+              return FactoryLogic.feature.createLanguageChoice({
+                id: f.id,
+                name: f.name || 'Language',
+                description: `${f.data.options.length > 0 ? `**Skills**: ${f.data.options.join(', ')}` : ''}`,
+                options: [...f.data.options],
+                count: f.data.count,
+                selected: [...f.data.selected],
+              });
+            })
+            .map(f => (
+              <FeatureConfigPanel
+                key={f.id}
+                feature={f}
+                options={props.options}
+                hero={props.hero}
+                sourcebooks={props.sourcebooks}
+                setData={props.setFeatureData}
+              />
+            ))}
+        </Expander>
+        <Expander title="Skill Choices">
+          {HeroLogic.getFeatures(props.hero)
+            .map(f => f.feature)
+            .filter(f => f.type === FeatureType.SkillChoice)
+            .map(f => {
+              return FactoryLogic.feature.createSkillChoice({
+                id: f.id,
+                name: 'Skill',
+                description: `
 ${f.data.options.length > 0 ? `**Skills**: ${f.data.options.join(', ')}` : ''}
 ${f.data.listOptions.length > 0 ? `**Lists**: ${f.data.listOptions.map(s => `${s} Skills`).join(', ')}` : ''}`,
-									options: [ ...f.data.options ],
-									listOptions: [ ...f.data.listOptions ],
-									count: f.data.count,
-									selected: [ ...f.data.selected ]
-								});
-							})
-							.map(f => (
-								<FeatureConfigPanel
-									key={f.id}
-									feature={f}
-									options={props.options}
-									hero={props.hero}
-									sourcebooks={props.sourcebooks}
-									setData={props.setFeatureData}
-								/>
-							))
-					}
-				</Expander>
-			</div>
-		</div>
-	);
+                options: [...f.data.options],
+                listOptions: [...f.data.listOptions],
+                count: f.data.count,
+                selected: [...f.data.selected],
+              });
+            })
+            .map(f => (
+              <FeatureConfigPanel
+                key={f.id}
+                feature={f}
+                options={props.options}
+                hero={props.hero}
+                sourcebooks={props.sourcebooks}
+                setData={props.setFeatureData}
+              />
+            ))}
+        </Expander>
+      </div>
+    </div>
+  );
 };

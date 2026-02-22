@@ -11,7 +11,7 @@ import axios from 'axios';
 import localforage from 'localforage';
 
 afterEach(() => {
-	vi.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 vi.mock('localforage');
@@ -19,10 +19,10 @@ vi.mock('LocalService');
 vi.mock('WarehouseService');
 
 const defaultSettings: ConnectionSettings = {
-	useWarehouse: false,
-	warehouseHost: '',
-	warehouseToken: '',
-	patreonConnected: false
+  useWarehouse: false,
+  warehouseHost: '',
+  warehouseToken: '',
+  patreonConnected: false,
 };
 
 const mockOptions = {} as Options;
@@ -30,384 +30,346 @@ const mockHeroes = [] as Hero[];
 const mockHomebrew = [] as Sourcebook[];
 const mockPlaybook = {} as Playbook;
 const mockSession = {} as Session;
-const mockHiddenSettingIds = [ 'one', 'two' ];
+const mockHiddenSettingIds = ['one', 'two'];
 
 const catchFn = vi.fn();
 const thenFn = vi.fn();
 
 describe('DataService', () => {
-	// #region Options
-	describe('getOptions', () => {
-		test.each([
-			[ true ],
-			[ false ]
-		])('always calls localforage', async (useWarehouse: boolean) => {
-			const connSettings = { ...defaultSettings,
-				useWarehouse: useWarehouse
-			};
-			const ds = new DataService(connSettings);
-
-			localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockOptions));
-
-			await ds.getOptions()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-options');
-			expect(thenFn).toHaveBeenCalledWith(mockOptions);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('saveOptions', () => {
-		test.each([
-			[ true ],
-			[ false ]
-		])('always calls localforage', async (useWarehouse: boolean) => {
-			const connSettings = { ...defaultSettings,
-				useWarehouse: useWarehouse
-			};
-			const ds = new DataService(connSettings);
-
-			localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockOptions));
-
-			await ds.saveOptions(mockOptions)
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-options', mockOptions);
-			expect(thenFn).toHaveBeenCalledWith(mockOptions);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion Options
-
-	// #region Heroes
-	describe('getHeroes', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockHeroes));
-
-			await ds.getHeroes()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-heroes');
-			expect(thenFn).toHaveBeenCalledWith(mockHeroes);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('saveHeroes', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockHeroes));
-
-			await ds.saveHeroes(mockHeroes)
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-heroes', mockHeroes);
-			expect(thenFn).toHaveBeenCalledWith(mockHeroes);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion Heroes
-
-	// #region Playbook
-	describe('getHomebrew', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockHomebrew));
-
-			await ds.getHomebrew()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-homebrew-settings');
-			expect(thenFn).toHaveBeenCalledWith(mockHomebrew);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('saveHomebrew', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockHomebrew));
-
-			await ds.saveHomebrew(mockHomebrew)
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-homebrew-settings', mockHomebrew);
-			expect(thenFn).toHaveBeenCalledWith(mockHomebrew);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion Homebrew
-
-	// #region Playbook
-	describe('getPlaybook', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockPlaybook));
-
-			await ds.getPlaybook()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-playbook');
-			expect(thenFn).toHaveBeenCalledWith(mockPlaybook);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('savePlaybook', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockPlaybook));
-
-			await ds.savePlaybook(mockPlaybook)
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-playbook', mockPlaybook);
-			expect(thenFn).toHaveBeenCalledWith(mockPlaybook);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion Playbook
-
-	// #region Session
-	describe('getSession', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockSession));
-
-			await ds.getSession()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-session');
-			expect(thenFn).toHaveBeenCalledWith(mockSession);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('saveSession', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockSession));
-
-			await ds.saveSession(mockSession)
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-session', mockSession);
-			expect(thenFn).toHaveBeenCalledWith(mockSession);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion Session
-
-	// #region HiddenSettingIds
-	describe('getHiddenSettingIds', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockHiddenSettingIds));
-
-			await ds.getHiddenSettingIds()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-hidden-setting-ids');
-			expect(thenFn).toHaveBeenCalledWith(mockHiddenSettingIds);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('saveHiddenSettingIds', () => {
-		test('calls localforage when configured to not use warehouse', async () => {
-			const ds = new DataService(defaultSettings);
-
-			localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockHiddenSettingIds));
-
-			await ds.saveHiddenSettingIds(mockHiddenSettingIds)
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-hidden-setting-ids', mockHiddenSettingIds);
-			expect(thenFn).toHaveBeenCalledWith(mockHiddenSettingIds);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion HiddenSettingIds
-
-	// #region Token Handler
-	describe('getPatreonAuthUrl', () => {
-		test('calls the token handler login/start endpoint', async () => {
-			const ds = new DataService(defaultSettings);
-
-			const catchFn = vi.fn();
-			const thenFn = vi.fn();
-
-			const authUrl = 'https://some.fake/auth/url';
-			const urlResponse = {
-				data: {
-					authorizationUrl: authUrl
-				}
-			};
-
-			axios.post = vi.fn()
-				.mockImplementationOnce(() => Promise.resolve(urlResponse));
-
-			await ds.getPatreonAuthUrl()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(thenFn).toHaveBeenCalledWith(authUrl);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('finishPatreonLogin', () => {
-		test('returns a successful login correctly', async () => {
-			const catchFn = vi.fn();
-			const thenFn = vi.fn();
-
-			const sessionResponse = {
-				data: {
-					authenticated_with_patreon: true,
-					user: {
-						mcdm: {
-							patron: true,
-							tier_cents: 800,
-							start: 'Wed, 14 Feb 2024 00:00:00 GMT'
-						}
-					}
-				}
-			};
-
-			axios.post = vi.fn()
-				.mockImplementationOnce(() => Promise.resolve(sessionResponse));
-
-			const ds = new DataService(defaultSettings);
-
-			await ds.finishPatreonLogin('some_code', 'some_state')
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(thenFn.mock.lastCall).toEqual([ {
-				authenticated: true,
-				connections: [
-					{
-						name: 'Forge Steel Patreon',
-						status: undefined
-					},
-					{
-						name: 'MCDM Patreon',
-						status: {
-							patron: true,
-							tier_cents: 800,
-							start: 'Wed, 14 Feb 2024 00:00:00 GMT'
-						}
-					}
-				]
-			} ]);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('getPatreonSession', () => {
-		test('returns a logged in session correctly', async () => {
-			const connSettings = { ...defaultSettings,
-				patreonConnected: true
-			};
-
-			const catchFn = vi.fn();
-			const thenFn = vi.fn();
-
-			const sessionResponse = {
-				data: {
-					authenticated_with_patreon: true,
-					user: {
-						mcdm: {
-							patron: false,
-							tier_cents: 0,
-							start: null
-						}
-					}
-				}
-			};
-
-			axios.get = vi.fn()
-				.mockImplementationOnce(() => Promise.resolve(sessionResponse));
-
-			const ds = new DataService(connSettings);
-
-			await ds.getPatreonSession()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(thenFn.mock.lastCall).toEqual([ {
-				authenticated: true,
-				connections: [
-					{
-						name: 'Forge Steel Patreon',
-						status: undefined
-					},
-					{
-						name: 'MCDM Patreon',
-						status: {
-							patron: false,
-							tier_cents: 0,
-							start: null
-						}
-					}
-				]
-			} ]);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-
-		test('returns a NON logged in session correctly', async () => {
-			const connSettings = { ...defaultSettings,
-				patreonConnected: true
-			};
-
-			const catchFn = vi.fn();
-			const thenFn = vi.fn();
-
-			const sessionResponse = {
-				data: {
-					authenticated_with_patreon: false,
-					user: null
-				}
-			};
-
-			axios.get = vi.fn()
-				.mockImplementationOnce(() => Promise.resolve(sessionResponse));
-
-			const ds = new DataService(connSettings);
-
-			await ds.getPatreonSession()
-				.then(thenFn)
-				.catch(catchFn);
-
-			expect(thenFn.mock.lastCall).toEqual([ {
-				authenticated: false,
-				connections: []
-			} ]);
-			expect(catchFn).not.toHaveBeenCalled();
-		});
-	});
-	// #endregion Token Handler
+  // #region Options
+  describe('getOptions', () => {
+    test.each([[true], [false]])('always calls localforage', async (useWarehouse: boolean) => {
+      const connSettings = { ...defaultSettings, useWarehouse: useWarehouse };
+      const ds = new DataService(connSettings);
+
+      localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockOptions));
+
+      await ds.getOptions().then(thenFn).catch(catchFn);
+
+      expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-options');
+      expect(thenFn).toHaveBeenCalledWith(mockOptions);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('saveOptions', () => {
+    test.each([[true], [false]])('always calls localforage', async (useWarehouse: boolean) => {
+      const connSettings = { ...defaultSettings, useWarehouse: useWarehouse };
+      const ds = new DataService(connSettings);
+
+      localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockOptions));
+
+      await ds.saveOptions(mockOptions).then(thenFn).catch(catchFn);
+
+      expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-options', mockOptions);
+      expect(thenFn).toHaveBeenCalledWith(mockOptions);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion Options
+
+  // #region Heroes
+  describe('getHeroes', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockHeroes));
+
+      await ds.getHeroes().then(thenFn).catch(catchFn);
+
+      expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-heroes');
+      expect(thenFn).toHaveBeenCalledWith(mockHeroes);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('saveHeroes', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockHeroes));
+
+      await ds.saveHeroes(mockHeroes).then(thenFn).catch(catchFn);
+
+      expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-heroes', mockHeroes);
+      expect(thenFn).toHaveBeenCalledWith(mockHeroes);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion Heroes
+
+  // #region Playbook
+  describe('getHomebrew', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockHomebrew));
+
+      await ds.getHomebrew().then(thenFn).catch(catchFn);
+
+      expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-homebrew-settings');
+      expect(thenFn).toHaveBeenCalledWith(mockHomebrew);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('saveHomebrew', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockHomebrew));
+
+      await ds.saveHomebrew(mockHomebrew).then(thenFn).catch(catchFn);
+
+      expect(localforage.setItem).toHaveBeenCalledWith(
+        'forgesteel-homebrew-settings',
+        mockHomebrew,
+      );
+      expect(thenFn).toHaveBeenCalledWith(mockHomebrew);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion Homebrew
+
+  // #region Playbook
+  describe('getPlaybook', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockPlaybook));
+
+      await ds.getPlaybook().then(thenFn).catch(catchFn);
+
+      expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-playbook');
+      expect(thenFn).toHaveBeenCalledWith(mockPlaybook);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('savePlaybook', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockPlaybook));
+
+      await ds.savePlaybook(mockPlaybook).then(thenFn).catch(catchFn);
+
+      expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-playbook', mockPlaybook);
+      expect(thenFn).toHaveBeenCalledWith(mockPlaybook);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion Playbook
+
+  // #region Session
+  describe('getSession', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockSession));
+
+      await ds.getSession().then(thenFn).catch(catchFn);
+
+      expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-session');
+      expect(thenFn).toHaveBeenCalledWith(mockSession);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('saveSession', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockSession));
+
+      await ds.saveSession(mockSession).then(thenFn).catch(catchFn);
+
+      expect(localforage.setItem).toHaveBeenCalledWith('forgesteel-session', mockSession);
+      expect(thenFn).toHaveBeenCalledWith(mockSession);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion Session
+
+  // #region HiddenSettingIds
+  describe('getHiddenSettingIds', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.getItem = vi.fn().mockImplementation(() => Promise.resolve(mockHiddenSettingIds));
+
+      await ds.getHiddenSettingIds().then(thenFn).catch(catchFn);
+
+      expect(localforage.getItem).toHaveBeenCalledWith('forgesteel-hidden-setting-ids');
+      expect(thenFn).toHaveBeenCalledWith(mockHiddenSettingIds);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('saveHiddenSettingIds', () => {
+    test('calls localforage when configured to not use warehouse', async () => {
+      const ds = new DataService(defaultSettings);
+
+      localforage.setItem = vi.fn().mockImplementation(() => Promise.resolve(mockHiddenSettingIds));
+
+      await ds.saveHiddenSettingIds(mockHiddenSettingIds).then(thenFn).catch(catchFn);
+
+      expect(localforage.setItem).toHaveBeenCalledWith(
+        'forgesteel-hidden-setting-ids',
+        mockHiddenSettingIds,
+      );
+      expect(thenFn).toHaveBeenCalledWith(mockHiddenSettingIds);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion HiddenSettingIds
+
+  // #region Token Handler
+  describe('getPatreonAuthUrl', () => {
+    test('calls the token handler login/start endpoint', async () => {
+      const ds = new DataService(defaultSettings);
+
+      const catchFn = vi.fn();
+      const thenFn = vi.fn();
+
+      const authUrl = 'https://some.fake/auth/url';
+      const urlResponse = {
+        data: {
+          authorizationUrl: authUrl,
+        },
+      };
+
+      axios.post = vi.fn().mockImplementationOnce(() => Promise.resolve(urlResponse));
+
+      await ds.getPatreonAuthUrl().then(thenFn).catch(catchFn);
+
+      expect(thenFn).toHaveBeenCalledWith(authUrl);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('finishPatreonLogin', () => {
+    test('returns a successful login correctly', async () => {
+      const catchFn = vi.fn();
+      const thenFn = vi.fn();
+
+      const sessionResponse = {
+        data: {
+          authenticated_with_patreon: true,
+          user: {
+            mcdm: {
+              patron: true,
+              tier_cents: 800,
+              start: 'Wed, 14 Feb 2024 00:00:00 GMT',
+            },
+          },
+        },
+      };
+
+      axios.post = vi.fn().mockImplementationOnce(() => Promise.resolve(sessionResponse));
+
+      const ds = new DataService(defaultSettings);
+
+      await ds.finishPatreonLogin('some_code', 'some_state').then(thenFn).catch(catchFn);
+
+      expect(thenFn.mock.lastCall).toEqual([
+        {
+          authenticated: true,
+          connections: [
+            {
+              name: 'Forge Steel Patreon',
+              status: undefined,
+            },
+            {
+              name: 'MCDM Patreon',
+              status: {
+                patron: true,
+                tier_cents: 800,
+                start: 'Wed, 14 Feb 2024 00:00:00 GMT',
+              },
+            },
+          ],
+        },
+      ]);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getPatreonSession', () => {
+    test('returns a logged in session correctly', async () => {
+      const connSettings = { ...defaultSettings, patreonConnected: true };
+
+      const catchFn = vi.fn();
+      const thenFn = vi.fn();
+
+      const sessionResponse = {
+        data: {
+          authenticated_with_patreon: true,
+          user: {
+            mcdm: {
+              patron: false,
+              tier_cents: 0,
+              start: null,
+            },
+          },
+        },
+      };
+
+      axios.get = vi.fn().mockImplementationOnce(() => Promise.resolve(sessionResponse));
+
+      const ds = new DataService(connSettings);
+
+      await ds.getPatreonSession().then(thenFn).catch(catchFn);
+
+      expect(thenFn.mock.lastCall).toEqual([
+        {
+          authenticated: true,
+          connections: [
+            {
+              name: 'Forge Steel Patreon',
+              status: undefined,
+            },
+            {
+              name: 'MCDM Patreon',
+              status: {
+                patron: false,
+                tier_cents: 0,
+                start: null,
+              },
+            },
+          ],
+        },
+      ]);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+
+    test('returns a NON logged in session correctly', async () => {
+      const connSettings = { ...defaultSettings, patreonConnected: true };
+
+      const catchFn = vi.fn();
+      const thenFn = vi.fn();
+
+      const sessionResponse = {
+        data: {
+          authenticated_with_patreon: false,
+          user: null,
+        },
+      };
+
+      axios.get = vi.fn().mockImplementationOnce(() => Promise.resolve(sessionResponse));
+
+      const ds = new DataService(connSettings);
+
+      await ds.getPatreonSession().then(thenFn).catch(catchFn);
+
+      expect(thenFn.mock.lastCall).toEqual([
+        {
+          authenticated: false,
+          connections: [],
+        },
+      ]);
+      expect(catchFn).not.toHaveBeenCalled();
+    });
+  });
+  // #endregion Token Handler
 });

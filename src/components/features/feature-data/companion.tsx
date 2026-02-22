@@ -18,120 +18,133 @@ import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 interface InfoProps {
-	data: FeatureCompanionData;
-	feature: Feature;
-	hero?: Hero;
-	sourcebooks?: Sourcebook[];
-	options: Options;
+  data: FeatureCompanionData;
+  feature: Feature;
+  hero?: Hero;
+  sourcebooks?: Sourcebook[];
+  options: Options;
 }
 
 export const InfoCompanion = (props: InfoProps) => {
-	if (props.data.selected === null) {
-		return (
-			<div className='ds-text'>
-				Choose a monster.
-			</div>
-		);
-	}
+  if (props.data.selected === null) {
+    return <div className="ds-text">Choose a monster.</div>;
+  }
 
-	return <MonsterPanel monster={props.data.selected} sourcebooks={props.sourcebooks || []} options={props.options} />;
+  return (
+    <MonsterPanel
+      monster={props.data.selected}
+      sourcebooks={props.sourcebooks || []}
+      options={props.options}
+    />
+  );
 };
 
 interface ConfigProps {
-	data: FeatureCompanionData;
-	feature: Feature;
-	hero: Hero;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setData: (data: FeatureCompanionData) => void;
+  data: FeatureCompanionData;
+  feature: Feature;
+  hero: Hero;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setData: (data: FeatureCompanionData) => void;
 }
 
 export const ConfigCompanion = (props: ConfigProps) => {
-	const [ monsterSelectorOpen, setMonsterSelectorOpen ] = useState<boolean>(false);
-	const [ selectedMonster, setSelectedMonster ] = useState<Monster | null>(null);
+  const [monsterSelectorOpen, setMonsterSelectorOpen] = useState<boolean>(false);
+  const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
 
-	const setName = (value: string) => {
-		const dataCopy = Utils.copy(props.data);
-		dataCopy.selected!.name = value;
-		props.setData(dataCopy);
-	};
+  const setName = (value: string) => {
+    const dataCopy = Utils.copy(props.data);
+    dataCopy.selected!.name = value;
+    props.setData(dataCopy);
+  };
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			{
-				props.data.selected ?
-					<Flex className='selection-box' align='center' gap={10}>
-						<MonsterInfo
-							style={{ flex: '1 1 0' }}
-							monster={props.data.selected}
-						/>
-						<div style={{ flex: '0 0 auto' }}>
-							<Button
-								type='text'
-								title='Show details'
-								icon={<InfoCircleOutlined />}
-								onClick={() => setSelectedMonster(props.data.selected)}
-							/>
-							<Button
-								type='text'
-								title='Remove'
-								icon={<CloseOutlined />}
-								onClick={() => {
-									const dataCopy = Utils.copy(props.data);
-									dataCopy.selected = null;
-									props.setData(dataCopy);
-								}}
-							/>
-						</div>
-					</Flex>
-					:
-					<Button block={true} className='status-warning' onClick={() => setMonsterSelectorOpen(true)}>Select</Button>
-			}
-			{
-				props.data.selected ?
-					<Expander title='Customize'>
-						<HeaderText>Name</HeaderText>
-						<Space.Compact style={{ width: '100%' }}>
-							<TextInput
-								status={props.data.selected.name === '' ? 'warning' : ''}
-								placeholder='Name'
-								allowClear={true}
-								value={props.data.selected.name}
-								onChange={setName}
-							/>
-							<Button icon={<ThunderboltOutlined />} onClick={() => setName(NameGenerator.generateName())} />
-						</Space.Compact>
-					</Expander>
-					: null
-			}
-			<Drawer open={monsterSelectorOpen} onClose={() => setMonsterSelectorOpen(false)} closeIcon={null} size={500}>
-				<MonsterSelectModal
-					monsters={SourcebookLogic.getMonsters(props.sourcebooks)}
-					sourcebooks={props.sourcebooks}
-					options={props.options}
-					onSelect={monster => {
-						setMonsterSelectorOpen(false);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      {props.data.selected ? (
+        <Flex className="selection-box" align="center" gap={10}>
+          <MonsterInfo style={{ flex: '1 1 0' }} monster={props.data.selected} />
+          <div style={{ flex: '0 0 auto' }}>
+            <Button
+              type="text"
+              title="Show details"
+              icon={<InfoCircleOutlined />}
+              onClick={() => setSelectedMonster(props.data.selected)}
+            />
+            <Button
+              type="text"
+              title="Remove"
+              icon={<CloseOutlined />}
+              onClick={() => {
+                const dataCopy = Utils.copy(props.data);
+                dataCopy.selected = null;
+                props.setData(dataCopy);
+              }}
+            />
+          </div>
+        </Flex>
+      ) : (
+        <Button
+          block={true}
+          className="status-warning"
+          onClick={() => setMonsterSelectorOpen(true)}
+        >
+          Select
+        </Button>
+      )}
+      {props.data.selected ? (
+        <Expander title="Customize">
+          <HeaderText>Name</HeaderText>
+          <Space.Compact style={{ width: '100%' }}>
+            <TextInput
+              status={props.data.selected.name === '' ? 'warning' : ''}
+              placeholder="Name"
+              allowClear={true}
+              value={props.data.selected.name}
+              onChange={setName}
+            />
+            <Button
+              icon={<ThunderboltOutlined />}
+              onClick={() => setName(NameGenerator.generateName())}
+            />
+          </Space.Compact>
+        </Expander>
+      ) : null}
+      <Drawer
+        open={monsterSelectorOpen}
+        onClose={() => setMonsterSelectorOpen(false)}
+        closeIcon={null}
+        size={500}
+      >
+        <MonsterSelectModal
+          monsters={SourcebookLogic.getMonsters(props.sourcebooks)}
+          sourcebooks={props.sourcebooks}
+          options={props.options}
+          onSelect={monster => {
+            setMonsterSelectorOpen(false);
 
-						const monsterCopy = Utils.copy(monster) as Monster;
-						const dataCopy = Utils.copy(props.data);
-						dataCopy.selected = monsterCopy;
-						props.setData(dataCopy);
-					}}
-					onClose={() => setMonsterSelectorOpen(false)}
-				/>
-			</Drawer>
-			<Drawer open={!!selectedMonster} onClose={() => setSelectedMonster(null)} closeIcon={null} size={500}>
-				{
-					selectedMonster ?
-						<MonsterModal
-							monster={selectedMonster}
-							sourcebooks={props.sourcebooks}
-							options={props.options}
-							onClose={() => setSelectedMonster(null)}
-						/>
-						: null
-				}
-			</Drawer>
-		</Space>
-	);
+            const monsterCopy = Utils.copy(monster) as Monster;
+            const dataCopy = Utils.copy(props.data);
+            dataCopy.selected = monsterCopy;
+            props.setData(dataCopy);
+          }}
+          onClose={() => setMonsterSelectorOpen(false)}
+        />
+      </Drawer>
+      <Drawer
+        open={!!selectedMonster}
+        onClose={() => setSelectedMonster(null)}
+        closeIcon={null}
+        size={500}
+      >
+        {selectedMonster ? (
+          <MonsterModal
+            monster={selectedMonster}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            onClose={() => setSelectedMonster(null)}
+          />
+        ) : null}
+      </Drawer>
+    </Space>
+  );
 };

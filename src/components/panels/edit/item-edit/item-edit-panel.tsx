@@ -1,5 +1,10 @@
 import { Button, Select, Space, Tabs } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  PlusOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import { AbilityKeyword } from '@/enums/ability-keyword';
 import { AbilityLogic } from '@/logic/ability-logic';
 import { Collections } from '@/utils/collections';
@@ -33,288 +38,324 @@ import { useState } from 'react';
 import './item-edit-panel.scss';
 
 interface Props {
-	item: Item;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	mode?: PanelMode;
-	onChange: (item: Item) => void;
+  item: Item;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  mode?: PanelMode;
+  onChange: (item: Item) => void;
 }
 
 export const ItemEditPanel = (props: Props) => {
-	const [ item, setItem ] = useState<Item>(props.item);
+  const [item, setItem] = useState<Item>(props.item);
 
-	const getNameAndDescriptionSection = () => {
-		const setName = (value: string) => {
-			const copy = Utils.copy(item);
-			copy.name = value;
-			setItem(copy);
-			props.onChange(copy);
-		};
+  const getNameAndDescriptionSection = () => {
+    const setName = (value: string) => {
+      const copy = Utils.copy(item);
+      copy.name = value;
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const setDescription = (value: string) => {
-			const copy = Utils.copy(item);
-			copy.description = value;
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const setDescription = (value: string) => {
+      const copy = Utils.copy(item);
+      copy.description = value;
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>Name</HeaderText>
-				<Space.Compact style={{ width: '100%' }}>
-					<TextInput
-						status={item.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						value={item.name}
-						onChange={setName}
-					/>
-					<Button icon={<ThunderboltOutlined />} onClick={() => setName(NameGenerator.generateName())} />
-				</Space.Compact>
-				<HeaderText>Description</HeaderText>
-				<MarkdownEditor value={item.description} onChange={setDescription} />
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Name</HeaderText>
+        <Space.Compact style={{ width: '100%' }}>
+          <TextInput
+            status={item.name === '' ? 'warning' : ''}
+            placeholder="Name"
+            allowClear={true}
+            value={item.name}
+            onChange={setName}
+          />
+          <Button
+            icon={<ThunderboltOutlined />}
+            onClick={() => setName(NameGenerator.generateName())}
+          />
+        </Space.Compact>
+        <HeaderText>Description</HeaderText>
+        <MarkdownEditor value={item.description} onChange={setDescription} />
+      </Space>
+    );
+  };
 
-	const getItemDetailsEditSection = () => {
-		const setType = (value: ItemType) => {
-			const copy = Utils.copy(item);
-			copy.type = value;
-			setItem(copy);
-			props.onChange(copy);
-		};
+  const getItemDetailsEditSection = () => {
+    const setType = (value: ItemType) => {
+      const copy = Utils.copy(item);
+      copy.type = value;
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const setKeywords = (value: (AbilityKeyword | KitArmor | KitWeapon)[]) => {
-			const copy = Utils.copy(item);
-			copy.keywords = value;
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const setKeywords = (value: (AbilityKeyword | KitArmor | KitWeapon)[]) => {
+      const copy = Utils.copy(item);
+      copy.keywords = value;
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const setEffect = (value: string) => {
-			const copy = Utils.copy(item);
-			copy.effect = value;
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const setEffect = (value: string) => {
+      const copy = Utils.copy(item);
+      copy.effect = value;
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>Item Type</HeaderText>
-				<Select
-					style={{ width: '100%' }}
-					placeholder='Type'
-					options={[ ItemType.Artifact, ItemType.Consumable1st, ItemType.Consumable2nd, ItemType.Consumable3rd, ItemType.Consumable4th, ItemType.LeveledArmor, ItemType.LeveledImplement, ItemType.LeveledWeapon, ItemType.Leveled, ItemType.Trinket1st, ItemType.Trinket2nd, ItemType.Trinket3rd, ItemType.Trinket4th ].map(option => ({ value: option }))}
-					optionRender={option => <div className='ds-text'>{option.data.value}</div>}
-					value={item.type}
-					onChange={setType}
-				/>
-				<HeaderText>Keywords</HeaderText>
-				<Select
-					style={{ width: '100%' }}
-					placeholder='Keywords'
-					mode='multiple'
-					allowClear={true}
-					options={AbilityLogic.getKeywords().map(option => ({ value: option }))}
-					optionRender={option => <div className='ds-text'>{option.data.value}</div>}
-					value={item.keywords}
-					onChange={setKeywords}
-				/>
-				<HeaderText>Effect</HeaderText>
-				<MarkdownEditor value={item.effect} onChange={setEffect} />
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Item Type</HeaderText>
+        <Select
+          style={{ width: '100%' }}
+          placeholder="Type"
+          options={[
+            ItemType.Artifact,
+            ItemType.Consumable1st,
+            ItemType.Consumable2nd,
+            ItemType.Consumable3rd,
+            ItemType.Consumable4th,
+            ItemType.LeveledArmor,
+            ItemType.LeveledImplement,
+            ItemType.LeveledWeapon,
+            ItemType.Leveled,
+            ItemType.Trinket1st,
+            ItemType.Trinket2nd,
+            ItemType.Trinket3rd,
+            ItemType.Trinket4th,
+          ].map(option => ({ value: option }))}
+          optionRender={option => <div className="ds-text">{option.data.value}</div>}
+          value={item.type}
+          onChange={setType}
+        />
+        <HeaderText>Keywords</HeaderText>
+        <Select
+          style={{ width: '100%' }}
+          placeholder="Keywords"
+          mode="multiple"
+          allowClear={true}
+          options={AbilityLogic.getKeywords().map(option => ({ value: option }))}
+          optionRender={option => <div className="ds-text">{option.data.value}</div>}
+          value={item.keywords}
+          onChange={setKeywords}
+        />
+        <HeaderText>Effect</HeaderText>
+        <MarkdownEditor value={item.effect} onChange={setEffect} />
+      </Space>
+    );
+  };
 
-	const getFeaturesByLevelEditSection = () => {
-		const addFeature = (level: number) => {
-			const copy = Utils.copy(item);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					lvl.features.push(FactoryLogic.feature.create({
-						id: Utils.guid(),
-						name: '',
-						description: ''
-					}));
-				});
-			setItem(copy);
-			props.onChange(copy);
-		};
+  const getFeaturesByLevelEditSection = () => {
+    const addFeature = (level: number) => {
+      const copy = Utils.copy(item);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          lvl.features.push(
+            FactoryLogic.feature.create({
+              id: Utils.guid(),
+              name: '',
+              description: '',
+            }),
+          );
+        });
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const changeFeature = (level: number, feature: Feature) => {
-			const copy = Utils.copy(item);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					const index = lvl.features.findIndex(f => f.id === feature.id);
-					if (index !== -1) {
-						lvl.features[index] = feature;
-					}
-				});
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const changeFeature = (level: number, feature: Feature) => {
+      const copy = Utils.copy(item);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          const index = lvl.features.findIndex(f => f.id === feature.id);
+          if (index !== -1) {
+            lvl.features[index] = feature;
+          }
+        });
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const moveFeature = (level: number, feature: Feature, direction: 'up' | 'down') => {
-			const copy = Utils.copy(item);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					const index = lvl.features.findIndex(f => f.id === feature.id);
-					lvl.features = Collections.move(lvl.features, index, direction);
-				});
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const moveFeature = (level: number, feature: Feature, direction: 'up' | 'down') => {
+      const copy = Utils.copy(item);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          const index = lvl.features.findIndex(f => f.id === feature.id);
+          lvl.features = Collections.move(lvl.features, index, direction);
+        });
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const deleteFeature = (level: number, feature: Feature) => {
-			const copy = Utils.copy(item);
-			copy.featuresByLevel
-				.filter(lvl => lvl.level === level)
-				.forEach(lvl => {
-					lvl.features = lvl.features.filter(f => f.id !== feature.id);
-				});
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const deleteFeature = (level: number, feature: Feature) => {
+      const copy = Utils.copy(item);
+      copy.featuresByLevel
+        .filter(lvl => lvl.level === level)
+        .forEach(lvl => {
+          lvl.features = lvl.features.filter(f => f.id !== feature.id);
+        });
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				{
-					item.featuresByLevel.map(lvl => (
-						<div key={lvl.level}>
-							<HeaderText
-								extra={
-									<Button type='text' icon={<PlusOutlined />} onClick={() => addFeature(lvl.level)} />
-								}
-							>
-								Level {lvl.level.toString()}
-							</HeaderText>
-							<Space orientation='vertical' style={{ width: '100%' }}>
-								{
-									lvl.features.map(f => (
-										<Expander
-											key={f.id}
-											title={f.name || 'Unnamed Feature'}
-											tags={[ FeatureLogic.getFeatureTag(f) ]}
-											extra={[
-												<Button key='up' type='text' title='Move Up' icon={<CaretUpOutlined />} onClick={e => { e.stopPropagation(); moveFeature(lvl.level, f, 'up'); }} />,
-												<Button key='down' type='text' title='Move Down' icon={<CaretDownOutlined />} onClick={e => { e.stopPropagation(); moveFeature(lvl.level, f, 'down'); }} />,
-												<DangerButton key='delete' mode='clear' onConfirm={e => { e.stopPropagation(); deleteFeature(lvl.level, f); }} />
-											]}
-										>
-											<FeatureEditPanel
-												feature={f}
-												sourcebooks={props.sourcebooks}
-												options={props.options}
-												onChange={feature => changeFeature(lvl.level, feature)}
-											/>
-										</Expander>
-									))
-								}
-								{
-									lvl.features.length === 0 ?
-										<Empty />
-										: null
-								}
-							</Space>
-						</div>
-					))
-				}
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        {item.featuresByLevel.map(lvl => (
+          <div key={lvl.level}>
+            <HeaderText
+              extra={
+                <Button type="text" icon={<PlusOutlined />} onClick={() => addFeature(lvl.level)} />
+              }
+            >
+              Level {lvl.level.toString()}
+            </HeaderText>
+            <Space orientation="vertical" style={{ width: '100%' }}>
+              {lvl.features.map(f => (
+                <Expander
+                  key={f.id}
+                  title={f.name || 'Unnamed Feature'}
+                  tags={[FeatureLogic.getFeatureTag(f)]}
+                  extra={[
+                    <Button
+                      key="up"
+                      type="text"
+                      title="Move Up"
+                      icon={<CaretUpOutlined />}
+                      onClick={e => {
+                        e.stopPropagation();
+                        moveFeature(lvl.level, f, 'up');
+                      }}
+                    />,
+                    <Button
+                      key="down"
+                      type="text"
+                      title="Move Down"
+                      icon={<CaretDownOutlined />}
+                      onClick={e => {
+                        e.stopPropagation();
+                        moveFeature(lvl.level, f, 'down');
+                      }}
+                    />,
+                    <DangerButton
+                      key="delete"
+                      mode="clear"
+                      onConfirm={e => {
+                        e.stopPropagation();
+                        deleteFeature(lvl.level, f);
+                      }}
+                    />,
+                  ]}
+                >
+                  <FeatureEditPanel
+                    feature={f}
+                    sourcebooks={props.sourcebooks}
+                    options={props.options}
+                    onChange={feature => changeFeature(lvl.level, feature)}
+                  />
+                </Expander>
+              ))}
+              {lvl.features.length === 0 ? <Empty /> : null}
+            </Space>
+          </div>
+        ))}
+      </Space>
+    );
+  };
 
-	const getCraftingEditSection = () => {
-		const setCraftable = (value: boolean) => {
-			const copy = Utils.copy(item);
-			copy.crafting = value ?
-				FactoryLogic.createProject({ id: `${item.id}-crafting`, name: `Craft ${item.name}`, description: item.name })
-				: null;
-			setItem(copy);
-			props.onChange(copy);
-		};
+  const getCraftingEditSection = () => {
+    const setCraftable = (value: boolean) => {
+      const copy = Utils.copy(item);
+      copy.crafting = value
+        ? FactoryLogic.createProject({
+            id: `${item.id}-crafting`,
+            name: `Craft ${item.name}`,
+            description: item.name,
+          })
+        : null;
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		const setCrafting = (value: Project) => {
-			const copy = Utils.copy(item);
-			copy.crafting = Utils.copy(value);
-			setItem(copy);
-			props.onChange(copy);
-		};
+    const setCrafting = (value: Project) => {
+      const copy = Utils.copy(item);
+      copy.crafting = Utils.copy(value);
+      setItem(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<Toggle label='Can be crafted' value={!!item.crafting} onChange={setCraftable} />
-				{
-					item.crafting ?
-						<ProjectEditPanel
-							project={item.crafting}
-							includeNameAndDescription={false}
-							sourcebooks={props.sourcebooks}
-							onChange={setCrafting}
-						/>
-						: null
-				}
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <Toggle label="Can be crafted" value={!!item.crafting} onChange={setCraftable} />
+        {item.crafting ? (
+          <ProjectEditPanel
+            project={item.crafting}
+            includeNameAndDescription={false}
+            sourcebooks={props.sourcebooks}
+            onChange={setCrafting}
+          />
+        ) : null}
+      </Space>
+    );
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='item-edit-panel'>
-				<div className='item-workspace-column'>
-					<Tabs
-						items={[
-							{
-								key: '1',
-								label: 'Item',
-								children: getNameAndDescriptionSection()
-							},
-							{
-								key: '2',
-								label: 'Details',
-								children: getItemDetailsEditSection()
-							},
-							{
-								key: '3',
-								label: 'Crafting',
-								children: getCraftingEditSection()
-							},
-							{
-								key: '4',
-								label: 'Levels',
-								children: getFeaturesByLevelEditSection()
-							}
-						]}
-					/>
-				</div>
-				{
-					props.mode === PanelMode.Full ?
-						<div className='item-preview-column'>
-							<Tabs
-								items={[
-									{
-										key: '1',
-										label: 'Preview',
-										children: (
-											<SelectablePanel>
-												<ItemPanel
-													item={item}
-													sourcebooks={props.sourcebooks}
-													options={props.options}
-													mode={PanelMode.Full}
-												/>
-											</SelectablePanel>
-										)
-									}
-								]}
-							/>
-						</div>
-						: null
-				}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="item-edit-panel">
+        <div className="item-workspace-column">
+          <Tabs
+            items={[
+              {
+                key: '1',
+                label: 'Item',
+                children: getNameAndDescriptionSection(),
+              },
+              {
+                key: '2',
+                label: 'Details',
+                children: getItemDetailsEditSection(),
+              },
+              {
+                key: '3',
+                label: 'Crafting',
+                children: getCraftingEditSection(),
+              },
+              {
+                key: '4',
+                label: 'Levels',
+                children: getFeaturesByLevelEditSection(),
+              },
+            ]}
+          />
+        </div>
+        {props.mode === PanelMode.Full ? (
+          <div className="item-preview-column">
+            <Tabs
+              items={[
+                {
+                  key: '1',
+                  label: 'Preview',
+                  children: (
+                    <SelectablePanel>
+                      <ItemPanel
+                        item={item}
+                        sourcebooks={props.sourcebooks}
+                        options={props.options}
+                        mode={PanelMode.Full}
+                      />
+                    </SelectablePanel>
+                  ),
+                },
+              ]}
+            />
+          </div>
+        ) : null}
+      </div>
+    </ErrorBoundary>
+  );
 };

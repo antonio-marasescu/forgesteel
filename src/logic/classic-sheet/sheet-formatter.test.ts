@@ -12,111 +12,111 @@ import { SheetFormatter } from '@/logic/classic-sheet/sheet-formatter';
 import { retainer } from '@/data/monsters/retainer';
 
 afterEach(() => {
-	vi.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 describe.concurrent('Test addSign', () => {
-	test.each([
-		[ 1, '+1' ],
-		[ 2, '+2' ],
-		[ 10, '+10' ],
-		[ 5, '+5' ]
-	])('addSign(%i) -> %s', (n, expected) => {
-		expect(SheetFormatter.addSign(n)).toBe(expected);
-	});
+  test.each([
+    [1, '+1'],
+    [2, '+2'],
+    [10, '+10'],
+    [5, '+5'],
+  ])('addSign(%i) -> %s', (n, expected) => {
+    expect(SheetFormatter.addSign(n)).toBe(expected);
+  });
 
-	test('Does not add a sign to 0', () => {
-		expect(SheetFormatter.addSign(0)).toBe('0');
-	});
+  test('Does not add a sign to 0', () => {
+    expect(SheetFormatter.addSign(0)).toBe('0');
+  });
 
-	test.each([
-		[ -1, '-1' ],
-		[ -2, '-2' ],
-		[ -10, '-10' ],
-		[ -5, '-5' ]
-	])('addSign(%i) -> %s', (n, expected) => {
-		expect(SheetFormatter.addSign(n)).toBe(expected);
-	});
+  test.each([
+    [-1, '-1'],
+    [-2, '-2'],
+    [-10, '-10'],
+    [-5, '-5'],
+  ])('addSign(%i) -> %s', (n, expected) => {
+    expect(SheetFormatter.addSign(n)).toBe(expected);
+  });
 });
 
 describe.concurrent('Test markdown enhancement', () => {
-	test.each([
-		[ 'M < Strong', '<span class="potency">m&lt;s]</span>' ],
-		[ 'A < Average', '<span class="potency">a&lt;v]</span>' ],
-		[ 'R < weak', '<span class="potency">r&lt;w]</span>' ],
-		[ 'I < [strong]', '<span class="potency">i&lt;s]</span>' ],
-		[ 'P < [weak]', '<span class="potency">p&lt;w]</span>' ],
-		[ 'M<Strong', '<span class="potency">m&lt;s]</span>' ]
-	])('converts potency text to glyph form', (inStr, expected) => {
-		expect(SheetFormatter.enhanceMarkdown(inStr)).toBe(expected);
-	});
+  test.each([
+    ['M < Strong', '<span class="potency">m&lt;s]</span>'],
+    ['A < Average', '<span class="potency">a&lt;v]</span>'],
+    ['R < weak', '<span class="potency">r&lt;w]</span>'],
+    ['I < [strong]', '<span class="potency">i&lt;s]</span>'],
+    ['P < [weak]', '<span class="potency">p&lt;w]</span>'],
+    ['M<Strong', '<span class="potency">m&lt;s]</span>'],
+  ])('converts potency text to glyph form', (inStr, expected) => {
+    expect(SheetFormatter.enhanceMarkdown(inStr)).toBe(expected);
+  });
 
-	test.each([
-		[ 'M < 5', '<span class="potency">m&lt;5]</span>' ],
-		[ 'A<3', '<span class="potency">a&lt;3]</span>' ]
-	])('converts potency values to glyph form', (inStr, expected) => {
-		expect(SheetFormatter.enhanceMarkdown(inStr)).toBe(expected);
-	});
+  test.each([
+    ['M < 5', '<span class="potency">m&lt;5]</span>'],
+    ['A<3', '<span class="potency">a&lt;3]</span>'],
+  ])('converts potency values to glyph form', (inStr, expected) => {
+    expect(SheetFormatter.enhanceMarkdown(inStr)).toBe(expected);
+  });
 
-	test.each([
-		[ '`M < Strong`', '<span class="potency">m&lt;s]</span>' ],
-		[ '`M < 5`', '<span class="potency">m&lt;5]</span>' ],
-		[ '<code>M < 5</code>', '<span class="potency">m&lt;5]</span>' ]
-	])('Removes extra/bad markdown stuff', (inStr, expected) => {
-		expect(SheetFormatter.enhanceMarkdown(inStr)).toBe(expected);
-	});
+  test.each([
+    ['`M < Strong`', '<span class="potency">m&lt;s]</span>'],
+    ['`M < 5`', '<span class="potency">m&lt;5]</span>'],
+    ['<code>M < 5</code>', '<span class="potency">m&lt;5]</span>'],
+  ])('Removes extra/bad markdown stuff', (inStr, expected) => {
+    expect(SheetFormatter.enhanceMarkdown(inStr)).toBe(expected);
+  });
 
-	test.each([
-		[ '| ≤ 11 |', '|![11 or less](<img>)|' ],
-		[ '|<=11|', '|![11 or less](<img>)|' ],
-		[ '|11 or less		|', '|![11 or less](<img>)|' ],
-		[ '* 11 or lower:', '* ![11 or less](<img>)' ],
-		[ '* ≤11:', '* ![11 or less](<img>)' ],
-		[ '<=11', '![11 or less](<img>)' ],
-		[ '\\<\\=11', '![11 or less](<img>)' ],
-		[ '* <= 11:', '* ![11 or less](<img>)' ],
-		[ '| 12-16 |', '|![12 to 16](<img>)|' ],
-		[ '* 12 - 16:', '* ![12 to 16](<img>)' ],
-		[ '| 17+ |', '|![17 or greater](<img>)|' ],
-		[ '* ≥ 17:', '* ![17 or greater](<img>)' ],
-		[ '* >=17:', '* ![17 or greater](<img>)' ],
-		[ '* 17+:', '* ![17 or greater](<img>)' ]
-	])('Converts power roll text to glyphs', (inStr, expected) => {
-		const markdown = SheetFormatter.enhanceMarkdown(inStr);
-		// switch out the image svg details
-		const check = markdown.replace(/(!\[.+\])\(data:image.+\)/, '$1(<img>)');
-		expect(check).toBe(expected);
-	});
+  test.each([
+    ['| ≤ 11 |', '|![11 or less](<img>)|'],
+    ['|<=11|', '|![11 or less](<img>)|'],
+    ['|11 or less		|', '|![11 or less](<img>)|'],
+    ['* 11 or lower:', '* ![11 or less](<img>)'],
+    ['* ≤11:', '* ![11 or less](<img>)'],
+    ['<=11', '![11 or less](<img>)'],
+    ['\\<\\=11', '![11 or less](<img>)'],
+    ['* <= 11:', '* ![11 or less](<img>)'],
+    ['| 12-16 |', '|![12 to 16](<img>)|'],
+    ['* 12 - 16:', '* ![12 to 16](<img>)'],
+    ['| 17+ |', '|![17 or greater](<img>)|'],
+    ['* ≥ 17:', '* ![17 or greater](<img>)'],
+    ['* >=17:', '* ![17 or greater](<img>)'],
+    ['* 17+:', '* ![17 or greater](<img>)'],
+  ])('Converts power roll text to glyphs', (inStr, expected) => {
+    const markdown = SheetFormatter.enhanceMarkdown(inStr);
+    // switch out the image svg details
+    const check = markdown.replace(/(!\[.+\])\(data:image.+\)/, '$1(<img>)');
+    expect(check).toBe(expected);
+  });
 
-	test.each([
-		[ '|---|---|', '|---|---|' ],
-		[ '|---|---|\n|---|---|', '|---|---|\n|---|---|' ],
-		[ '  |   ---	|---  |\n|---|---|', '|---|---|\n|---|---|' ]
-	])('properly handles table whitespace', (inStr, expected) => {
-		const markdown = SheetFormatter.enhanceMarkdown(inStr);
+  test.each([
+    ['|---|---|', '|---|---|'],
+    ['|---|---|\n|---|---|', '|---|---|\n|---|---|'],
+    ['  |   ---	|---  |\n|---|---|', '|---|---|\n|---|---|'],
+  ])('properly handles table whitespace', (inStr, expected) => {
+    const markdown = SheetFormatter.enhanceMarkdown(inStr);
 
-		expect(markdown).toBe(expected);
-	});
+    expect(markdown).toBe(expected);
+  });
 });
 
 describe.concurrent('cleanupText', () => {
-	test('does not remove markdown tables', () => {
-		const inStr = `
+  test('does not remove markdown tables', () => {
+    const inStr = `
 		| Header | Cells |
 		|:---|:---|
 		| Some | Data |
 		| More | Data |
 		`;
-		expect(SheetFormatter.cleanupText(inStr)).toBe(inStr);
-	});
+    expect(SheetFormatter.cleanupText(inStr)).toBe(inStr);
+  });
 });
 
 describe.concurrent('calculateFeatureSize', () => {
-	test('properly calculates size for features with tables', () => {
-		const feature = FactoryLogic.feature.create({
-			id: 'calc-feature-size-tables-1',
-			name: 'Test Tables Size Feature',
-			description: `
+  test('properly calculates size for features with tables', () => {
+    const feature = FactoryLogic.feature.create({
+      id: 'calc-feature-size-tables-1',
+      name: 'Test Tables Size Feature',
+      description: `
 This is some initial feature text. It will be followed by a table.
 
 | Header 1 | Header 2 |
@@ -125,431 +125,463 @@ This is some initial feature text. It will be followed by a table.
 | 2 | more text |
 | 3 | more text |
 | 4 | more text |
-			`
-		});
+			`,
+    });
 
-		expect(SheetFormatter.calculateFeatureSize(feature, null, 100, true)).toBe(3);
+    expect(SheetFormatter.calculateFeatureSize(feature, null, 100, true)).toBe(3);
 
-		expect(SheetFormatter.calculateFeatureSize(feature, null, 100, false)).toBeCloseTo(11, 0.2);
-	});
+    expect(SheetFormatter.calculateFeatureSize(feature, null, 100, false)).toBeCloseTo(11, 0.2);
+  });
 });
 
 describe.concurrent('divideFeatures', () => {
-	test('does expand a displayed feature if it will fit', () => {
-		const features = [
-			{
-				source: 'test',
-				feature: FactoryLogic.feature.create({
-					id: 'df-1',
-					name: 'DF 1',
-					description: 'Line 1'
-				})
-			},
-			{
-				source: 'test',
-				feature: FactoryLogic.feature.create({
-					id: 'df-2',
-					name: 'DF 2',
-					description: `
+  test('does expand a displayed feature if it will fit', () => {
+    const features = [
+      {
+        source: 'test',
+        feature: FactoryLogic.feature.create({
+          id: 'df-1',
+          name: 'DF 1',
+          description: 'Line 1',
+        }),
+      },
+      {
+        source: 'test',
+        feature: FactoryLogic.feature.create({
+          id: 'df-2',
+          name: 'DF 2',
+          description: `
 Line 1
 
 Line 2
 
-Line 3`
-				})
-			}
-		];
+Line 3`,
+        }),
+      },
+    ];
 
-		const result = SheetFormatter.divideFeatures(features, null, 10, 50, 1);
-		expect(result.displayed.length).toBe(2);
-		expect(result.displayed[0].feature.id).toBe('df-1');
-		expect(result.displayed[1].feature.id).toBe('df-2');
-		expect(result.displayed.every(f => f.display === 'full')).toBe(true);
-	});
+    const result = SheetFormatter.divideFeatures(features, null, 10, 50, 1);
+    expect(result.displayed.length).toBe(2);
+    expect(result.displayed[0].feature.id).toBe('df-1');
+    expect(result.displayed[1].feature.id).toBe('df-2');
+    expect(result.displayed.every(f => f.display === 'full')).toBe(true);
+  });
 
-	test('does not expand a displayed feature if it might cause column balancing issues', () => {
-		const features = [
-			{
-				source: 'test',
-				feature: FactoryLogic.feature.create({
-					id: 'df-1',
-					name: 'DF 1',
-					description: 'Line 1'
-				})
-			},
-			{
-				source: 'test',
-				feature: FactoryLogic.feature.create({
-					id: 'df-2',
-					name: 'DF 2',
-					description: `
+  test('does not expand a displayed feature if it might cause column balancing issues', () => {
+    const features = [
+      {
+        source: 'test',
+        feature: FactoryLogic.feature.create({
+          id: 'df-1',
+          name: 'DF 1',
+          description: 'Line 1',
+        }),
+      },
+      {
+        source: 'test',
+        feature: FactoryLogic.feature.create({
+          id: 'df-2',
+          name: 'DF 2',
+          description: `
 Line 1
 
 Line 2
 
-Line 3`
-				})
-			}
-		];
+Line 3`,
+        }),
+      },
+    ];
 
-		const result = SheetFormatter.divideFeatures(features, null, 10, 50, 2);
-		expect(result.displayed.length).toBe(2);
-		expect(result.displayed[0].feature.id).toBe('df-1');
-		expect(result.displayed[0].display).toBe('full');
-		expect(result.displayed[1].feature.id).toBe('df-2');
-		expect(result.displayed[1].display).toBe('short');
-		expect(result.reference.length).toBe(1);
-		expect(result.reference[0].source).toBe('test');
-		expect(result.reference[0].feature.id).toBe('df-2');
-	});
+    const result = SheetFormatter.divideFeatures(features, null, 10, 50, 2);
+    expect(result.displayed.length).toBe(2);
+    expect(result.displayed[0].feature.id).toBe('df-1');
+    expect(result.displayed[0].display).toBe('full');
+    expect(result.displayed[1].feature.id).toBe('df-2');
+    expect(result.displayed[1].display).toBe('short');
+    expect(result.reference.length).toBe(1);
+    expect(result.reference[0].source).toBe('test');
+    expect(result.reference[0].feature.id).toBe('df-2');
+  });
 
-	test('should create an extra reference item for tables with more than 3 columns', () => {
-		const features = [ {
-			source: 'test',
-			feature: FactoryLogic.feature.create({
-				id: 'tf1',
-				name: 'Table Feature',
-				description: `
+  test('should create an extra reference item for tables with more than 3 columns', () => {
+    const features = [
+      {
+        source: 'test',
+        feature: FactoryLogic.feature.create({
+          id: 'tf1',
+          name: 'Table Feature',
+          description: `
 This is some description of the table below.
 
 | Header 1 | Header 2 | Header 3 | Header 4 |
 |:---|:---:|:---:|---:|
 | Content 1 | Lorem Ipsum | Test 1 | Column 4 |
 | Content 2 | Lorem Ipsum | Test 2 | Column 4 |
-| Content 3 | Lorem Ipsum | Test 3 | Column 4 |`
-			})
-		} ];
+| Content 3 | Lorem Ipsum | Test 3 | Column 4 |`,
+        }),
+      },
+    ];
 
-		const result = SheetFormatter.divideFeatures(features, null, 50, 50, 1);
-		expect(result.displayed.length).toBe(1);
-		expect(result.displayed[0].feature.id).toBe('tf1');
-		expect(result.displayed[0].display).toBe('short');
+    const result = SheetFormatter.divideFeatures(features, null, 50, 50, 1);
+    expect(result.displayed.length).toBe(1);
+    expect(result.displayed[0].feature.id).toBe('tf1');
+    expect(result.displayed[0].display).toBe('short');
 
-		expect(result.reference.length).toBe(0);
+    expect(result.reference.length).toBe(0);
 
-		expect(result.extraReferenceItems.length).toBe(1);
-		expect(result.extraReferenceItems[0].title).toBe('Table Feature: Header 1 Table');
-	});
+    expect(result.extraReferenceItems.length).toBe(1);
+    expect(result.extraReferenceItems[0].title).toBe('Table Feature: Header 1 Table');
+  });
 });
 
 describe.concurrent('sortFeatures', () => {
-	test.each([
-		[ FeatureType.Package, FeatureType.Text, true ],
-		[ FeatureType.Package, FeatureType.PackageContent, false ],
-		[ FeatureType.Ability, FeatureType.PackageContent, true ],
-		[ FeatureType.HeroicResource, FeatureType.Ability, true ],
-		[ FeatureType.HeroicResource, FeatureType.Kit, false ],
-		[ FeatureType.Domain, FeatureType.HeroicResource, true ],
-		[ FeatureType.Language, FeatureType.ConditionImmunity, true ]
-	])('sorts types correctly', (aType, bType, bFirst) => {
-		const fA = {
-			type: aType
-		} as Feature;
-		const fB = {
-			type: bType
-		} as Feature;
+  test.each([
+    [FeatureType.Package, FeatureType.Text, true],
+    [FeatureType.Package, FeatureType.PackageContent, false],
+    [FeatureType.Ability, FeatureType.PackageContent, true],
+    [FeatureType.HeroicResource, FeatureType.Ability, true],
+    [FeatureType.HeroicResource, FeatureType.Kit, false],
+    [FeatureType.Domain, FeatureType.HeroicResource, true],
+    [FeatureType.Language, FeatureType.ConditionImmunity, true],
+  ])('sorts types correctly', (aType, bType, bFirst) => {
+    const fA = {
+      type: aType,
+    } as Feature;
+    const fB = {
+      type: bType,
+    } as Feature;
 
-		const result = SheetFormatter.sortFeatures(fA, fB);
-		if (bFirst) {
-			expect(result).toBeGreaterThan(0);
-		} else {
-			expect(result).toBeLessThan(0);
-		}
-	});
+    const result = SheetFormatter.sortFeatures(fA, fB);
+    if (bFirst) {
+      expect(result).toBeGreaterThan(0);
+    } else {
+      expect(result).toBeLessThan(0);
+    }
+  });
 
-	test.each([
-		[ 'Line1 \n Line 2', 'Line 1', false ],
-		[ 'Line 1', 'Line 1 \n Line 2', true ]
-	])('falls back to sorting by length if types are the same', (aDesc, bDesc, aFirst) => {
-		const fA = {
-			type: FeatureType.Text,
-			description: aDesc
-		} as Feature;
-		const fB = {
-			type: FeatureType.Text,
-			description: bDesc
-		} as Feature;
-		const result = SheetFormatter.sortFeatures(fA, fB);
+  test.each([
+    ['Line1 \n Line 2', 'Line 1', false],
+    ['Line 1', 'Line 1 \n Line 2', true],
+  ])('falls back to sorting by length if types are the same', (aDesc, bDesc, aFirst) => {
+    const fA = {
+      type: FeatureType.Text,
+      description: aDesc,
+    } as Feature;
+    const fB = {
+      type: FeatureType.Text,
+      description: bDesc,
+    } as Feature;
+    const result = SheetFormatter.sortFeatures(fA, fB);
 
-		if (aFirst) {
-			expect(result).toBeLessThan(0);
-		} else {
-			expect(result).toBeGreaterThan(0);
-		}
-	});
+    if (aFirst) {
+      expect(result).toBeLessThan(0);
+    } else {
+      expect(result).toBeGreaterThan(0);
+    }
+  });
 });
 
 describe('containsExtractableReferenceContent', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
-	});
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 
-	test.each([
-		[ false, false, false ],
-		[ true, false, true ],
-		[ false, true, true ],
-		[ true, true, true ]
-	])('returns true if there is an extractable table or is a special feature', (hasTable: boolean, isSpecial: boolean, expected: boolean) => {
-		const f = {} as Feature;
+  test.each([
+    [false, false, false],
+    [true, false, true],
+    [false, true, true],
+    [true, true, true],
+  ])(
+    'returns true if there is an extractable table or is a special feature',
+    (hasTable: boolean, isSpecial: boolean, expected: boolean) => {
+      const f = {} as Feature;
 
-		vi.spyOn(SheetFormatter, 'containsLargeTable').mockReturnValue(hasTable);
-		vi.spyOn(SheetFormatter, 'isSpecialHandlingFeature').mockReturnValue(isSpecial);
+      vi.spyOn(SheetFormatter, 'containsLargeTable').mockReturnValue(hasTable);
+      vi.spyOn(SheetFormatter, 'isSpecialHandlingFeature').mockReturnValue(isSpecial);
 
-		expect(SheetFormatter.containsExtractableReferenceContent(f)).toBe(expected);
-	});
+      expect(SheetFormatter.containsExtractableReferenceContent(f)).toBe(expected);
+    },
+  );
 });
 
 describe('containsLargeTable', () => {
-	test.each([
-		[ 'Some text.' ],
-		[ 'Some text.\nMultiple\nLines' ],
-		[ `| A Table | With Three | Columns |
+  test.each([
+    ['Some text.'],
+    ['Some text.\nMultiple\nLines'],
+    [
+      `| A Table | With Three | Columns |
 | --- | --- | --- |
 | A Table | With Three | Columns |
-| A Table | With Three | Columns |` ]
-	])('returns false when there is not a table with more than 3 columns', (content: string) => {
-		const feature = {
-			description: content
-		} as Feature;
+| A Table | With Three | Columns |`,
+    ],
+  ])('returns false when there is not a table with more than 3 columns', (content: string) => {
+    const feature = {
+      description: content,
+    } as Feature;
 
-		expect(SheetFormatter.containsLargeTable(feature)).toBe(false);
-	});
+    expect(SheetFormatter.containsLargeTable(feature)).toBe(false);
+  });
 
-	test.each([
-		[ `| A Table | With | FOUR | Columns |
+  test.each([
+    [
+      `| A Table | With | FOUR | Columns |
 | --- | --- | --- | --- |
 | A Table | With | FOUR | Columns |
-| A Table | With | FOUR | Columns |` ],
-		[ `| A Table | With | FOUR | Columns |
+| A Table | With | FOUR | Columns |`,
+    ],
+    [
+      `| A Table | With | FOUR | Columns |
 |:---|:---:|===:|===|
 | A Table | With | FOUR | Columns |
-| A Table | With | FOUR | Columns |` ]
-	])('returns true when there is a table with more than 3 columns', (content: string) => {
-		const feature = {
-			description: content
-		} as Feature;
+| A Table | With | FOUR | Columns |`,
+    ],
+  ])('returns true when there is a table with more than 3 columns', (content: string) => {
+    const feature = {
+      description: content,
+    } as Feature;
 
-		expect(SheetFormatter.containsLargeTable(feature)).toBe(true);
-	});
+    expect(SheetFormatter.containsLargeTable(feature)).toBe(true);
+  });
 });
 
 describe('isSpecialHandlingFeature', () => {
-	test.each([
-		[ 'not-special', false ],
-		[ 'beastheart-1-2b', true ],
-		[ 'summoner-1-2', true ]
-	])(' returns true for the correct feature ids', (id: string, expected: boolean) => {
-		const f = { id: id } as Feature;
-		expect(SheetFormatter.isSpecialHandlingFeature(f)).toBe(expected);
-	});
+  test.each([
+    ['not-special', false],
+    ['beastheart-1-2b', true],
+    ['summoner-1-2', true],
+  ])(' returns true for the correct feature ids', (id: string, expected: boolean) => {
+    const f = { id: id } as Feature;
+    expect(SheetFormatter.isSpecialHandlingFeature(f)).toBe(expected);
+  });
 });
 
 describe('extractTable', () => {
-	test.each([
-		[ 'No table here' ],
-		[ '| Might | Look |\n|Like| A | Table|\n|But isnt|' ]
-	])('returns null when there is no table', (t: string) => {
-		expect(SheetFormatter.extractTable(t)).toBeNull();
-	});
+  test.each([['No table here'], ['| Might | Look |\n|Like| A | Table|\n|But isnt|']])(
+    'returns null when there is no table',
+    (t: string) => {
+      expect(SheetFormatter.extractTable(t)).toBeNull();
+    },
+  );
 
-	test.each([
-		[ `|Simple|Table|
+  test.each([
+    [
+      `|Simple|Table|
 |---|---|
-|Some|Content|`, '', `|Simple|Table|
+|Some|Content|`,
+      '',
+      `|Simple|Table|
 |---|---|
-|Some|Content|` ],
-		[ `Content Before
+|Some|Content|`,
+    ],
+    [
+      `Content Before
 
-		|Simple|Table|\n|---|---|\n|Some|Content|`, 'Content Before', '|Simple|Table|\n|---|---|\n|Some|Content|' ],
-		[ `Content Before
+		|Simple|Table|\n|---|---|\n|Some|Content|`,
+      'Content Before',
+      '|Simple|Table|\n|---|---|\n|Some|Content|',
+    ],
+    [
+      `Content Before
 |Simple|Table|\n|---|---|\n|Some|Content|
 		
-Content After`, 'Content Before\nContent After', '|Simple|Table|\n|---|---|\n|Some|Content|' ],
-		[ `Content Before
+Content After`,
+      'Content Before\nContent After',
+      '|Simple|Table|\n|---|---|\n|Some|Content|',
+    ],
+    [
+      `Content Before
 			** Table Label**
-		|Simple|Table|\n|---|---|\n|Some|Content|`, 'Content Before', '|Simple|Table|\n|---|---|\n|Some|Content|' ]
-	])('Correctly extracts tables from features', (initial: string, after: string, table: string) => {
-		const result = SheetFormatter.extractTable(initial);
-		expect(result).not.toBeNull();
-		expect(result?.content).toBe(table);
-		expect(result?.leftover).toBe(after);
-	});
+		|Simple|Table|\n|---|---|\n|Some|Content|`,
+      'Content Before',
+      '|Simple|Table|\n|---|---|\n|Some|Content|',
+    ],
+  ])('Correctly extracts tables from features', (initial: string, after: string, table: string) => {
+    const result = SheetFormatter.extractTable(initial);
+    expect(result).not.toBeNull();
+    expect(result?.content).toBe(table);
+    expect(result?.leftover).toBe(after);
+  });
 
-	test.each([
-		[ 'No hint from content\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Simple Table' ],
-		[ 'No hint from content\n| Simple 2  |Table|\n|---|---|\n|Some|Content|', 'Simple 2 Table' ],
-		[ '**Table Label**\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Table Label' ],
-		[ '### Table Label\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Table Label' ],
-		[ '\t### Table Label\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Table Label' ]
-	])('correctly sets the table title', (text: string, expectedTitle: string) => {
-		const result = SheetFormatter.extractTable(text);
-		expect(result).not.toBeNull();
-		expect(result?.title).toBe(expectedTitle);
-	});
+  test.each([
+    ['No hint from content\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Simple Table'],
+    ['No hint from content\n| Simple 2  |Table|\n|---|---|\n|Some|Content|', 'Simple 2 Table'],
+    ['**Table Label**\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Table Label'],
+    ['### Table Label\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Table Label'],
+    ['\t### Table Label\n|Simple|Table|\n|---|---|\n|Some|Content|', 'Table Label'],
+  ])('correctly sets the table title', (text: string, expectedTitle: string) => {
+    const result = SheetFormatter.extractTable(text);
+    expect(result).not.toBeNull();
+    expect(result?.title).toBe(expectedTitle);
+  });
 
-	// future: multiple tables?
+  // future: multiple tables?
 });
 
 describe('calculateFeatureReferenceSize', () => {
-	afterEach(() => {
-		vi.resetAllMocks();
-	});
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 
-	test('Correctly calculates the size for a single column and source', () => {
-		const features = [ { feature: {} as Feature, source: 'Source 1' } ];
-		const hero = FactoryLogic.createHero([]);
+  test('Correctly calculates the size for a single column and source', () => {
+    const features = [{ feature: {} as Feature, source: 'Source 1' }];
+    const hero = FactoryLogic.createHero([]);
 
-		vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValueOnce(10);
+    vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValueOnce(10);
 
-		const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 1);
-		expect(result).toBe(14.5);
-	});
+    const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 1);
+    expect(result).toBe(14.5);
+  });
 
-	test('Correctly calculates the size for a single column and multiple sources', () => {
-		const features = [
-			{ feature: {} as Feature, source: 'Source 1' },
-			{ feature: {} as Feature, source: 'Source 2' }
-		];
-		const hero = FactoryLogic.createHero([]);
+  test('Correctly calculates the size for a single column and multiple sources', () => {
+    const features = [
+      { feature: {} as Feature, source: 'Source 1' },
+      { feature: {} as Feature, source: 'Source 2' },
+    ];
+    const hero = FactoryLogic.createHero([]);
 
-		vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValueOnce(10).mockReturnValueOnce(20);
+    vi.spyOn(SheetFormatter, 'calculateFeatureSize')
+      .mockReturnValueOnce(10)
+      .mockReturnValueOnce(20);
 
-		const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 1);
-		expect(result).toBe(36.5);
-	});
+    const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 1);
+    expect(result).toBe(36.5);
+  });
 
-	test('Correctly calculates the size for two columns and a single feature', () => {
-		const features = [
-			{ feature: {} as Feature, source: 'Source 1' }
-		];
-		const hero = FactoryLogic.createHero([]);
+  test('Correctly calculates the size for two columns and a single feature', () => {
+    const features = [{ feature: {} as Feature, source: 'Source 1' }];
+    const hero = FactoryLogic.createHero([]);
 
-		vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValueOnce(10);
+    vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValueOnce(10);
 
-		const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 2);
-		expect(result).toBe(14.5);
-	});
+    const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 2);
+    expect(result).toBe(14.5);
+  });
 
-	test('Correctly calculates the size for two columns and two features', () => {
-		const features = [
-			{ feature: {} as Feature, source: 'Source 1' },
-			{ feature: {} as Feature, source: 'Source 2' }
-		];
-		const hero = FactoryLogic.createHero([]);
+  test('Correctly calculates the size for two columns and two features', () => {
+    const features = [
+      { feature: {} as Feature, source: 'Source 1' },
+      { feature: {} as Feature, source: 'Source 2' },
+    ];
+    const hero = FactoryLogic.createHero([]);
 
-		vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValueOnce(10).mockReturnValueOnce(20);
+    vi.spyOn(SheetFormatter, 'calculateFeatureSize')
+      .mockReturnValueOnce(10)
+      .mockReturnValueOnce(20);
 
-		// with two different sized features, the value of the largest should determine the overall height
-		const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 2);
-		expect(result).toBe(24.5);
-	});
+    // with two different sized features, the value of the largest should determine the overall height
+    const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 2);
+    expect(result).toBe(24.5);
+  });
 
-	test('Correctly calculates the size for two columns and many features', () => {
-		const features = [
-			{ feature: {} as Feature, source: 'Source 1' },
-			{ feature: {} as Feature, source: 'Source 1' },
-			{ feature: {} as Feature, source: 'Source 1' },
-			{ feature: {} as Feature, source: 'Source 2' },
-			{ feature: {} as Feature, source: 'Source 2' },
-			{ feature: {} as Feature, source: 'Source 2' }
-		];
-		const hero = FactoryLogic.createHero([]);
+  test('Correctly calculates the size for two columns and many features', () => {
+    const features = [
+      { feature: {} as Feature, source: 'Source 1' },
+      { feature: {} as Feature, source: 'Source 1' },
+      { feature: {} as Feature, source: 'Source 1' },
+      { feature: {} as Feature, source: 'Source 2' },
+      { feature: {} as Feature, source: 'Source 2' },
+      { feature: {} as Feature, source: 'Source 2' },
+    ];
+    const hero = FactoryLogic.createHero([]);
 
-		vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValue(10);
+    vi.spyOn(SheetFormatter, 'calculateFeatureSize').mockReturnValue(10);
 
-		// with two different sized features, the value of the largest should determine the overall height
-		const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 2);
-		expect(result).toBe(34.5);
-	});
+    // with two different sized features, the value of the largest should determine the overall height
+    const result = SheetFormatter.calculateFeatureReferenceSize(features, hero, 50, 2);
+    expect(result).toBe(34.5);
+  });
 });
 
 describe('calculateProjectDetailCardSize', () => {
-	test('calculates card size correctly', () => {
-		const sheet = {
-			name: 'Craft Black Ash Dart',
-			description: 'Yields 1d3 darts, or three darts if crafted by a shadow',
-			prerequisites: 'Three vials of black ash from the College of Black Ash',
-			source: 'Texts or lore in Szetch',
-			characteristic: 'A or I',
-			pointsGoal: 45
-		} as ProjectSheet;
+  test('calculates card size correctly', () => {
+    const sheet = {
+      name: 'Craft Black Ash Dart',
+      description: 'Yields 1d3 darts, or three darts if crafted by a shadow',
+      prerequisites: 'Three vials of black ash from the College of Black Ash',
+      source: 'Texts or lore in Szetch',
+      characteristic: 'A or I',
+      pointsGoal: 45,
+    } as ProjectSheet;
 
-		const result = SheetFormatter.calculateProjectDetailCardSize(sheet, 54);// 54 is equivalent to the Letter/Portrait cardLineLen
-		expect(result).toBeCloseTo(14.4, 0.2);
-	});
+    const result = SheetFormatter.calculateProjectDetailCardSize(sheet, 54); // 54 is equivalent to the Letter/Portrait cardLineLen
+    expect(result).toBeCloseTo(14.4, 0.2);
+  });
 });
 
 describe('calculateProjectsOverviewCardSize', () => {
-	test('calculates size properly for multiple projects', () => {
-		const projects = [
-			{
-				name: 'Craft Buzz Balm',
-				characteristic: 'R or I',
-				prerequisites: 'An ounce of demon honey',
-				source: 'Texts or lore in Kalliak',
-				pointsGoal: 45
-			},
-			{
-				name: 'Craft Healing Potion',
-				characteristic: 'R or I',
-				prerequisites: 'An ounce of costmary leaves',
-				source: 'Texts or lore in Caelian',
-				pointsGoal: 45
-			},
-			{
-				name: 'Craft Foesense Lenses',
-				characteristic: 'R or I',
-				prerequisites: 'Two clear lenses carved from volcanic glass',
-				source: 'Texts or lore in Caelian',
-				pointsGoal: 450
-			},
-			{
-				name: 'Craft Black Ash Dart',
-				characteristic: 'A or I',
-				effect: 'Yields 1d3 darts, or three darts if crafted by a shadow',
-				prerequisites: 'Three vials of black ash from the College of Black Ash',
-				source: 'Texts or lore in Szetch',
-				pointsGoal: 45
-			}
-		];
-		const sheets = projects.map(p => p as ProjectSheet);
+  test('calculates size properly for multiple projects', () => {
+    const projects = [
+      {
+        name: 'Craft Buzz Balm',
+        characteristic: 'R or I',
+        prerequisites: 'An ounce of demon honey',
+        source: 'Texts or lore in Kalliak',
+        pointsGoal: 45,
+      },
+      {
+        name: 'Craft Healing Potion',
+        characteristic: 'R or I',
+        prerequisites: 'An ounce of costmary leaves',
+        source: 'Texts or lore in Caelian',
+        pointsGoal: 45,
+      },
+      {
+        name: 'Craft Foesense Lenses',
+        characteristic: 'R or I',
+        prerequisites: 'Two clear lenses carved from volcanic glass',
+        source: 'Texts or lore in Caelian',
+        pointsGoal: 450,
+      },
+      {
+        name: 'Craft Black Ash Dart',
+        characteristic: 'A or I',
+        effect: 'Yields 1d3 darts, or three darts if crafted by a shadow',
+        prerequisites: 'Three vials of black ash from the College of Black Ash',
+        source: 'Texts or lore in Szetch',
+        pointsGoal: 45,
+      },
+    ];
+    const sheets = projects.map(p => p as ProjectSheet);
 
-		const result = SheetFormatter.calculateProjectsOverviewCardSize(sheets, 54);
-		expect(result).toBeCloseTo(48.3, 0.2);
-	});
+    const result = SheetFormatter.calculateProjectsOverviewCardSize(sheets, 54);
+    expect(result).toBeCloseTo(48.3, 0.2);
+  });
 });
 
 describe('calculateAbilitySize', () => {
-	test.each([
-		[ AbilityData.heal, 11.2 ],
-		[ AbilityData.freeStrike, 7.2 ],
-		[ AbilityData.escapeGrab, 25.4 ],
-		[ AbilityData.clawDirt, 23.1 ],
-		[ AbilityData.advance, 9 ]
-	])('calculates size properly for standard abilities', (ability: Ability, expected: number) => {
-		const hero = FactoryLogic.createHero([]);
-		const sheet = ClassicSheetBuilder.buildAbilitySheet(ability, hero);
+  test.each([
+    [AbilityData.heal, 11.2],
+    [AbilityData.freeStrike, 7.2],
+    [AbilityData.escapeGrab, 25.4],
+    [AbilityData.clawDirt, 23.1],
+    [AbilityData.advance, 9],
+  ])('calculates size properly for standard abilities', (ability: Ability, expected: number) => {
+    const hero = FactoryLogic.createHero([]);
+    const sheet = ClassicSheetBuilder.buildAbilitySheet(ability, hero);
 
-		const result = SheetFormatter.calculateAbilitySize(sheet, 54);
-		expect(result).toBeCloseTo(expected, 0);
-	});
+    const result = SheetFormatter.calculateAbilitySize(sheet, 54);
+    expect(result).toBeCloseTo(expected, 0);
+  });
 });
 
 describe('calculateFollowerSize()', () => {
-	// vi.mock('@/logic/hero-logic', () => {
-	// 	const HeroLogic = vi.fn();
-	// 	return { HeroLogic: HeroLogic };
-	// });
+  // vi.mock('@/logic/hero-logic', () => {
+  // 	const HeroLogic = vi.fn();
+  // 	return { HeroLogic: HeroLogic };
+  // });
 
-	const humanWarrior = retainer.monsters.find(m => m.id === 'retainer-12') as Monster;
+  const humanWarrior = retainer.monsters.find(m => m.id === 'retainer-12') as Monster;
 
-	test.each([
-		[ 1, 37.5 ],
-		[ 4, 48 ],
-		[ 7, 61 ],
-		[ 10, 70 ]
-	])('properly calculates the size of a retainer at different levels of advancement', (level, expectedSize) => {
-		const followerSheet = HeroSheetBuilder.buildRetainerSheet(humanWarrior, level);
-		expect(SheetFormatter.calculateFollowerSize(followerSheet, 54)).toBeCloseTo(expectedSize, 0);
-	});
+  test.each([
+    [1, 37.5],
+    [4, 48],
+    [7, 61],
+    [10, 70],
+  ])(
+    'properly calculates the size of a retainer at different levels of advancement',
+    (level, expectedSize) => {
+      const followerSheet = HeroSheetBuilder.buildRetainerSheet(humanWarrior, level);
+      expect(SheetFormatter.calculateFollowerSize(followerSheet, 54)).toBeCloseTo(expectedSize, 0);
+    },
+  );
 });

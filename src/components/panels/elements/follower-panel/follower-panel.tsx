@@ -10,33 +10,45 @@ import { StatsRow } from '@/components/panels/stats-row/stats-row';
 import './follower-panel.scss';
 
 interface Props {
-	follower: Follower;
-	mode?: PanelMode;
+  follower: Follower;
+  mode?: PanelMode;
 }
 
 export const FollowerPanel = (props: Props) => {
-	return (
-		<ErrorBoundary>
-			<div className={props.mode === PanelMode.Full ? 'follower-panel' : 'follower-panel compact'} id={props.mode === PanelMode.Full ? SheetFormatter.getPageId('follower', props.follower.id) : undefined}>
-				<HeaderText
-					level={1}
-					tags={[ props.follower.type ]}
-				>
-					{props.follower.name || 'Unnamed Follower'}
-				</HeaderText>
-				<Markdown text={props.follower.description || `${props.follower.type} follower.`} />
-				{
-					props.mode === PanelMode.Full ?
-						<>
-							<StatsRow>
-								{props.follower.characteristics.map(ch => <Field key={ch.characteristic} orientation='vertical' label={ch.characteristic} value={ch.value} />)}
-							</StatsRow>
-							<Field label='Skills' value={props.follower.skills.sort().join(', ') || '(none)'} />
-							<Field label='Languages' value={[ 'Caelian', ...props.follower.languages ].sort().join(', ') || '(none)'} />
-						</>
-						: null
-				}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div
+        className={props.mode === PanelMode.Full ? 'follower-panel' : 'follower-panel compact'}
+        id={
+          props.mode === PanelMode.Full
+            ? SheetFormatter.getPageId('follower', props.follower.id)
+            : undefined
+        }
+      >
+        <HeaderText level={1} tags={[props.follower.type]}>
+          {props.follower.name || 'Unnamed Follower'}
+        </HeaderText>
+        <Markdown text={props.follower.description || `${props.follower.type} follower.`} />
+        {props.mode === PanelMode.Full ? (
+          <>
+            <StatsRow>
+              {props.follower.characteristics.map(ch => (
+                <Field
+                  key={ch.characteristic}
+                  orientation="vertical"
+                  label={ch.characteristic}
+                  value={ch.value}
+                />
+              ))}
+            </StatsRow>
+            <Field label="Skills" value={props.follower.skills.sort().join(', ') || '(none)'} />
+            <Field
+              label="Languages"
+              value={['Caelian', ...props.follower.languages].sort().join(', ') || '(none)'}
+            />
+          </>
+        ) : null}
+      </div>
+    </ErrorBoundary>
+  );
 };

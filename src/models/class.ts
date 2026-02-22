@@ -5,23 +5,23 @@ import { Feature } from '@/models/feature';
 import { SubClass } from '@/models/subclass';
 
 export interface HeroClass extends Element {
-	type: 'standard' | 'master';
-	subclassName: string;
-	subclassCount: number;
+  type: 'standard' | 'master';
+  subclassName: string;
+  subclassCount: number;
 
-	primaryCharacteristicsOptions: Characteristic[][];
-	primaryCharacteristics: Characteristic[];
+  primaryCharacteristicsOptions: Characteristic[][];
+  primaryCharacteristics: Characteristic[];
 
-	featuresByLevel: {
-		level: number;
-		features: Feature[];
-	}[];
-	abilities: Ability[];
-	subclasses: SubClass[];
+  featuresByLevel: {
+    level: number;
+    features: Feature[];
+  }[];
+  abilities: Ability[];
+  subclasses: SubClass[];
 
-	level: number;
-	characteristics: {
-		characteristic: Characteristic;
-		value: number;
-	}[];
+  level: number;
+  characteristics: {
+    characteristic: Characteristic;
+    value: number;
+  }[];
 }

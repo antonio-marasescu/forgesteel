@@ -13,52 +13,45 @@ import { useState } from 'react';
 import './ability-select-modal.scss';
 
 interface Props {
-	abilities: Ability[];
-	hero: Hero;
-	onClose: () => void;
-	onSelect: (ability: Ability) => void;
+  abilities: Ability[];
+  hero: Hero;
+  onClose: () => void;
+  onSelect: (ability: Ability) => void;
 }
 
 export const AbilitySelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-	const abilities = props.abilities
-		.filter(a => Utils.textMatches([
-			a.name,
-			a.description,
-			a.type.usage,
-			...a.keywords,
-			...a.sections.filter(s => s.type === 'text').map(s => s.text),
-			...a.sections.filter(s => s.type === 'field').map(s => s.effect)
-		], searchTerm));
+  const abilities = props.abilities.filter(a =>
+    Utils.textMatches(
+      [
+        a.name,
+        a.description,
+        a.type.usage,
+        ...a.keywords,
+        ...a.sections.filter(s => s.type === 'text').map(s => s.text),
+        ...a.sections.filter(s => s.type === 'field').map(s => s.effect),
+      ],
+      searchTerm,
+    ),
+  );
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='ability-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						{
-							abilities.map(a => (
-								<SelectablePanel
-									key={a.id}
-									onSelect={() => props.onSelect(a)}
-								>
-									<AbilityPanel ability={a} mode={PanelMode.Full} />
-								</SelectablePanel>
-							))
-						}
-						{
-							abilities.length === 0 ?
-								<Empty />
-								: null
-						}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="ability-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            {abilities.map(a => (
+              <SelectablePanel key={a.id} onSelect={() => props.onSelect(a)}>
+                <AbilityPanel ability={a} mode={PanelMode.Full} />
+              </SelectablePanel>
+            ))}
+            {abilities.length === 0 ? <Empty /> : null}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

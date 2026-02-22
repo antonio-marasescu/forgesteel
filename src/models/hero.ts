@@ -8,33 +8,40 @@ import { HeroClass } from '@/models/class';
 import { HeroState } from '@/models/hero-state';
 
 export interface AbilityCustomization {
-	abilityID: string;
-	name: string;
-	description: string;
-	notes: string;
-	costModifier: number;
-	distanceBonus: number;
-	damageBonus: number;
-	characteristic: Characteristic | null;
+  abilityID: string;
+  name: string;
+  description: string;
+  notes: string;
+  costModifier: number;
+  distanceBonus: number;
+  damageBonus: number;
+  characteristic: Characteristic | null;
 }
 
 export interface Hero {
-	id: string;
-	name: string;
+  id: string;
+  name: string;
 
-	picture: string | null;
-	folder: string;
-	settingIDs: string[];
+  picture: string | null;
+  folder: string;
+  settingIDs: string[];
 
-	ancestry: Ancestry | null;
-	culture: Culture | null;
-	career: Career | null;
-	class: HeroClass | null;
-	complication: Complication | null;
+  ancestry: Ancestry | null;
+  culture: Culture | null;
+  career: Career | null;
+  class: HeroClass | null;
+  complication: Complication | null;
 
-	features: Feature[];
-	state: HeroState;
-	abilityCustomizations: AbilityCustomization[];
+  features: Feature[];
+  state: HeroState;
+  abilityCustomizations: AbilityCustomization[];
 }
 
-export type HeroEditTab = 'start' | 'ancestry' | 'culture' | 'career' | 'class' | 'complication' | 'details';
+export type HeroEditTab =
+  | 'start'
+  | 'ancestry'
+  | 'culture'
+  | 'career'
+  | 'class'
+  | 'complication'
+  | 'details';

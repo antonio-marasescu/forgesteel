@@ -1,5 +1,11 @@
 import { Badge, Button, Divider, Flex } from 'antd';
-import { BookOutlined, InfoCircleOutlined, PlayCircleOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  BookOutlined,
+  InfoCircleOutlined,
+  PlayCircleOutlined,
+  SettingOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
 import { SyncStatus } from '@/components/panels/sync-status/sync-status';
 import { useIsSmall } from '@/hooks/use-is-small';
@@ -10,64 +16,83 @@ import './app-footer.scss';
 import shield from '@/assets/shield.png';
 
 interface Props {
-	page: 'welcome' | 'heroes' | 'library' | 'session' | 'player-view';
-	highlightAbout: boolean;
-	showReference: () => void;
-	showRoll: () => void;
-	showAbout: () => void;
-	showSettings: () => void;
+  page: 'welcome' | 'heroes' | 'library' | 'session' | 'player-view';
+  highlightAbout: boolean;
+  showReference: () => void;
+  showRoll: () => void;
+  showAbout: () => void;
+  showSettings: () => void;
 }
 
 export const AppFooter = (props: Props) => {
-	const isSmall = useIsSmall();
-	const navigation = useNavigation();
+  const isSmall = useIsSmall();
+  const navigation = useNavigation();
 
-	return (
-		<ErrorBoundary>
-			<div className='app-footer'>
-				{
-					(props.page === 'player-view') ?
-						<div />
-						:
-						<Flex className='navigation-buttons-panel' align='center' gap={2}>
-							<Button type='text' className={props.page === 'welcome' ? 'selected' : ''} icon={<img className='logo-icon' src={shield} />} onClick={() => navigation.goToWelcome()} />
-							<Divider orientation='vertical' />
-							<Button type='text' className={props.page === 'heroes' ? 'selected' : ''} icon={<TeamOutlined />} onClick={() => navigation.goToHeroList()}>
-								{isSmall ? null : 'Heroes'}
-							</Button>
-							<Divider orientation='vertical' />
-							<Button type='text' className={props.page === 'library' ? 'selected' : ''} icon={<BookOutlined />} onClick={() => navigation.goToLibrary('ancestry')}>
-								{isSmall ? null : 'Library'}
-							</Button>
-							<Divider orientation='vertical' />
-							<Button type='text' className={props.page === 'session' ? 'selected' : ''} icon={<PlayCircleOutlined />} onClick={() => navigation.goToSession()}>
-								{isSmall ? null : 'Session'}
-							</Button>
-						</Flex>
-				}
-				<div className='action-buttons-panel'>
-					<SyncStatus />
-					<Button type='text' onClick={props.showReference}>
-						{ isSmall ? 'Ref' : 'Reference' }
-					</Button>
-					<Divider orientation='vertical' />
-					<Button type='text' onClick={props.showRoll}>
-						Roll
-					</Button>
-					<Divider orientation='vertical' />
-					<Badge dot={props.highlightAbout}>
-						<Button type='text' onClick={props.showSettings}>
-							<SettingOutlined />
-							{ isSmall ? '' : 'Settings' }
-						</Button>
-					</Badge>
-					<Divider orientation='vertical' />
-					<Button type='text' onClick={props.showAbout}>
-						<InfoCircleOutlined />
-						{ isSmall ? '' : 'About' }
-					</Button>
-				</div>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="app-footer">
+        {props.page === 'player-view' ? (
+          <div />
+        ) : (
+          <Flex className="navigation-buttons-panel" align="center" gap={2}>
+            <Button
+              type="text"
+              className={props.page === 'welcome' ? 'selected' : ''}
+              icon={<img className="logo-icon" src={shield} />}
+              onClick={() => navigation.goToWelcome()}
+            />
+            <Divider orientation="vertical" />
+            <Button
+              type="text"
+              className={props.page === 'heroes' ? 'selected' : ''}
+              icon={<TeamOutlined />}
+              onClick={() => navigation.goToHeroList()}
+            >
+              {isSmall ? null : 'Heroes'}
+            </Button>
+            <Divider orientation="vertical" />
+            <Button
+              type="text"
+              className={props.page === 'library' ? 'selected' : ''}
+              icon={<BookOutlined />}
+              onClick={() => navigation.goToLibrary('ancestry')}
+            >
+              {isSmall ? null : 'Library'}
+            </Button>
+            <Divider orientation="vertical" />
+            <Button
+              type="text"
+              className={props.page === 'session' ? 'selected' : ''}
+              icon={<PlayCircleOutlined />}
+              onClick={() => navigation.goToSession()}
+            >
+              {isSmall ? null : 'Session'}
+            </Button>
+          </Flex>
+        )}
+        <div className="action-buttons-panel">
+          <SyncStatus />
+          <Button type="text" onClick={props.showReference}>
+            {isSmall ? 'Ref' : 'Reference'}
+          </Button>
+          <Divider orientation="vertical" />
+          <Button type="text" onClick={props.showRoll}>
+            Roll
+          </Button>
+          <Divider orientation="vertical" />
+          <Badge dot={props.highlightAbout}>
+            <Button type="text" onClick={props.showSettings}>
+              <SettingOutlined />
+              {isSmall ? '' : 'Settings'}
+            </Button>
+          </Badge>
+          <Divider orientation="vertical" />
+          <Button type="text" onClick={props.showAbout}>
+            <InfoCircleOutlined />
+            {isSmall ? '' : 'About'}
+          </Button>
+        </div>
+      </div>
+    </ErrorBoundary>
+  );
 };

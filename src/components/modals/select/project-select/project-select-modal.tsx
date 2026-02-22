@@ -14,53 +14,38 @@ import { useState } from 'react';
 import './project-select-modal.scss';
 
 interface Props {
-	sourcebooks: Sourcebook[];
-	onClose: () => void;
-	onSelect: (project: Project) => void;
+  sourcebooks: Sourcebook[];
+  onClose: () => void;
+  onSelect: (project: Project) => void;
 }
 
 export const ProjectSelectModal = (props: Props) => {
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-	const projects = [
-		FactoryLogic.createProject({
-			name: 'Custom Project',
-			isCustom: true
-		}),
-		...SourcebookLogic.getProjects(props.sourcebooks, true, true)
-	]
-		.filter(item => Utils.textMatches([
-			item.name,
-			item.description
-		], searchTerm));
+  const projects = [
+    FactoryLogic.createProject({
+      name: 'Custom Project',
+      isCustom: true,
+    }),
+    ...SourcebookLogic.getProjects(props.sourcebooks, true, true),
+  ].filter(item => Utils.textMatches([item.name, item.description], searchTerm));
 
-	return (
-		<Modal
-			toolbar={
-				<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-			}
-			content={
-				<div className='project-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						{
-							projects.map(project => (
-								<SelectablePanel
-									key={project.id}
-									onSelect={() => props.onSelect(project)}
-								>
-									<ProjectPanel project={project} sourcebooks={props.sourcebooks} />
-								</SelectablePanel>
-							))
-						}
-						{
-							projects.length === 0 ?
-								<Empty />
-								: null
-						}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
+      content={
+        <div className="project-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            {projects.map(project => (
+              <SelectablePanel key={project.id} onSelect={() => props.onSelect(project)}>
+                <ProjectPanel project={project} sourcebooks={props.sourcebooks} />
+              </SelectablePanel>
+            ))}
+            {projects.length === 0 ? <Empty /> : null}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

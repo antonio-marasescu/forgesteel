@@ -9,41 +9,41 @@ import { useState } from 'react';
 import './element-edit-panel.scss';
 
 interface Props {
-	element: Element;
-	onChange: (element: Element) => void;
+  element: Element;
+  onChange: (element: Element) => void;
 }
 
 export const ElementEditPanel = (props: Props) => {
-	const [ element, setElement ] = useState<Element>(props.element);
+  const [element, setElement] = useState<Element>(props.element);
 
-	const setName = (value: string) => {
-		const copy = Utils.copy(element);
-		copy.name = value;
-		setElement(copy);
-		props.onChange(copy);
-	};
+  const setName = (value: string) => {
+    const copy = Utils.copy(element);
+    copy.name = value;
+    setElement(copy);
+    props.onChange(copy);
+  };
 
-	const setDescription = (value: string) => {
-		const copy = Utils.copy(element);
-		copy.description = value;
-		setElement(copy);
-		props.onChange(copy);
-	};
+  const setDescription = (value: string) => {
+    const copy = Utils.copy(element);
+    copy.description = value;
+    setElement(copy);
+    props.onChange(copy);
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='element-edit-panel'>
-				<HeaderText>Name</HeaderText>
-				<TextInput
-					status={element.name === '' ? 'warning' : ''}
-					placeholder='Name'
-					allowClear={true}
-					value={element.name}
-					onChange={setName}
-				/>
-				<HeaderText>Description</HeaderText>
-				<MarkdownEditor value={element.description} onChange={setDescription} />
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="element-edit-panel">
+        <HeaderText>Name</HeaderText>
+        <TextInput
+          status={element.name === '' ? 'warning' : ''}
+          placeholder="Name"
+          allowClear={true}
+          value={element.name}
+          onChange={setName}
+        />
+        <HeaderText>Description</HeaderText>
+        <MarkdownEditor value={element.description} onChange={setDescription} />
+      </div>
+    </ErrorBoundary>
+  );
 };

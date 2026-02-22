@@ -24,31 +24,51 @@ import { Terrain } from '@/models/terrain';
 import { Title } from '@/models/title';
 
 export interface Sourcebook extends Element {
-	type: SourcebookType;
+  type: SourcebookType;
 
-	adventures: Adventure[];
-	ancestries: Ancestry[];
-	careers: Career[];
-	classes: HeroClass[];
-	complications: Complication[];
-	cultures: Culture[];
-	domains: Domain[];
-	encounters: Encounter[];
-	imbuements: Imbuement[];
-	items: Item[];
-	kits: Kit[];
-	monsterGroups: MonsterGroup[];
-	montages: Montage[];
-	negotiations: Negotiation[];
-	perks: Perk[];
-	projects: Project[];
-	subclasses: SubClass[];
-	tacticalMaps: TacticalMap[];
-	terrain: Terrain[];
-	titles: Title[];
+  adventures: Adventure[];
+  ancestries: Ancestry[];
+  careers: Career[];
+  classes: HeroClass[];
+  complications: Complication[];
+  cultures: Culture[];
+  domains: Domain[];
+  encounters: Encounter[];
+  imbuements: Imbuement[];
+  items: Item[];
+  kits: Kit[];
+  monsterGroups: MonsterGroup[];
+  montages: Montage[];
+  negotiations: Negotiation[];
+  perks: Perk[];
+  projects: Project[];
+  subclasses: SubClass[];
+  tacticalMaps: TacticalMap[];
+  terrain: Terrain[];
+  titles: Title[];
 
-	skills: Skill[];
-	languages: Language[];
+  skills: Skill[];
+  languages: Language[];
 }
 
-export type SourcebookElementKind = 'adventure' | 'ancestry' | 'career' | 'class' | 'complication' | 'culture' | 'domain' | 'encounter' | 'imbuement' | 'item' | 'kit' | 'monster-group' | 'montage' | 'negotiation' | 'perk' | 'project' | 'subclass' | 'tactical-map' | 'terrain' | 'title';
+export type SourcebookElementKind =
+  | 'adventure'
+  | 'ancestry'
+  | 'career'
+  | 'class'
+  | 'complication'
+  | 'culture'
+  | 'domain'
+  | 'encounter'
+  | 'imbuement'
+  | 'item'
+  | 'kit'
+  | 'monster-group'
+  | 'montage'
+  | 'negotiation'
+  | 'perk'
+  | 'project'
+  | 'subclass'
+  | 'tactical-map'
+  | 'terrain'
+  | 'title';

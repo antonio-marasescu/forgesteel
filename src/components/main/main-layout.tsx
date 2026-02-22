@@ -4,19 +4,24 @@ import { Outlet } from 'react-router';
 import { ReactNode } from 'react';
 
 interface Props {
-	drawer: ReactNode;
-	setDrawer: React.Dispatch<React.SetStateAction<ReactNode>>;
+  drawer: ReactNode;
+  setDrawer: React.Dispatch<React.SetStateAction<ReactNode>>;
 }
 
 export const MainLayout = (props: Props) => {
-	return (
-		<ErrorBoundary name='main-layout'>
-			<div className='main'>
-				<Outlet />
-			</div>
-			<Drawer open={props.drawer !== null} onClose={() => props.setDrawer(null)} closeIcon={null} size={500}>
-				{props.drawer}
-			</Drawer>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary name="main-layout">
+      <div className="main">
+        <Outlet />
+      </div>
+      <Drawer
+        open={props.drawer !== null}
+        onClose={() => props.setDrawer(null)}
+        closeIcon={null}
+        size={500}
+      >
+        {props.drawer}
+      </Drawer>
+    </ErrorBoundary>
+  );
 };

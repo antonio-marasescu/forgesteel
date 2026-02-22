@@ -25,193 +25,196 @@ import { useState } from 'react';
 import './imbuement-edit-panel.scss';
 
 interface Props {
-	imbuement: Imbuement;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	mode?: PanelMode;
-	onChange: (imbuemenet: Imbuement) => void;
+  imbuement: Imbuement;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  mode?: PanelMode;
+  onChange: (imbuemenet: Imbuement) => void;
 }
 
 export const ImbuementEditPanel = (props: Props) => {
-	const [ imbuement, setImbuement ] = useState<Imbuement>(props.imbuement);
+  const [imbuement, setImbuement] = useState<Imbuement>(props.imbuement);
 
-	const getNameAndDescriptionSection = () => {
-		const setName = (value: string) => {
-			const copy = Utils.copy(imbuement);
-			copy.name = value;
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+  const getNameAndDescriptionSection = () => {
+    const setName = (value: string) => {
+      const copy = Utils.copy(imbuement);
+      copy.name = value;
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		const setDescription = (value: string) => {
-			const copy = Utils.copy(imbuement);
-			copy.description = value;
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+    const setDescription = (value: string) => {
+      const copy = Utils.copy(imbuement);
+      copy.description = value;
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>Name</HeaderText>
-				<Space.Compact style={{ width: '100%' }}>
-					<TextInput
-						status={imbuement.name === '' ? 'warning' : ''}
-						placeholder='Name'
-						allowClear={true}
-						value={imbuement.name}
-						onChange={setName}
-					/>
-					<Button icon={<ThunderboltOutlined />} onClick={() => setName(NameGenerator.generateName())} />
-				</Space.Compact>
-				<HeaderText>Description</HeaderText>
-				<MarkdownEditor value={imbuement.description} onChange={setDescription} />
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Name</HeaderText>
+        <Space.Compact style={{ width: '100%' }}>
+          <TextInput
+            status={imbuement.name === '' ? 'warning' : ''}
+            placeholder="Name"
+            allowClear={true}
+            value={imbuement.name}
+            onChange={setName}
+          />
+          <Button
+            icon={<ThunderboltOutlined />}
+            onClick={() => setName(NameGenerator.generateName())}
+          />
+        </Space.Compact>
+        <HeaderText>Description</HeaderText>
+        <MarkdownEditor value={imbuement.description} onChange={setDescription} />
+      </Space>
+    );
+  };
 
-	const getImbuementEditSection = () => {
-		const setLevel = (value: number) => {
-			const copy = Utils.copy(imbuement);
-			copy.level = value;
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+  const getImbuementEditSection = () => {
+    const setLevel = (value: number) => {
+      const copy = Utils.copy(imbuement);
+      copy.level = value;
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		const setType = (value: ItemType) => {
-			const copy = Utils.copy(imbuement);
-			copy.type = value;
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+    const setType = (value: ItemType) => {
+      const copy = Utils.copy(imbuement);
+      copy.type = value;
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>Level</HeaderText>
-				<NumberSpin min={1} max={9} steps={[ 4 ]} value={imbuement.level} onChange={setLevel} />
-				<HeaderText>Item Type</HeaderText>
-				<Select
-					style={{ width: '100%' }}
-					placeholder='Type'
-					options={[ ItemType.ImbuedArmor, ItemType.ImbuedImplement, ItemType.ImbuedWeapon ].map(option => ({ value: option }))}
-					optionRender={option => <div className='ds-text'>{option.data.value}</div>}
-					value={imbuement.type}
-					onChange={setType}
-				/>
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Level</HeaderText>
+        <NumberSpin min={1} max={9} steps={[4]} value={imbuement.level} onChange={setLevel} />
+        <HeaderText>Item Type</HeaderText>
+        <Select
+          style={{ width: '100%' }}
+          placeholder="Type"
+          options={[ItemType.ImbuedArmor, ItemType.ImbuedImplement, ItemType.ImbuedWeapon].map(
+            option => ({ value: option }),
+          )}
+          optionRender={option => <div className="ds-text">{option.data.value}</div>}
+          value={imbuement.type}
+          onChange={setType}
+        />
+      </Space>
+    );
+  };
 
-	const getCraftingEditSection = () => {
-		const setCraftable = (value: boolean) => {
-			const copy = Utils.copy(imbuement);
-			copy.crafting = value ?
-				FactoryLogic.createProject({ id: `${imbuement.id}-crafting`, name: `Imbue ${imbuement.name}`, description: imbuement.name })
-				: null;
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+  const getCraftingEditSection = () => {
+    const setCraftable = (value: boolean) => {
+      const copy = Utils.copy(imbuement);
+      copy.crafting = value
+        ? FactoryLogic.createProject({
+            id: `${imbuement.id}-crafting`,
+            name: `Imbue ${imbuement.name}`,
+            description: imbuement.name,
+          })
+        : null;
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		const setCrafting = (value: Project) => {
-			const copy = Utils.copy(imbuement);
-			copy.crafting = Utils.copy(value);
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+    const setCrafting = (value: Project) => {
+      const copy = Utils.copy(imbuement);
+      copy.crafting = Utils.copy(value);
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<Toggle label='Can be crafted' value={!!imbuement.crafting} onChange={setCraftable} />
-				{
-					imbuement.crafting ?
-						<ProjectEditPanel
-							project={imbuement.crafting}
-							includeNameAndDescription={false}
-							sourcebooks={props.sourcebooks}
-							onChange={setCrafting}
-						/>
-						: null
-				}
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <Toggle label="Can be crafted" value={!!imbuement.crafting} onChange={setCraftable} />
+        {imbuement.crafting ? (
+          <ProjectEditPanel
+            project={imbuement.crafting}
+            includeNameAndDescription={false}
+            sourcebooks={props.sourcebooks}
+            onChange={setCrafting}
+          />
+        ) : null}
+      </Space>
+    );
+  };
 
-	const getFeatureEditSection = () => {
-		const changeFeature = (feature: Feature) => {
-			const copy = Utils.copy(imbuement);
-			copy.feature = feature;
-			setImbuement(copy);
-			props.onChange(copy);
-		};
+  const getFeatureEditSection = () => {
+    const changeFeature = (feature: Feature) => {
+      const copy = Utils.copy(imbuement);
+      copy.feature = feature;
+      setImbuement(copy);
+      props.onChange(copy);
+    };
 
-		return (
-			<Space orientation='vertical' style={{ width: '100%' }}>
-				<HeaderText>
-					Feature
-				</HeaderText>
-				<FeatureEditPanel
-					feature={imbuement.feature}
-					sourcebooks={props.sourcebooks}
-					options={props.options}
-					onChange={changeFeature}
-				/>
-			</Space>
-		);
-	};
+    return (
+      <Space orientation="vertical" style={{ width: '100%' }}>
+        <HeaderText>Feature</HeaderText>
+        <FeatureEditPanel
+          feature={imbuement.feature}
+          sourcebooks={props.sourcebooks}
+          options={props.options}
+          onChange={changeFeature}
+        />
+      </Space>
+    );
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='imbuement-edit-panel'>
-				<div className='imbuement-workspace-column'>
-					<Tabs
-						items={[
-							{
-								key: '1',
-								label: 'imbuement',
-								children: getNameAndDescriptionSection()
-							},
-							{
-								key: '2',
-								label: 'Details',
-								children: getImbuementEditSection()
-							},
-							{
-								key: '3',
-								label: 'Crafting',
-								children: getCraftingEditSection()
-							},
-							{
-								key: '4',
-								label: 'Feature',
-								children: getFeatureEditSection()
-							}
-						]}
-					/>
-				</div>
-				{
-					props.mode === PanelMode.Full ?
-						<div className='imbuement-preview-column'>
-							<Tabs
-								items={[
-									{
-										key: '1',
-										label: 'Preview',
-										children: (
-											<SelectablePanel>
-												<ImbuementPanel
-													imbuement={imbuement}
-													sourcebooks={props.sourcebooks}
-													options={props.options}
-													mode={PanelMode.Full}
-												/>
-											</SelectablePanel>
-										)
-									}
-								]}
-							/>
-						</div>
-						: null
-				}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="imbuement-edit-panel">
+        <div className="imbuement-workspace-column">
+          <Tabs
+            items={[
+              {
+                key: '1',
+                label: 'imbuement',
+                children: getNameAndDescriptionSection(),
+              },
+              {
+                key: '2',
+                label: 'Details',
+                children: getImbuementEditSection(),
+              },
+              {
+                key: '3',
+                label: 'Crafting',
+                children: getCraftingEditSection(),
+              },
+              {
+                key: '4',
+                label: 'Feature',
+                children: getFeatureEditSection(),
+              },
+            ]}
+          />
+        </div>
+        {props.mode === PanelMode.Full ? (
+          <div className="imbuement-preview-column">
+            <Tabs
+              items={[
+                {
+                  key: '1',
+                  label: 'Preview',
+                  children: (
+                    <SelectablePanel>
+                      <ImbuementPanel
+                        imbuement={imbuement}
+                        sourcebooks={props.sourcebooks}
+                        options={props.options}
+                        mode={PanelMode.Full}
+                      />
+                    </SelectablePanel>
+                  ),
+                },
+              ]}
+            />
+          </div>
+        ) : null}
+      </div>
+    </ErrorBoundary>
+  );
 };

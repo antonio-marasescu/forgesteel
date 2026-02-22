@@ -1,6 +1,6 @@
 export interface ConnectionSettings {
-	useWarehouse: boolean;
-	warehouseHost: string;
-	warehouseToken: string;
-	patreonConnected: boolean;
+  useWarehouse: boolean;
+  warehouseHost: string;
+  warehouseToken: string;
+  patreonConnected: boolean;
 }

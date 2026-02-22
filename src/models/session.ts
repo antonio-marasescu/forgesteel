@@ -5,10 +5,10 @@ import { Negotiation } from '@/models/negotiation';
 import { TacticalMap } from '@/models/tactical-map';
 
 export interface Session {
-	counters: Counter[];
-	encounters: Encounter[];
-	montages: Montage[];
-	negotiations: Negotiation[];
-	tacticalMaps: TacticalMap[];
-	playerViewID: string | null;
+  counters: Counter[];
+  encounters: Encounter[];
+  montages: Montage[];
+  negotiations: Negotiation[];
+  tacticalMaps: TacticalMap[];
+  playerViewID: string | null;
 }

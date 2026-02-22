@@ -11,15 +11,15 @@ import { talent } from '@/data/classes/talent/talent';
 import { troubadour } from '@/data/classes/troubadour/troubadour';
 
 export class ClassData {
-	static beastheart = beastheart;
-	static censor = censor;
-	static conduit = conduit;
-	static elementalist = elementalist;
-	static fury = fury;
-	static nullClass = nullClass;
-	static shadow = shadow;
-	static summoner = summoner;
-	static tactician = tactician;
-	static talent = talent;
-	static troubadour = troubadour;
+  static beastheart = beastheart;
+  static censor = censor;
+  static conduit = conduit;
+  static elementalist = elementalist;
+  static fury = fury;
+  static nullClass = nullClass;
+  static shadow = shadow;
+  static summoner = summoner;
+  static tactician = tactician;
+  static talent = talent;
+  static troubadour = troubadour;
 }

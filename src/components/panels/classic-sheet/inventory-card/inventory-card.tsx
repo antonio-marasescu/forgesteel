@@ -8,212 +8,217 @@ import { Markdown } from '@/components/controls/markdown/markdown';
 import './inventory-card.scss';
 
 interface InventoryProps {
-	character: HeroSheet;
-	wide?: boolean;
+  character: HeroSheet;
+  wide?: boolean;
 }
 
 export const TrinketsCard = (props: InventoryProps) => {
-	const character = props.character;
-	const wide = props.wide || false;
-	const cardClasses = [ 'inventory', 'trinkets', 'card' ];
+  const character = props.character;
+  const wide = props.wide || false;
+  const cardClasses = ['inventory', 'trinkets', 'card'];
 
-	const getTrinkets = () => {
-		return character.inventory?.filter(i => ItemLogic.isTrinket(i.item)) || [];
-	};
+  const getTrinkets = () => {
+    return character.inventory?.filter(i => ItemLogic.isTrinket(i.item)) || [];
+  };
 
-	return (
-		<div className={cardClasses.join(' ')}>
-			<h2>Trinkets</h2>
-			<div className={`features-container ${wide ? 'three-column' : 'two-column'}`}>
-				{getTrinkets().map(item => (
-					<ItemComponent key={item.id} item={item} character={character} />
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div className={cardClasses.join(' ')}>
+      <h2>Trinkets</h2>
+      <div className={`features-container ${wide ? 'three-column' : 'two-column'}`}>
+        {getTrinkets().map(item => (
+          <ItemComponent key={item.id} item={item} character={character} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export const ConsumablesCard = (props: InventoryProps) => {
-	const character = props.character;
-	const wide = props.wide || false;
-	const cardClasses = [ 'inventory', 'consumables', 'card' ];
+  const character = props.character;
+  const wide = props.wide || false;
+  const cardClasses = ['inventory', 'consumables', 'card'];
 
-	const consumables = character.inventory?.filter(i => [ ItemType.Consumable1st, ItemType.Consumable2nd, ItemType.Consumable3rd, ItemType.Consumable4th ].includes(i.item.type)) ?? [];
-	const maxConsumables = wide ? 4 : 2; // approximation
-	const displayShort = consumables.length > maxConsumables;
+  const consumables =
+    character.inventory?.filter(i =>
+      [
+        ItemType.Consumable1st,
+        ItemType.Consumable2nd,
+        ItemType.Consumable3rd,
+        ItemType.Consumable4th,
+      ].includes(i.item.type),
+    ) ?? [];
+  const maxConsumables = wide ? 4 : 2; // approximation
+  const displayShort = consumables.length > maxConsumables;
 
-	return (
-		<div className={cardClasses.join(' ')}>
-			<h2>Consumables</h2>
-			<div className={`features-container ${wide ? 'two-column' : ''}`}>
-				{consumables.map(item => (
-					<ItemComponent key={item.id} item={item} character={character} truncate={displayShort} />
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div className={cardClasses.join(' ')}>
+      <h2>Consumables</h2>
+      <div className={`features-container ${wide ? 'two-column' : ''}`}>
+        {consumables.map(item => (
+          <ItemComponent key={item.id} item={item} character={character} truncate={displayShort} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export const LeveledTreasureCard = (props: InventoryProps) => {
-	const character = props.character;
-	const columns = props.wide || false;
-	const cardClasses = [ 'inventory', 'leveled-treasure', 'card' ];
-	if (columns) {
-		cardClasses.push('wide');
-	}
+  const character = props.character;
+  const columns = props.wide || false;
+  const cardClasses = ['inventory', 'leveled-treasure', 'card'];
+  if (columns) {
+    cardClasses.push('wide');
+  }
 
-	const getLeveledTreasures = () => {
-		return character.inventory?.filter(i => ItemLogic.isLeveledTreasure(i.item)) || [];
-	};
+  const getLeveledTreasures = () => {
+    return character.inventory?.filter(i => ItemLogic.isLeveledTreasure(i.item)) || [];
+  };
 
-	const leveledTreasures = getLeveledTreasures();
+  const leveledTreasures = getLeveledTreasures();
 
-	return (
-		<div className={cardClasses.join(' ')}>
-			<h2>
-				<div className='title'>Leveled Treasures</div>
-				<div className='count'>
-					<label className={leveledTreasures.length > 3 ? 'extra' : undefined}>Carry Three Safely</label>
-					<div className='leveled-treasure-boxes'>
-						<ol>
-							{[ ...Array(Math.max(3, leveledTreasures.length)) ].map((_o, i) => {
-								return <li className={i >= 3 ? 'extra' : undefined} key={`leveled-treasure-marker-${i}`}>{leveledTreasures.length >= i + 1 ? '◼' : <>&nbsp;</>}</li>;
-							})}
-						</ol>
-					</div>
-				</div>
-			</h2>
-			<div className='features-container three-column'>
-				{leveledTreasures.map(item => (
-					<ItemComponent key={item.id} item={item} character={character} />
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div className={cardClasses.join(' ')}>
+      <h2>
+        <div className="title">Leveled Treasures</div>
+        <div className="count">
+          <label className={leveledTreasures.length > 3 ? 'extra' : undefined}>
+            Carry Three Safely
+          </label>
+          <div className="leveled-treasure-boxes">
+            <ol>
+              {[...Array(Math.max(3, leveledTreasures.length))].map((_o, i) => {
+                return (
+                  <li className={i >= 3 ? 'extra' : undefined} key={`leveled-treasure-marker-${i}`}>
+                    {leveledTreasures.length >= i + 1 ? '◼' : <>&nbsp;</>}
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </div>
+      </h2>
+      <div className="features-container three-column">
+        {leveledTreasures.map(item => (
+          <ItemComponent key={item.id} item={item} character={character} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 interface RemainingInventoryProps {
-	items: ItemSheet[];
-	character: HeroSheet;
+  items: ItemSheet[];
+  character: HeroSheet;
 }
 
 export const RemainingInventoryCard = (props: RemainingInventoryProps) => {
-	const items = props.items;
-	// items.forEach(i => console.log(i.item.name, i.features));
+  const items = props.items;
+  // items.forEach(i => console.log(i.item.name, i.features));
 
-	return (
-		<div className='inventory card'>
-			<h2>Remaining Inventory</h2>
-			<div className='features-container'>
-				{items.map(item => (
-					<ItemComponent key={item.id} item={item} character={props.character} />
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div className="inventory card">
+      <h2>Remaining Inventory</h2>
+      <div className="features-container">
+        {items.map(item => (
+          <ItemComponent key={item.id} item={item} character={props.character} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 interface ItemProps {
-	item: ItemSheet;
-	character: HeroSheet;
-	truncate?: boolean;
+  item: ItemSheet;
+  character: HeroSheet;
+  truncate?: boolean;
 }
 
 export const ItemComponent = (props: ItemProps) => {
-	const itemSheet = props.item;
-	const item = itemSheet.item;
-	const truncate = props.truncate ?? false;
+  const itemSheet = props.item;
+  const item = itemSheet.item;
+  const truncate = props.truncate ?? false;
 
-	const getItemName = () => {
-		let name = item.name;
+  const getItemName = () => {
+    let name = item.name;
 
-		if (item.count > 1) {
-			name += ` (x${item.count})`;
-		}
+    if (item.count > 1) {
+      name += ` (x${item.count})`;
+    }
 
-		if ([ ItemType.Consumable1st, ItemType.Consumable2nd, ItemType.Consumable3rd, ItemType.Consumable4th ].includes(item.type)) {
-			return (
-				<>
-					<span className='item-name'>{name}</span>
-					<span className='item-uses'>
-						<ol>
-							{[ ...Array(item.count) ].map((_o, i) => {
-								return <li key={`consumable-${item.id}-uses-${i}`}>◇</li>;
-							})}
-						</ol>
-					</span>
-				</>
-			);
-		}
+    if (
+      [
+        ItemType.Consumable1st,
+        ItemType.Consumable2nd,
+        ItemType.Consumable3rd,
+        ItemType.Consumable4th,
+      ].includes(item.type)
+    ) {
+      return (
+        <>
+          <span className="item-name">{name}</span>
+          <span className="item-uses">
+            <ol>
+              {[...Array(item.count)].map((_o, i) => {
+                return <li key={`consumable-${item.id}-uses-${i}`}>◇</li>;
+              })}
+            </ol>
+          </span>
+        </>
+      );
+    }
 
-		return name;
-	};
+    return name;
+  };
 
-	const getItemType = () => {
-		let type = item.type.toString();
+  const getItemType = () => {
+    let type = item.type.toString();
 
-		if (ItemLogic.isTrinket(item)) {
-			type = 'Trinket';
-		} else if (ItemLogic.isImbuedItem(item)) {
-			type = '';
-		}
+    if (ItemLogic.isTrinket(item)) {
+      type = 'Trinket';
+    } else if (ItemLogic.isImbuedItem(item)) {
+      type = '';
+    }
 
-		return type;
-	};
+    return type;
+  };
 
-	const getItemDetails = () => {
-		return (
-			<>
-				{
-					ItemLogic.isImbuedItem(item) ?
-						<LabeledTextField
-							label={item.type.toString().slice(7)}
-							additionalClasses={[ 'label-overlay' ]}
-							content={undefined}
-						/>
-						: null
-				}
-				<Markdown
-					text={itemSheet.effect}
-					className='item-effect'
-					key={`item-effect-${item.id}`}
-				/>
-				{
-					featuresToDisplay.length ?
-						<div className='item-features'>
-							{featuresToDisplay.map(f =>
-								<FeatureComponent
-									key={f.id}
-									hero={props.character.hero}
-									feature={f}
-								/>
-							)}
-						</div>
-						: null
-				}
-			</>
-		);
-	};
+  const getItemDetails = () => {
+    return (
+      <>
+        {ItemLogic.isImbuedItem(item) ? (
+          <LabeledTextField
+            label={item.type.toString().slice(7)}
+            additionalClasses={['label-overlay']}
+            content={undefined}
+          />
+        ) : null}
+        <Markdown text={itemSheet.effect} className="item-effect" key={`item-effect-${item.id}`} />
+        {featuresToDisplay.length ? (
+          <div className="item-features">
+            {featuresToDisplay.map(f => (
+              <FeatureComponent key={f.id} hero={props.character.hero} feature={f} />
+            ))}
+          </div>
+        ) : null}
+      </>
+    );
+  };
 
-	// const isArtifact = itemSheet.item.type === ItemType.Artifact;
-	// let featuresToDisplay = itemSheet.features ?? [];
-	// if (!isArtifact) {
-	// 	featuresToDisplay = featuresToDisplay.filter(f => f.id !== item.id);
-	// }
-	const featuresToDisplay = itemSheet.features?.filter(f => f.id !== item.id) ?? [];
+  // const isArtifact = itemSheet.item.type === ItemType.Artifact;
+  // let featuresToDisplay = itemSheet.features ?? [];
+  // if (!isArtifact) {
+  // 	featuresToDisplay = featuresToDisplay.filter(f => f.id !== item.id);
+  // }
+  const featuresToDisplay = itemSheet.features?.filter(f => f.id !== item.id) ?? [];
 
-	return (
-		<div className='item'>
-			<h3>{getItemName()}</h3>
-			<div className='keywords-item-type'>
-				<div className='keywords'>{item.keywords.join(', ')}</div>
-				<div className='item-type'>{getItemType()}</div>
-			</div>
-			{
-				truncate ?
-					null
-					: getItemDetails()
-			}
-		</div>
-	);
+  return (
+    <div className="item">
+      <h3>{getItemName()}</h3>
+      <div className="keywords-item-type">
+        <div className="keywords">{item.keywords.join(', ')}</div>
+        <div className="item-type">{getItemType()}</div>
+      </div>
+      {truncate ? null : getItemDetails()}
+    </div>
+  );
 };

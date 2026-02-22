@@ -6,34 +6,36 @@ import { Options } from '@/models/options';
 import './malice-card.scss';
 
 interface Props {
-	encounter: EncounterSheet;
-	options: Options;
+  encounter: EncounterSheet;
+  options: Options;
 }
 
 export const MaliceCard = (props: Props) => {
-	const encounter = useMemo(() => props.encounter, [ props.encounter ]);
+  const encounter = useMemo(() => props.encounter, [props.encounter]);
 
-	return (
-		<div className='malice card'>
-			<h2>
-				Malice Features
-				<br />
-				<span>At the start of a monster’s turn, you can spend malice to activate a Malice feature</span>
-			</h2>
-			<div className='malice-features features-container three-column'>
-				{encounter.malice?.map(m => {
-					return (
-						<Fragment key={`malice-group-${m.monster}`}>
-							{m.malice.map((malice, i) =>
-								<Fragment key={malice.id}>
-									{i === 0 ? <h3>{m.monster} Malice</h3> : null}
-									<FeatureComponent feature={malice} />
-								</Fragment>
-							)}
-						</Fragment>
-					);
-				})}
-			</div>
-		</div>
-	);
+  return (
+    <div className="malice card">
+      <h2>
+        Malice Features
+        <br />
+        <span>
+          At the start of a monster’s turn, you can spend malice to activate a Malice feature
+        </span>
+      </h2>
+      <div className="malice-features features-container three-column">
+        {encounter.malice?.map(m => {
+          return (
+            <Fragment key={`malice-group-${m.monster}`}>
+              {m.malice.map((malice, i) => (
+                <Fragment key={malice.id}>
+                  {i === 0 ? <h3>{m.monster} Malice</h3> : null}
+                  <FeatureComponent feature={malice} />
+                </Fragment>
+              ))}
+            </Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
 };

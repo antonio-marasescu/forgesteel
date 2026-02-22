@@ -8,51 +8,45 @@ import { SheetFormatter } from '@/logic/classic-sheet/sheet-formatter';
 import { useMemo } from 'react';
 
 interface Props {
-	hero: Hero;
-	options: Options;
-};
+  hero: Hero;
+  options: Options;
+}
 
 export const StandardAbilitiesPage = (props: Props) => {
-	const abilities = useMemo(
-		() => AbilityData.standardAbilities.map(a => ClassicSheetBuilder.buildAbilitySheet(a, props.hero, undefined, props.options)),
-		[ props.hero, props.options ]
-	);
-	abilities.sort((a, b) => SheetFormatter.sortAbilitiesByType(a, b, 'asc'));
+  const abilities = useMemo(
+    () =>
+      AbilityData.standardAbilities.map(a =>
+        ClassicSheetBuilder.buildAbilitySheet(a, props.hero, undefined, props.options),
+      ),
+    [props.hero, props.options],
+  );
+  abilities.sort((a, b) => SheetFormatter.sortAbilitiesByType(a, b, 'asc'));
 
-	const layout = useMemo(
-		() => SheetLayout.getAbilityLayout(props.options),
-		[ props.options ]
-	);
+  const layout = useMemo(() => SheetLayout.getAbilityLayout(props.options), [props.options]);
 
-	const sheetClasses = useMemo(
-		() => {
-			const classes = [
-				'hero-sheet',
-				props.options.classicSheetPageSize.toLowerCase()
-			];
-			if (props.options.colorSheet) {
-				classes.push('color');
-				classes.push(`colors-${props.options.colorScheme}`);
-			}
-			return classes;
-		},
-		[ props.options.classicSheetPageSize, props.options.colorSheet, props.options.colorScheme ]
-	);
+  const sheetClasses = useMemo(() => {
+    const classes = ['hero-sheet', props.options.classicSheetPageSize.toLowerCase()];
+    if (props.options.colorSheet) {
+      classes.push('color');
+      classes.push(`colors-${props.options.colorScheme}`);
+    }
+    return classes;
+  }, [props.options.classicSheetPageSize, props.options.colorSheet, props.options.colorScheme]);
 
-	const extraCards = {
-		required: [],
-		optional: []
-	} as ExtraCards;
+  const extraCards = {
+    required: [],
+    optional: [],
+  } as ExtraCards;
 
-	return (
-		<ErrorBoundary>
-			<main id='classic-sheet'>
-				<div className={sheetClasses.join(' ')} id={props.hero.id}>
-					{
-						SheetLayout.getAbilityPages(abilities, extraCards, layout, p => SheetFormatter.getPageId('hero-sheet', 'standard-abilities', `abilities-${p}`))
-					}
-				</div>
-			</main>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <main id="classic-sheet">
+        <div className={sheetClasses.join(' ')} id={props.hero.id}>
+          {SheetLayout.getAbilityPages(abilities, extraCards, layout, p =>
+            SheetFormatter.getPageId('hero-sheet', 'standard-abilities', `abilities-${p}`),
+          )}
+        </div>
+      </main>
+    </ErrorBoundary>
+  );
 };

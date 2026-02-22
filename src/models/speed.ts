@@ -1,4 +1,4 @@
 export interface Speed {
-	value: number;
-	modes: string[];
-};
+  value: number;
+  modes: string[];
+}

@@ -1,5 +1,10 @@
 import { Button, Divider, Popover, Space, Tabs, Upload } from 'antd';
-import { DownOutlined, DownloadOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import {
+  DownOutlined,
+  DownloadOutlined,
+  PlusOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import { AppFooter } from '@/components/panels/app-footer/app-footer';
 import { AppHeader } from '@/components/panels/app-header/app-header';
 import { Collections } from '@/utils/collections';
@@ -24,174 +29,188 @@ import { useTitle } from '@/hooks/use-title';
 import './hero-list-page.scss';
 
 interface Props {
-	heroes: Hero[];
-	sourcebooks: Sourcebook[];
-	options: Options;
-	highlightAbout: boolean;
-	showReference: () => void;
-	showRoll: () => void;
-	showAbout: () => void;
-	showSettings: () => void;
-	addHero: (folder: string) => void;
-	importHero: (hero: Hero, folder: string) => void;
-	showParty: (folder: string) => void;
+  heroes: Hero[];
+  sourcebooks: Sourcebook[];
+  options: Options;
+  highlightAbout: boolean;
+  showReference: () => void;
+  showRoll: () => void;
+  showAbout: () => void;
+  showSettings: () => void;
+  addHero: (folder: string) => void;
+  importHero: (hero: Hero, folder: string) => void;
+  showParty: (folder: string) => void;
 }
 
 export const HeroListPage = (props: Props) => {
-	const navigation = useNavigation();
-	const { folder } = useParams<{ folder: string }>();
-	const [ previousTab, setPreviousTab ] = useState<string | undefined>(folder);
-	const [ currentTab, setCurrentTab ] = useState<string>(folder ?? '');
-	const [ searchTerm, setSearchTerm ] = useState<string>('');
-	useTitle('Heroes');
+  const navigation = useNavigation();
+  const { folder } = useParams<{ folder: string }>();
+  const [previousTab, setPreviousTab] = useState<string | undefined>(folder);
+  const [currentTab, setCurrentTab] = useState<string>(folder ?? '');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  useTitle('Heroes');
 
-	if (folder !== previousTab) {
-		setCurrentTab(folder ?? '');
-		setPreviousTab(folder);
-	}
+  if (folder !== previousTab) {
+    setCurrentTab(folder ?? '');
+    setPreviousTab(folder);
+  }
 
-	const folders = Collections.distinct(props.heroes.map(h => h.folder).sort(), f => f);
-	if (folders.length === 0) {
-		folders.push('');
-	}
+  const folders = Collections.distinct(props.heroes.map(h => h.folder).sort(), f => f);
+  if (folders.length === 0) {
+    folders.push('');
+  }
 
-	const getHeroes = (folder: string) => {
-		return props.heroes
-			.filter(h => h.folder === folder)
-			.filter(h => Utils.textMatches([
-				h.name,
-				h.ancestry?.name || '',
-				h.culture?.name || '',
-				h.career?.name || '',
-				h.class?.name || '',
-				h.complication?.name || ''
-			], searchTerm));
-	};
+  const getHeroes = (folder: string) => {
+    return props.heroes
+      .filter(h => h.folder === folder)
+      .filter(h =>
+        Utils.textMatches(
+          [
+            h.name,
+            h.ancestry?.name || '',
+            h.culture?.name || '',
+            h.career?.name || '',
+            h.class?.name || '',
+            h.complication?.name || '',
+          ],
+          searchTerm,
+        ),
+      );
+  };
 
-	const getHeroesSection = (list: Hero[]) => {
-		if (list.length === 0) {
-			return (
-				<Empty />
-			);
-		}
+  const getHeroesSection = (list: Hero[]) => {
+    if (list.length === 0) {
+      return <Empty />;
+    }
 
-		return (
-			<div className='hero-section-row'>
-				{
-					list.map(hero => (
-						<SelectablePanel key={hero.id} watermark={hero.picture || undefined} onSelect={() => navigation.goToHeroView(hero.id)}>
-							<HeroPanel hero={hero} sourcebooks={props.sourcebooks} options={props.options} />
-						</SelectablePanel>
-					))
-				}
-			</div>
-		);
-	};
+    return (
+      <div className="hero-section-row">
+        {list.map(hero => (
+          <SelectablePanel
+            key={hero.id}
+            watermark={hero.picture || undefined}
+            onSelect={() => navigation.goToHeroView(hero.id)}
+          >
+            <HeroPanel hero={hero} sourcebooks={props.sourcebooks} options={props.options} />
+          </SelectablePanel>
+        ))}
+      </div>
+    );
+  };
 
-	const exampleHeroes = [
-		HeroData.dwarfFury,
-		HeroData.highElfTactician,
-		HeroData.humanCensor,
-		HeroData.humanNull,
-		HeroData.humanTalent,
-		HeroData.orcConduit,
-		HeroData.polderElementalist,
-		HeroData.polderShadow,
-		HeroData.wodeElfTroubadour
-	];
+  const exampleHeroes = [
+    HeroData.dwarfFury,
+    HeroData.highElfTactician,
+    HeroData.humanCensor,
+    HeroData.humanNull,
+    HeroData.humanTalent,
+    HeroData.orcConduit,
+    HeroData.polderElementalist,
+    HeroData.polderShadow,
+    HeroData.wodeElfTroubadour,
+  ];
 
-	return (
-		<ErrorBoundary>
-			<div className='hero-list-page'>
-				<AppHeader subheader='Heroes'>
-					<SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-					<div className='divider' />
-					<Popover
-						trigger='click'
-						content={(
-							<Space orientation='vertical' style={{ width: '300px' }}>
-								<Button type='primary' block={true} icon={<PlusOutlined />} onClick={() => props.addHero(currentTab)}>
-									Create a New Hero
-								</Button>
-								<Divider />
-								<Upload
-									style={{ width: '100%' }}
-									accept='.drawsteel-hero,.ds-hero'
-									showUploadList={false}
-									beforeUpload={file => {
-										file
-											.text()
-											.then(json => {
-												const hero = JSON.parse(json) as Hero;
-												props.importHero(hero, currentTab);
-											});
-										return false;
-									}}
-								>
-									<Button block={true} icon={<DownloadOutlined />}>
-										Import a Hero File
-									</Button>
-								</Upload>
-								<Button block={true} icon={<ThunderboltOutlined />} onClick={() => props.importHero(HeroLogic.createRandomHero(), currentTab)}>
-									Generate a Random Hero
-								</Button>
-								<Expander title='Use a premade example'>
-									<Space orientation='vertical' style={{ width: '100%', maxHeight: '200px', overflowY: 'auto' }}>
-										{
-											exampleHeroes.map(h => (
-												<Button key={h.id} className='container-button' block={true} onClick={() => props.importHero(h, currentTab)}>
-													<HeroInfo hero={h} />
-												</Button>
-											))
-										}
-									</Space>
-								</Expander>
-							</Space>
-						)}
-					>
-						<Button type='primary'>
-							Add
-							<DownOutlined />
-						</Button>
-					</Popover>
-					{
-						getHeroes(currentTab).length > 1 ?
-							<>
-								<div className='divider' />
-								<Button onClick={() => props.showParty(currentTab)}>
-									Party Overview
-								</Button>
-							</>
-							: null
-					}
-				</AppHeader>
-				<ErrorBoundary>
-					<div className='hero-list-page-content'>
-						<Tabs
-							activeKey={currentTab}
-							items={folders.map(f => ({
-								key: f,
-								label: (
-									<div className='section-header'>
-										<div className='section-title'>{f || 'Heroes'}</div>
-										<div className='section-count'>{getHeroes(f).length}</div>
-									</div>
-								),
-								children: getHeroesSection(getHeroes(f))
-							}))}
-							onChange={navigation.goToHeroList}
-						/>
-					</div>
-				</ErrorBoundary>
-				<AppFooter
-					page='heroes'
-					highlightAbout={props.highlightAbout}
-					showReference={props.showReference}
-					showRoll={props.showRoll}
-					showAbout={props.showAbout}
-					showSettings={props.showSettings}
-				/>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="hero-list-page">
+        <AppHeader subheader="Heroes">
+          <SearchBox searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <div className="divider" />
+          <Popover
+            trigger="click"
+            content={
+              <Space orientation="vertical" style={{ width: '300px' }}>
+                <Button
+                  type="primary"
+                  block={true}
+                  icon={<PlusOutlined />}
+                  onClick={() => props.addHero(currentTab)}
+                >
+                  Create a New Hero
+                </Button>
+                <Divider />
+                <Upload
+                  style={{ width: '100%' }}
+                  accept=".drawsteel-hero,.ds-hero"
+                  showUploadList={false}
+                  beforeUpload={file => {
+                    file.text().then(json => {
+                      const hero = JSON.parse(json) as Hero;
+                      props.importHero(hero, currentTab);
+                    });
+                    return false;
+                  }}
+                >
+                  <Button block={true} icon={<DownloadOutlined />}>
+                    Import a Hero File
+                  </Button>
+                </Upload>
+                <Button
+                  block={true}
+                  icon={<ThunderboltOutlined />}
+                  onClick={() => props.importHero(HeroLogic.createRandomHero(), currentTab)}
+                >
+                  Generate a Random Hero
+                </Button>
+                <Expander title="Use a premade example">
+                  <Space
+                    orientation="vertical"
+                    style={{ width: '100%', maxHeight: '200px', overflowY: 'auto' }}
+                  >
+                    {exampleHeroes.map(h => (
+                      <Button
+                        key={h.id}
+                        className="container-button"
+                        block={true}
+                        onClick={() => props.importHero(h, currentTab)}
+                      >
+                        <HeroInfo hero={h} />
+                      </Button>
+                    ))}
+                  </Space>
+                </Expander>
+              </Space>
+            }
+          >
+            <Button type="primary">
+              Add
+              <DownOutlined />
+            </Button>
+          </Popover>
+          {getHeroes(currentTab).length > 1 ? (
+            <>
+              <div className="divider" />
+              <Button onClick={() => props.showParty(currentTab)}>Party Overview</Button>
+            </>
+          ) : null}
+        </AppHeader>
+        <ErrorBoundary>
+          <div className="hero-list-page-content">
+            <Tabs
+              activeKey={currentTab}
+              items={folders.map(f => ({
+                key: f,
+                label: (
+                  <div className="section-header">
+                    <div className="section-title">{f || 'Heroes'}</div>
+                    <div className="section-count">{getHeroes(f).length}</div>
+                  </div>
+                ),
+                children: getHeroesSection(getHeroes(f)),
+              }))}
+              onChange={navigation.goToHeroList}
+            />
+          </div>
+        </ErrorBoundary>
+        <AppFooter
+          page="heroes"
+          highlightAbout={props.highlightAbout}
+          showReference={props.showReference}
+          showRoll={props.showRoll}
+          showAbout={props.showAbout}
+          showSettings={props.showSettings}
+        />
+      </div>
+    </ErrorBoundary>
+  );
 };

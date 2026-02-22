@@ -11,88 +11,89 @@ import { useState } from 'react';
 import './standard-ability-select-modal.scss';
 
 interface Props {
-	abilityIDs: string[];
-	onClose: () => void;
-	onSelect: (abilityIDs: string[]) => void;
+  abilityIDs: string[];
+  onClose: () => void;
+  onSelect: (abilityIDs: string[]) => void;
 }
 
 export const StandardAbilitySelectModal = (props: Props) => {
-	const [ abilityIDs, setAbilityIDs ] = useState<string[]>(Utils.copy(props.abilityIDs));
+  const [abilityIDs, setAbilityIDs] = useState<string[]>(Utils.copy(props.abilityIDs));
 
-	const addAbilityIDs = (ids: string[]) => {
-		const copy = Utils.copy(abilityIDs);
-		copy.push(...ids.filter(id => !copy.includes(id)));
+  const addAbilityIDs = (ids: string[]) => {
+    const copy = Utils.copy(abilityIDs);
+    copy.push(...ids.filter(id => !copy.includes(id)));
 
-		setAbilityIDs(copy);
-		props.onSelect(copy);
-	};
+    setAbilityIDs(copy);
+    props.onSelect(copy);
+  };
 
-	const removeAbilityIDs = (ids: string[]) => {
-		const copy = Utils.copy(abilityIDs).filter(id => !ids.includes(id));
+  const removeAbilityIDs = (ids: string[]) => {
+    const copy = Utils.copy(abilityIDs).filter(id => !ids.includes(id));
 
-		setAbilityIDs(copy);
-		props.onSelect(copy);
-	};
+    setAbilityIDs(copy);
+    props.onSelect(copy);
+  };
 
-	return (
-		<Modal
-			content={
-				<div className='standard-ability-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						{
-							Collections
-								.distinct(AbilityData.standardAbilities.map(a => a.type.usage), usage => usage)
-								.map(usage => (
-									<div key={usage}>
-										<HeaderText
-											extra={
-												<Flex>
-													<Button
-														type='text'
-														icon={<MinusCircleOutlined />}
-														onClick={() => {
-															const abilityIDs = AbilityData.standardAbilities.filter(a => a.type.usage === usage).map(a => a.id);
-															removeAbilityIDs(abilityIDs);
-														}}
-													/>
-													<Button
-														type='text'
-														icon={<PlusCircleOutlined />}
-														onClick={() => {
-															const abilityIDs = AbilityData.standardAbilities.filter(a => a.type.usage === usage).map(a => a.id);
-															addAbilityIDs(abilityIDs);
-														}}
-													/>
-												</Flex>
-											}
-										>
-											{usage}
-										</HeaderText>
-										{
-											AbilityData.standardAbilities
-												.filter(a => a.type.usage === usage)
-												.map(a => (
-													<Toggle
-														key={a.id}
-														label={a.name}
-														value={abilityIDs.includes(a.id)}
-														onChange={value => {
-															if (value) {
-																addAbilityIDs([ a.id ]);
-															} else {
-																removeAbilityIDs([ a.id ]);
-															}
-														}}
-													/>
-												))
-										}
-									</div>
-								))
-						}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      content={
+        <div className="standard-ability-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            {Collections.distinct(
+              AbilityData.standardAbilities.map(a => a.type.usage),
+              usage => usage,
+            ).map(usage => (
+              <div key={usage}>
+                <HeaderText
+                  extra={
+                    <Flex>
+                      <Button
+                        type="text"
+                        icon={<MinusCircleOutlined />}
+                        onClick={() => {
+                          const abilityIDs = AbilityData.standardAbilities
+                            .filter(a => a.type.usage === usage)
+                            .map(a => a.id);
+                          removeAbilityIDs(abilityIDs);
+                        }}
+                      />
+                      <Button
+                        type="text"
+                        icon={<PlusCircleOutlined />}
+                        onClick={() => {
+                          const abilityIDs = AbilityData.standardAbilities
+                            .filter(a => a.type.usage === usage)
+                            .map(a => a.id);
+                          addAbilityIDs(abilityIDs);
+                        }}
+                      />
+                    </Flex>
+                  }
+                >
+                  {usage}
+                </HeaderText>
+                {AbilityData.standardAbilities
+                  .filter(a => a.type.usage === usage)
+                  .map(a => (
+                    <Toggle
+                      key={a.id}
+                      label={a.name}
+                      value={abilityIDs.includes(a.id)}
+                      onChange={value => {
+                        if (value) {
+                          addAbilityIDs([a.id]);
+                        } else {
+                          removeAbilityIDs([a.id]);
+                        }
+                      }}
+                    />
+                  ))}
+              </div>
+            ))}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

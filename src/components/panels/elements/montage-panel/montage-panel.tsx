@@ -20,165 +20,185 @@ import { useState } from 'react';
 import './montage-panel.scss';
 
 interface Props {
-	montage: Montage;
-	heroes: Hero[];
-	sourcebooks: Sourcebook[];
-	options: Options;
-	mode?: PanelMode;
+  montage: Montage;
+  heroes: Hero[];
+  sourcebooks: Sourcebook[];
+  options: Options;
+  mode?: PanelMode;
 }
 
 export const MontagePanel = (props: Props) => {
-	const [ page, setPage ] = useState<string>('overview');
+  const [page, setPage] = useState<string>('overview');
 
-	const getOverview = () => {
-		return (
-			<>
-				<Markdown text={props.montage.description} />
-				<StatsRow>
-					<Field
-						orientation='vertical'
-						label='Difficulty'
-						value={props.montage.difficulty}
-					/>
-					<Field
-						orientation='vertical'
-						label='Success Limit'
-						value={(
-							<Space>
-								{MontageLogic.getSuccessLimit(props.montage, props.heroes, props.options)}
-								<CheckIcon state='success' />
-							</Space>
-						)}
-					/>
-					<Field
-						orientation='vertical'
-						label='Failure Limit'
-						value={(
-							<Space>
-								{MontageLogic.getFailureLimit(props.montage, props.heroes, props.options)}
-								<CheckIcon state='failure' />
-							</Space>
-						)}
-					/>
-				</StatsRow>
-				<HeaderText>Setting the Scene</HeaderText>
-				<Markdown text={props.montage.scene} />
-			</>
-		);
-	};
+  const getOverview = () => {
+    return (
+      <>
+        <Markdown text={props.montage.description} />
+        <StatsRow>
+          <Field orientation="vertical" label="Difficulty" value={props.montage.difficulty} />
+          <Field
+            orientation="vertical"
+            label="Success Limit"
+            value={
+              <Space>
+                {MontageLogic.getSuccessLimit(props.montage, props.heroes, props.options)}
+                <CheckIcon state="success" />
+              </Space>
+            }
+          />
+          <Field
+            orientation="vertical"
+            label="Failure Limit"
+            value={
+              <Space>
+                {MontageLogic.getFailureLimit(props.montage, props.heroes, props.options)}
+                <CheckIcon state="failure" />
+              </Space>
+            }
+          />
+        </StatsRow>
+        <HeaderText>Setting the Scene</HeaderText>
+        <Markdown text={props.montage.scene} />
+      </>
+    );
+  };
 
-	const getSection = (section: MontageSection) => {
-		const getChallenge = (challenge: MontageChallenge) => {
-			return (
-				<div key={challenge.id} className='montage-challenge'>
-					<Flex align='center' justify='space-between' gap={10}>
-						<Field
-							style={{ flex: '1 1 0', opacity: (challenge.successes + challenge.failures) >= challenge.uses ? 0.3 : 1 }}
-							label={challenge.name}
-							labelTag={challenge.uses > 1 ? <Pill>x{challenge.uses}</Pill> : null}
-							value={
-								<Markdown text={challenge.description} useSpan={true} />
-							}
-						/>
-					</Flex>
-					<ul>
-						{challenge.characteristics.length > 0 ? <li><Field label='Characteristics' value={challenge.characteristics.join(', ')} /></li> : null}
-						{challenge.skills.length > 0 ? <li><Field label='Skills' value={challenge.skills} /></li> : null}
-						{challenge.abilities.length > 0 ? <li><Field label='Abilities' value={challenge.abilities} /></li> : null}
-					</ul>
-				</div>
-			);
-		};
+  const getSection = (section: MontageSection) => {
+    const getChallenge = (challenge: MontageChallenge) => {
+      return (
+        <div key={challenge.id} className="montage-challenge">
+          <Flex align="center" justify="space-between" gap={10}>
+            <Field
+              style={{
+                flex: '1 1 0',
+                opacity: challenge.successes + challenge.failures >= challenge.uses ? 0.3 : 1,
+              }}
+              label={challenge.name}
+              labelTag={challenge.uses > 1 ? <Pill>x{challenge.uses}</Pill> : null}
+              value={<Markdown text={challenge.description} useSpan={true} />}
+            />
+          </Flex>
+          <ul>
+            {challenge.characteristics.length > 0 ? (
+              <li>
+                <Field label="Characteristics" value={challenge.characteristics.join(', ')} />
+              </li>
+            ) : null}
+            {challenge.skills.length > 0 ? (
+              <li>
+                <Field label="Skills" value={challenge.skills} />
+              </li>
+            ) : null}
+            {challenge.abilities.length > 0 ? (
+              <li>
+                <Field label="Abilities" value={challenge.abilities} />
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      );
+    };
 
-		return (
-			<div key={section.id} className='montage-section'>
-				<Markdown text={section.description} />
-				<HeaderText>{section.name || 'Montage'} Challenges</HeaderText>
-				{section.challenges.map(getChallenge)}
-				{(section.twists.length > 0) || (section.twistInfo !== '') ? <HeaderText>Optional Twists</HeaderText> : null}
-				<Markdown text={section.twistInfo} />
-				{
-					section.twists.map(t => (
-						<Field
-							key={t.id}
-							label={t.name}
-							value={
-								<Markdown text={t.description} useSpan={true} />
-							}
-						/>
-					))
-				}
-			</div>
-		);
-	};
+    return (
+      <div key={section.id} className="montage-section">
+        <Markdown text={section.description} />
+        <HeaderText>{section.name || 'Montage'} Challenges</HeaderText>
+        {section.challenges.map(getChallenge)}
+        {section.twists.length > 0 || section.twistInfo !== '' ? (
+          <HeaderText>Optional Twists</HeaderText>
+        ) : null}
+        <Markdown text={section.twistInfo} />
+        {section.twists.map(t => (
+          <Field
+            key={t.id}
+            label={t.name}
+            value={<Markdown text={t.description} useSpan={true} />}
+          />
+        ))}
+      </div>
+    );
+  };
 
-	const getOutcomes = () => {
-		return (
-			<>
-				<Field label='Total Success' value={<Markdown text={props.montage.outcomes.totalSuccess} useSpan={true} />} />
-				<Field label='Partial Success' value={<Markdown text={props.montage.outcomes.partialSuccess} useSpan={true} />} />
-				<Field label='Total Failure' value={<Markdown text={props.montage.outcomes.totalFailure} useSpan={true} />} />
-			</>
-		);
-	};
+  const getOutcomes = () => {
+    return (
+      <>
+        <Field
+          label="Total Success"
+          value={<Markdown text={props.montage.outcomes.totalSuccess} useSpan={true} />}
+        />
+        <Field
+          label="Partial Success"
+          value={<Markdown text={props.montage.outcomes.partialSuccess} useSpan={true} />}
+        />
+        <Field
+          label="Total Failure"
+          value={<Markdown text={props.montage.outcomes.totalFailure} useSpan={true} />}
+        />
+      </>
+    );
+  };
 
-	const getContent = () => {
-		let content = null;
-		switch (page) {
-			case 'overview':
-				content = getOverview();
-				break;
-			case 'outcomes':
-				content = getOutcomes();
-				break;
-			default:
-				content = getSection(props.montage.sections.find(s => s.id === page) as MontageSection);
-				break;
-		}
+  const getContent = () => {
+    let content = null;
+    switch (page) {
+      case 'overview':
+        content = getOverview();
+        break;
+      case 'outcomes':
+        content = getOutcomes();
+        break;
+      default:
+        content = getSection(props.montage.sections.find(s => s.id === page) as MontageSection);
+        break;
+    }
 
-		return (
-			<>
-				<Segmented
-					style={{ marginBottom: '20px' }}
-					block={true}
-					options={[
-						{ value: 'overview', label: 'Overview' },
-						...props.montage.sections.map(s => ({ value: s.id, label: s.name || 'Details' })),
-						{ value: 'outcomes', label: 'Outcomes' }
-					]}
-					value={page}
-					onChange={setPage}
-				/>
-				{content}
-			</>
-		);
-	};
+    return (
+      <>
+        <Segmented
+          style={{ marginBottom: '20px' }}
+          block={true}
+          options={[
+            { value: 'overview', label: 'Overview' },
+            ...props.montage.sections.map(s => ({ value: s.id, label: s.name || 'Details' })),
+            { value: 'outcomes', label: 'Outcomes' },
+          ]}
+          value={page}
+          onChange={setPage}
+        />
+        {content}
+      </>
+    );
+  };
 
-	const tags = [];
-	if (props.sourcebooks.length > 0) {
-		const sourcebookType = SourcebookLogic.getMontageSourcebook(props.sourcebooks, props.montage)?.type || SourcebookType.Official;
-		if (sourcebookType !== SourcebookType.Official) {
-			tags.push(sourcebookType);
-		}
-	}
+  const tags = [];
+  if (props.sourcebooks.length > 0) {
+    const sourcebookType =
+      SourcebookLogic.getMontageSourcebook(props.sourcebooks, props.montage)?.type ||
+      SourcebookType.Official;
+    if (sourcebookType !== SourcebookType.Official) {
+      tags.push(sourcebookType);
+    }
+  }
 
-	if (props.mode !== PanelMode.Full) {
-		return (
-			<div className='montage-panel compact'>
-				<HeaderText level={1} tags={tags}>
-					{props.montage.name || 'Unnamed Montage'}
-				</HeaderText>
-				<Markdown text={props.montage.description} />
-			</div>
-		);
-	}
+  if (props.mode !== PanelMode.Full) {
+    return (
+      <div className="montage-panel compact">
+        <HeaderText level={1} tags={tags}>
+          {props.montage.name || 'Unnamed Montage'}
+        </HeaderText>
+        <Markdown text={props.montage.description} />
+      </div>
+    );
+  }
 
-	return (
-		<ErrorBoundary>
-			<div className='montage-panel' id={SheetFormatter.getPageId('montage', props.montage.id)}>
-				<HeaderText level={1} tags={tags}>{props.montage.name || 'Unnamed Montage'}</HeaderText>
-				{getContent()}
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="montage-panel" id={SheetFormatter.getPageId('montage', props.montage.id)}>
+        <HeaderText level={1} tags={tags}>
+          {props.montage.name || 'Unnamed Montage'}
+        </HeaderText>
+        {getContent()}
+      </div>
+    </ErrorBoundary>
+  );
 };

@@ -10,53 +10,54 @@ import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 interface InfoProps {
-	data: FeatureLanguageData;
-	feature: Feature;
-	hero?: Hero;
-	sourcebooks?: Sourcebook[];
-	options: Options;
+  data: FeatureLanguageData;
+  feature: Feature;
+  hero?: Hero;
+  sourcebooks?: Sourcebook[];
+  options: Options;
 }
 
 export const InfoLanguage = (props: InfoProps) => {
-	if (!props.feature.description) {
-		return (
-			<Field label='Language' value={props.data.language} />
-		);
-	}
+  if (!props.feature.description) {
+    return <Field label="Language" value={props.data.language} />;
+  }
 
-	return null;
+  return null;
 };
 
 interface EditProps {
-	data: FeatureLanguageData;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setData: (data: FeatureLanguageData) => void;
+  data: FeatureLanguageData;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setData: (data: FeatureLanguageData) => void;
 }
 
 export const EditLanguage = (props: EditProps) => {
-	const [ data, setData ] = useState<FeatureLanguageData>(Utils.copy(props.data));
+  const [data, setData] = useState<FeatureLanguageData>(Utils.copy(props.data));
 
-	const setLanguage = (value: string) => {
-		const copy = Utils.copy(data);
-		copy.language = value;
-		setData(copy);
-		props.setData(copy);
-	};
+  const setLanguage = (value: string) => {
+    const copy = Utils.copy(data);
+    copy.language = value;
+    setData(copy);
+    props.setData(copy);
+  };
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			<HeaderText>Language</HeaderText>
-			<Select
-				style={{ width: '100%' }}
-				status={data.language === '' ? 'warning' : ''}
-				placeholder='Language'
-				allowClear={true}
-				options={SourcebookLogic.getLanguages(props.sourcebooks).map(option => ({ value: option.name, description: option.description }))}
-				optionRender={option => <Field label={option.data.value} value={option.data.description} />}
-				value={data.language || ''}
-				onChange={setLanguage}
-			/>
-		</Space>
-	);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      <HeaderText>Language</HeaderText>
+      <Select
+        style={{ width: '100%' }}
+        status={data.language === '' ? 'warning' : ''}
+        placeholder="Language"
+        allowClear={true}
+        options={SourcebookLogic.getLanguages(props.sourcebooks).map(option => ({
+          value: option.name,
+          description: option.description,
+        }))}
+        optionRender={option => <Field label={option.data.value} value={option.data.description} />}
+        value={data.language || ''}
+        onChange={setLanguage}
+      />
+    </Space>
+  );
 };

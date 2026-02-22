@@ -4,15 +4,15 @@ import { DamageType } from '@/enums/damage-type';
 import { FeatureField } from '@/enums/feature-field';
 
 export interface Modifier {
-	value: number;
-	valueFromController: FeatureField | null;
-	valueCharacteristics: Characteristic[];
-	valueCharacteristicMultiplier: number;
-	valuePerLevel: number;
-	valuePerEchelon: number;
+  value: number;
+  valueFromController: FeatureField | null;
+  valueCharacteristics: Characteristic[];
+  valueCharacteristicMultiplier: number;
+  valuePerLevel: number;
+  valuePerEchelon: number;
 }
 
 export interface DamageModifier extends Modifier {
-	damageType: DamageType;
-	type: DamageModifierType;
+  damageType: DamageType;
+  type: DamageModifierType;
 }

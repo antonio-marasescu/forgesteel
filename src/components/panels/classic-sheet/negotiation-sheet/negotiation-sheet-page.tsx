@@ -12,42 +12,39 @@ import { useMemo } from 'react';
 import './negotiation-sheet-page.scss';
 
 interface Props {
-	negotiation: Negotiation;
-	options: Options;
+  negotiation: Negotiation;
+  options: Options;
 }
 
 export const NegotiationSheetPage = (props: Props) => {
-	const negotiation = useMemo(
-		() => NegotiationSheetBuilder.buildNegotiationSheet(props.negotiation),
-		[ props.negotiation ]
-	);
+  const negotiation = useMemo(
+    () => NegotiationSheetBuilder.buildNegotiationSheet(props.negotiation),
+    [props.negotiation],
+  );
 
-	const sheetClasses = useMemo(
-		() => {
-			const classes = [
-				'negotiation-sheet',
-				props.options.classicSheetPageSize.toLowerCase()
-			];
-			if (props.options.colorSheet) {
-				classes.push('color');
-				classes.push(`colors-${props.options.colorScheme}`);
-			}
-			return classes;
-		},
-		[ props.options.classicSheetPageSize, props.options.colorSheet, props.options.colorScheme ]
-	);
+  const sheetClasses = useMemo(() => {
+    const classes = ['negotiation-sheet', props.options.classicSheetPageSize.toLowerCase()];
+    if (props.options.colorSheet) {
+      classes.push('color');
+      classes.push(`colors-${props.options.colorScheme}`);
+    }
+    return classes;
+  }, [props.options.classicSheetPageSize, props.options.colorSheet, props.options.colorScheme]);
 
-	return (
-		<main id='classic-sheet'>
-			<div className={sheetClasses.join(' ')}>
-				<div className={`page page-1 ${props.options.pageOrientation}`} id={SheetFormatter.getPageId('negotiation', negotiation.id)}>
-					<NegotiationHeaderCard negotiation={negotiation} />
-					<PatienceInterestCard negotiation={negotiation} />
-					<NegotiationNpcCard negotiation={negotiation} />
-					<NegotiationResponsesCard negotiation={negotiation} />
-					<NegotiationArgumentsCard />
-				</div>
-			</div>
-		</main>
-	);
+  return (
+    <main id="classic-sheet">
+      <div className={sheetClasses.join(' ')}>
+        <div
+          className={`page page-1 ${props.options.pageOrientation}`}
+          id={SheetFormatter.getPageId('negotiation', negotiation.id)}
+        >
+          <NegotiationHeaderCard negotiation={negotiation} />
+          <PatienceInterestCard negotiation={negotiation} />
+          <NegotiationNpcCard negotiation={negotiation} />
+          <NegotiationResponsesCard negotiation={negotiation} />
+          <NegotiationArgumentsCard />
+        </div>
+      </div>
+    </main>
+  );
 };

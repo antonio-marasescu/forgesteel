@@ -16,105 +16,98 @@ import { useState } from 'react';
 import './hero-state-modal.scss';
 
 interface Props {
-	hero: Hero;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	startPage: HeroStatePage;
-	showEncounterControls: boolean;
-	onClose: () => void;
-	onChange: (hero: Hero) => void;
+  hero: Hero;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  startPage: HeroStatePage;
+  showEncounterControls: boolean;
+  onClose: () => void;
+  onChange: (hero: Hero) => void;
 }
 
 export const HeroStateModal = (props: Props) => {
-	const [ hero, setHero ] = useState<Hero>(Utils.copy(props.hero));
-	const [ page, setPage ] = useState<HeroStatePage>(props.startPage);
+  const [hero, setHero] = useState<Hero>(Utils.copy(props.hero));
+  const [page, setPage] = useState<HeroStatePage>(props.startPage);
 
-	const onChange = (hero: Hero) => {
-		setHero(hero);
-		props.onChange(hero);
-	};
+  const onChange = (hero: Hero) => {
+    setHero(hero);
+    props.onChange(hero);
+  };
 
-	const getContent = () => {
-		switch (page) {
-			case HeroStatePage.Resources:
-				return (
-					<ResourcesPanel
-						hero={hero}
-						sourcebooks={props.sourcebooks}
-						options={props.options}
-						onChange={onChange}
-					/>
-				);
-			case HeroStatePage.Vitals:
-				return (
-					<HeroHealthPanel
-						hero={hero}
-						showEncounterControls={props.showEncounterControls}
-						onChange={onChange}
-					/>
-				);
-			case HeroStatePage.Inventory:
-				return (
-					<InventoryPanel
-						hero={hero}
-						sourcebooks={props.sourcebooks}
-						options={props.options}
-						onChange={onChange}
-					/>
-				);
-			case HeroStatePage.Projects:
-				return (
-					<ProjectsPanel
-						hero={hero}
-						sourcebooks={props.sourcebooks}
-						options={props.options}
-						onChange={onChange}
-					/>
-				);
-			case HeroStatePage.Titles:
-				return (
-					<TitlesPanel
-						hero={hero}
-						sourcebooks={props.sourcebooks}
-						options={props.options}
-						onChange={onChange}
-					/>
-				);
-		}
-	};
+  const getContent = () => {
+    switch (page) {
+      case HeroStatePage.Resources:
+        return (
+          <ResourcesPanel
+            hero={hero}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            onChange={onChange}
+          />
+        );
+      case HeroStatePage.Vitals:
+        return (
+          <HeroHealthPanel
+            hero={hero}
+            showEncounterControls={props.showEncounterControls}
+            onChange={onChange}
+          />
+        );
+      case HeroStatePage.Inventory:
+        return (
+          <InventoryPanel
+            hero={hero}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            onChange={onChange}
+          />
+        );
+      case HeroStatePage.Projects:
+        return (
+          <ProjectsPanel
+            hero={hero}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            onChange={onChange}
+          />
+        );
+      case HeroStatePage.Titles:
+        return (
+          <TitlesPanel
+            hero={hero}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            onChange={onChange}
+          />
+        );
+    }
+  };
 
-	return (
-		<Modal
-			toolbar={
-				<div style={{ width: '100%' }}>
-					<Segmented
-						name='tabs'
-						block={true}
-						options={
-							HeroLogic.getStamina(hero) !== 0 ?
-								[
-									HeroStatePage.Resources,
-									HeroStatePage.Vitals,
-									HeroStatePage.Inventory,
-									HeroStatePage.Projects,
-									HeroStatePage.Titles
-								]
-								:
-								[
-									HeroStatePage.Vitals
-								]
-						}
-						value={page}
-						onChange={setPage}
-					/>
-				</div>
-			}
-			content={
-				<div className='hero-state-modal'>
-					{getContent()}
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={
+        <div style={{ width: '100%' }}>
+          <Segmented
+            name="tabs"
+            block={true}
+            options={
+              HeroLogic.getStamina(hero) !== 0
+                ? [
+                    HeroStatePage.Resources,
+                    HeroStatePage.Vitals,
+                    HeroStatePage.Inventory,
+                    HeroStatePage.Projects,
+                    HeroStatePage.Titles,
+                  ]
+                : [HeroStatePage.Vitals]
+            }
+            value={page}
+            onChange={setPage}
+          />
+        </div>
+      }
+      content={<div className="hero-state-modal">{getContent()}</div>}
+      onClose={props.onClose}
+    />
+  );
 };

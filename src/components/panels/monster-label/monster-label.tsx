@@ -11,72 +11,76 @@ import { TerrainLogic } from '@/logic/terrain-logic';
 import './monster-label.scss';
 
 interface MonsterLabelProps {
-	monster: Monster;
-	extra?: ReactNode;
+  monster: Monster;
+  extra?: ReactNode;
 }
 
 export const MonsterLabel = (props: MonsterLabelProps) => {
-	const desc = MonsterLogic.getMonsterDescription(props.monster);
-	if (!desc) {
-		return null;
-	}
+  const desc = MonsterLogic.getMonsterDescription(props.monster);
+  if (!desc) {
+    return null;
+  }
 
-	const type = props.monster.role.type.toLowerCase().replace(' ', '');
-	return (
-		<ErrorBoundary>
-			<div className={`monster-label ${type}`}>
-				<Flex orientation='vertical' gap={8}>
-					<Flex gap={3}>
-						{props.monster.keywords.map((k, n) => <Tag key={n} variant='outlined'>{k}</Tag>)}
-					</Flex>
-					<div>{desc}</div>
-				</Flex>
-				{props.extra}
-			</div>
-		</ErrorBoundary>
-	);
+  const type = props.monster.role.type.toLowerCase().replace(' ', '');
+  return (
+    <ErrorBoundary>
+      <div className={`monster-label ${type}`}>
+        <Flex orientation="vertical" gap={8}>
+          <Flex gap={3}>
+            {props.monster.keywords.map((k, n) => (
+              <Tag key={n} variant="outlined">
+                {k}
+              </Tag>
+            ))}
+          </Flex>
+          <div>{desc}</div>
+        </Flex>
+        {props.extra}
+      </div>
+    </ErrorBoundary>
+  );
 };
 
 interface TerrainLabelProps {
-	terrain: Terrain;
-	extra?: ReactNode;
+  terrain: Terrain;
+  extra?: ReactNode;
 }
 
 export const TerrainLabel = (props: TerrainLabelProps) => {
-	const desc = TerrainLogic.getTerrainDescription(props.terrain);
-	if (!desc) {
-		return null;
-	}
+  const desc = TerrainLogic.getTerrainDescription(props.terrain);
+  if (!desc) {
+    return null;
+  }
 
-	const type = props.terrain.role.type.toLowerCase().replace(' ', '');
-	return (
-		<ErrorBoundary>
-			<div className={`terrain-label ${type}`}>
-				<div>{desc}</div>
-				{props.extra}
-			</div>
-		</ErrorBoundary>
-	);
+  const type = props.terrain.role.type.toLowerCase().replace(' ', '');
+  return (
+    <ErrorBoundary>
+      <div className={`terrain-label ${type}`}>
+        <div>{desc}</div>
+        {props.extra}
+      </div>
+    </ErrorBoundary>
+  );
 };
 
 interface FixtureLabelProps {
-	fixture: Fixture;
-	extra?: ReactNode;
+  fixture: Fixture;
+  extra?: ReactNode;
 }
 
 export const FixtureLabel = (props: FixtureLabelProps) => {
-	const desc = FixtureLogic.getFixtureDescription(props.fixture);
-	if (!desc) {
-		return null;
-	}
+  const desc = FixtureLogic.getFixtureDescription(props.fixture);
+  if (!desc) {
+    return null;
+  }
 
-	const type = props.fixture.role.type.toLowerCase().replace(' ', '');
-	return (
-		<ErrorBoundary>
-			<div className={`fixture-label ${type}`}>
-				<div>{desc}</div>
-				{props.extra}
-			</div>
-		</ErrorBoundary>
-	);
+  const type = props.fixture.role.type.toLowerCase().replace(' ', '');
+  return (
+    <ErrorBoundary>
+      <div className={`fixture-label ${type}`}>
+        <div>{desc}</div>
+        {props.extra}
+      </div>
+    </ErrorBoundary>
+  );
 };

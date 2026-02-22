@@ -3,13 +3,13 @@ import { ErrorBoundary } from '@/components/controls/error-boundary/error-bounda
 import './sash-panel.scss';
 
 interface Props {
-	monogram: string;
+  monogram: string;
 }
 
 export const SashPanel = (props: Props) => {
-	return (
-		<ErrorBoundary>
-			<div className={`sash-panel type-${props.monogram.toLowerCase()}`}>{props.monogram}</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className={`sash-panel type-${props.monogram.toLowerCase()}`}>{props.monogram}</div>
+    </ErrorBoundary>
+  );
 };

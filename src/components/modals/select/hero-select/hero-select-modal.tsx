@@ -17,153 +17,148 @@ import { useState } from 'react';
 import './hero-select-modal.scss';
 
 interface Props {
-	heroes: Hero[];
-	sourcebooks: Sourcebook[];
-	options: Options;
-	onClose: () => void;
-	onSelect: (heroes: Hero[]) => void;
+  heroes: Hero[];
+  sourcebooks: Sourcebook[];
+  options: Options;
+  onClose: () => void;
+  onSelect: (heroes: Hero[]) => void;
 }
 
 export const HeroSelectModal = (props: Props) => {
-	const [ mode, setMode ] = useState<string>('folder');
-	const [ heroName, setHeroName ] = useState<string>('');
+  const [mode, setMode] = useState<string>('folder');
+  const [heroName, setHeroName] = useState<string>('');
 
-	const getContent = () => {
-		switch (mode) {
-			case 'folder': {
-				const folders = Collections
-					.distinct(props.heroes.map(h => h.folder), f => f)
-					.sort()
-					.filter(f => !!f);
+  const getContent = () => {
+    switch (mode) {
+      case 'folder': {
+        const folders = Collections.distinct(
+          props.heroes.map(h => h.folder),
+          f => f,
+        )
+          .sort()
+          .filter(f => !!f);
 
-				if (folders.length === 0) {
-					return (
-						<Empty text='No folders' />
-					);
-				}
+        if (folders.length === 0) {
+          return <Empty text="No folders" />;
+        }
 
-				return (
-					<>
-						<Alert
-							type='info'
-							showIcon={true}
-							title='Select a folder to add all the heroes within it.'
-						/>
-						{
-							folders.map(f => (
-								<SelectablePanel
-									key={f}
-									onSelect={() => props.onSelect(props.heroes.filter(h => h.folder === f))}
-								>
-									<HeaderText level={1}>{f}</HeaderText>
-									<Space orientation='vertical' style={{ width: '100%' }}>
-										{
-											props.heroes
-												.filter(h => h.folder === f)
-												.sort()
-												.map(h => <HeroInfo key={h.id} hero={h} />)
-										}
-									</Space>
-								</SelectablePanel>
-							))
-						}
-					</>
-				);
-			}
-			case 'hero': {
-				const heroes = props.heroes;
+        return (
+          <>
+            <Alert
+              type="info"
+              showIcon={true}
+              title="Select a folder to add all the heroes within it."
+            />
+            {folders.map(f => (
+              <SelectablePanel
+                key={f}
+                onSelect={() => props.onSelect(props.heroes.filter(h => h.folder === f))}
+              >
+                <HeaderText level={1}>{f}</HeaderText>
+                <Space orientation="vertical" style={{ width: '100%' }}>
+                  {props.heroes
+                    .filter(h => h.folder === f)
+                    .sort()
+                    .map(h => (
+                      <HeroInfo key={h.id} hero={h} />
+                    ))}
+                </Space>
+              </SelectablePanel>
+            ))}
+          </>
+        );
+      }
+      case 'hero': {
+        const heroes = props.heroes;
 
-				if (heroes.length === 0) {
-					return (
-						<Empty text='No heroes' />
-					);
-				}
+        if (heroes.length === 0) {
+          return <Empty text="No heroes" />;
+        }
 
-				return (
-					<>
-						{
-							heroes.map(h => (
-								<SelectablePanel
-									key={h.id}
-									watermark={h.picture || undefined}
-									onSelect={() => {
-										props.onSelect([ h ]);
-									}}
-								>
-									<HeroPanel hero={h} sourcebooks={props.sourcebooks} options={props.options} />
-								</SelectablePanel>
-							))
-						}
-					</>
-				);
-			}
-			case 'simple': {
-				return (
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						<Alert
-							type='info'
-							showIcon={true}
-							title={(
-								<>
-									<div>
-										If you don't have your party in Forge Steel, you can just add their names.
-									</div>
-									<div>
-										You won't be able to track their stamina, but they'll be in the turn order and you'll still be able to track conditions.
-									</div>
-								</>
-							)}
-						/>
-						<Flex align='center' justify='space-between' gap={10}>
-							<TextInput
-								placeholder='Name'
-								allowClear={true}
-								value={heroName}
-								onChange={setHeroName}
-							/>
-							<Button
-								disabled={!heroName}
-								type='primary'
-								icon={<PlusOutlined />}
-								onClick={() => {
-									const hero = FactoryLogic.createHero([]);
-									hero.name = heroName;
-									setHeroName('');
-									props.onSelect([ hero ]);
-								}}
-							/>
-						</Flex>
-					</Space>
-				);
-			}
-		}
+        return (
+          <>
+            {heroes.map(h => (
+              <SelectablePanel
+                key={h.id}
+                watermark={h.picture || undefined}
+                onSelect={() => {
+                  props.onSelect([h]);
+                }}
+              >
+                <HeroPanel hero={h} sourcebooks={props.sourcebooks} options={props.options} />
+              </SelectablePanel>
+            ))}
+          </>
+        );
+      }
+      case 'simple': {
+        return (
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            <Alert
+              type="info"
+              showIcon={true}
+              title={
+                <>
+                  <div>
+                    If you don't have your party in Forge Steel, you can just add their names.
+                  </div>
+                  <div>
+                    You won't be able to track their stamina, but they'll be in the turn order and
+                    you'll still be able to track conditions.
+                  </div>
+                </>
+              }
+            />
+            <Flex align="center" justify="space-between" gap={10}>
+              <TextInput
+                placeholder="Name"
+                allowClear={true}
+                value={heroName}
+                onChange={setHeroName}
+              />
+              <Button
+                disabled={!heroName}
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  const hero = FactoryLogic.createHero([]);
+                  hero.name = heroName;
+                  setHeroName('');
+                  props.onSelect([hero]);
+                }}
+              />
+            </Flex>
+          </Space>
+        );
+      }
+    }
 
-		return null;
-	};
+    return null;
+  };
 
-	return (
-		<Modal
-			toolbar={
-				<div style={{ width: '100%', textAlign: 'center' }}>
-					<Segmented
-						options={[
-							{ value: 'folder', label: 'Folders' },
-							{ value: 'hero', label: 'Heroes' },
-							{ value: 'simple', label: 'Simple' }
-						]}
-						value={mode}
-						onChange={setMode}
-					/>
-				</div>
-			}
-			content={
-				<div className='hero-select-modal'>
-					<Space orientation='vertical' style={{ width: '100%' }}>
-						{getContent()}
-					</Space>
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={
+        <div style={{ width: '100%', textAlign: 'center' }}>
+          <Segmented
+            options={[
+              { value: 'folder', label: 'Folders' },
+              { value: 'hero', label: 'Heroes' },
+              { value: 'simple', label: 'Simple' },
+            ]}
+            value={mode}
+            onChange={setMode}
+          />
+        </div>
+      }
+      content={
+        <div className="hero-select-modal">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            {getContent()}
+          </Space>
+        </div>
+      }
+      onClose={props.onClose}
+    />
+  );
 };

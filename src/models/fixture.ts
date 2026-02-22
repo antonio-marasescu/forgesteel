@@ -4,8 +4,8 @@ import { Size } from '@/models/size';
 import { TerrainRole } from '@/models/terrain';
 
 export interface Fixture extends Element {
-	role: TerrainRole;
-	baseStamina: number;
-	size: Size;
-	featuresByLevel: { level: number, features: Feature[] }[]
+  role: TerrainRole;
+  baseStamina: number;
+  size: Size;
+  featuresByLevel: { level: number; features: Feature[] }[];
 }

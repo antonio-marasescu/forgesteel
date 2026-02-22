@@ -9,19 +9,19 @@ import { summonerSourcebook } from '@/data/sourcebooks/official/summoner';
 import { triglav } from '@/data/sourcebooks/third-party/triglav';
 
 export class SourcebookData {
-	// Official
-	static core = core;
-	static orden = orden;
-	static patreon = patreon;
-	static summoner = summonerSourcebook;
+  // Official
+  static core = core;
+  static orden = orden;
+  static patreon = patreon;
+  static summoner = summonerSourcebook;
 
-	// Third Party
-	static lookOut = lookOut;
-	static magazineBlacksmith = blacksmith;
-	static magazineRatcatcher = ratcatcher;
-	static triglav = triglav;
+  // Third Party
+  static lookOut = lookOut;
+  static magazineBlacksmith = blacksmith;
+  static magazineRatcatcher = ratcatcher;
+  static triglav = triglav;
 
-	// Community
-	static communityPrerelease = communityPrerelease;
-	static community = community;
+  // Community
+  static communityPrerelease = communityPrerelease;
+  static community = community;
 }

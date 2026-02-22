@@ -7,77 +7,68 @@ import './patreon-status-panel.scss';
 import patreon from '@/assets/icons/patreon.svg';
 
 interface Props {
-	title: string;
-	status: PatronStatus | null;
+  title: string;
+  status: PatronStatus | null;
 }
 
 export const PatreonStatusPanel = (props: Props) => {
-	const getIsPatron = () => {
-		return (
-			<Tag
-				color={props.status && props.status.patron ? 'blue' : 'red'}
-				variant={props.status && props.status.patron ? 'solid' : 'outlined'}
-			>
-				{props.status && props.status.patron ? 'Patron' : 'Not A Patron'}
-			</Tag>
-		);
-	};
+  const getIsPatron = () => {
+    return (
+      <Tag
+        color={props.status && props.status.patron ? 'blue' : 'red'}
+        variant={props.status && props.status.patron ? 'solid' : 'outlined'}
+      >
+        {props.status && props.status.patron ? 'Patron' : 'Not A Patron'}
+      </Tag>
+    );
+  };
 
-	const getTiers = () => {
-		if (!props.status || !props.status.patron || !props.status.tiers) {
-			return null;
-		}
+  const getTiers = () => {
+    if (!props.status || !props.status.patron || !props.status.tiers) {
+      return null;
+    }
 
-		return (
-			<>
-				{
-					props.status.tiers.map(tier => {
-						return (
-							<Tag
-								key={tier.id}
-								color='blue'
-								variant='outlined'
-							>
-								{tier.title}
-							</Tag>
-						);
-					})
-				}
-			</>
-		);
-	};
+    return (
+      <>
+        {props.status.tiers.map(tier => {
+          return (
+            <Tag key={tier.id} color="blue" variant="outlined">
+              {tier.title}
+            </Tag>
+          );
+        })}
+      </>
+    );
+  };
 
-	const getSubscribedDate = () => {
-		if (!props.status || !props.status.patron || !props.status.start) {
-			return null;
-		}
+  const getSubscribedDate = () => {
+    if (!props.status || !props.status.patron || !props.status.start) {
+      return null;
+    }
 
-		const date = new Date(props.status.start);
-		const subDate = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const date = new Date(props.status.start);
+    const subDate = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-		return (
-			<Tag
-				color='blue'
-				variant='outlined'
-			>
-				Since {subDate}
-			</Tag>
-		);
-	};
+    return (
+      <Tag color="blue" variant="outlined">
+        Since {subDate}
+      </Tag>
+    );
+  };
 
-	return (
-		<div className='patreon-status-panel'>
-			<HeaderText>
-				<Flex align='center' gap={10}>
-					<img className='patreon-logo' src={patreon} style={{ width: '16px', height: '16px' }} />
-					{props.title}
-				</Flex>
-			</HeaderText>
-			<Flex gap={5}>
-				{getIsPatron()}
-				{getTiers()}
-				{getSubscribedDate()}
-			</Flex>
-		</div>
-	);
+  return (
+    <div className="patreon-status-panel">
+      <HeaderText>
+        <Flex align="center" gap={10}>
+          <img className="patreon-logo" src={patreon} style={{ width: '16px', height: '16px' }} />
+          {props.title}
+        </Flex>
+      </HeaderText>
+      <Flex gap={5}>
+        {getIsPatron()}
+        {getTiers()}
+        {getSubscribedDate()}
+      </Flex>
+    </div>
+  );
 };

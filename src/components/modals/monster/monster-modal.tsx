@@ -22,158 +22,156 @@ import { useState } from 'react';
 import './monster-modal.scss';
 
 interface Props {
-	monster: Monster;
-	monsterGroup?: MonsterGroup;
-	encounter?: Encounter;
-	summon?: SummoningInfo;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	onClose: () => void;
-	updateMonster?: (monster: Monster) => void;
-	updateEncounter?: (encounter: Encounter) => void;
-	exportElementData?: (category: string, element: Element) => void;
+  monster: Monster;
+  monsterGroup?: MonsterGroup;
+  encounter?: Encounter;
+  summon?: SummoningInfo;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  onClose: () => void;
+  updateMonster?: (monster: Monster) => void;
+  updateEncounter?: (encounter: Encounter) => void;
+  exportElementData?: (category: string, element: Element) => void;
 }
 
 export const MonsterModal = (props: Props) => {
-	const [ monster, setMonster ] = useState<Monster>(Utils.copy(props.monster));
-	const [ encounter, setEncounter ] = useState<Encounter | undefined>(props.encounter ? Utils.copy(props.encounter) : undefined);
-	const [ page, setPage ] = useState<string>(props.updateMonster ? 'Vitals' : 'Stat Block');
-	const [ editingName, setEditingName ] = useState<boolean>(false);
+  const [monster, setMonster] = useState<Monster>(Utils.copy(props.monster));
+  const [encounter, setEncounter] = useState<Encounter | undefined>(
+    props.encounter ? Utils.copy(props.encounter) : undefined,
+  );
+  const [page, setPage] = useState<string>(props.updateMonster ? 'Vitals' : 'Stat Block');
+  const [editingName, setEditingName] = useState<boolean>(false);
 
-	const updateMonster = (monster: Monster) => {
-		setMonster(monster);
-		if (props.updateMonster) {
-			props.updateMonster(monster);
-		}
-	};
+  const updateMonster = (monster: Monster) => {
+    setMonster(monster);
+    if (props.updateMonster) {
+      props.updateMonster(monster);
+    }
+  };
 
-	const exportMonster = () => {
-		if (props.exportElementData) {
-			props.exportElementData('monster', props.monster);
-		}
-	};
+  const exportMonster = () => {
+    if (props.exportElementData) {
+      props.exportElementData('monster', props.monster);
+    }
+  };
 
-	const getToolbar = () => {
-		if (props.updateMonster) {
-			return (
-				<Flex align='center' justify='center' style={{ width: '100%' }}>
-					<Segmented
-						name='tabs'
-						options={encounter ? [ 'Vitals', 'Stat Block', 'Malice' ] : [ 'Vitals', 'Stat Block' ]}
-						value={page}
-						onChange={setPage}
-					/>
-				</Flex>
-			);
-		}
+  const getToolbar = () => {
+    if (props.updateMonster) {
+      return (
+        <Flex align="center" justify="center" style={{ width: '100%' }}>
+          <Segmented
+            name="tabs"
+            options={encounter ? ['Vitals', 'Stat Block', 'Malice'] : ['Vitals', 'Stat Block']}
+            value={page}
+            onChange={setPage}
+          />
+        </Flex>
+      );
+    }
 
-		if (props.exportElementData) {
-			return (
-				<Button icon={<UploadOutlined />} onClick={exportMonster}>
-					Export
-				</Button>
-			);
-		}
+    if (props.exportElementData) {
+      return (
+        <Button icon={<UploadOutlined />} onClick={exportMonster}>
+          Export
+        </Button>
+      );
+    }
 
-		return null;
-	};
+    return null;
+  };
 
-	const getContent = () => {
-		switch (page) {
-			case 'Vitals':
-				return (
-					<div style={{ padding: '0 20px' }}>
-						<HeaderText
-							level={1}
-							ribbon={<MonsterToken monster={monster} monsterGroup={props.monsterGroup} size={28} />}
-							extra={
-								props.updateMonster ?
-									<Button
-										type='text'
-										title='Edit the name'
-										icon={editingName ? <EditFilled style={{ color: 'rgb(64, 150, 255)' }} /> : <EditOutlined />}
-										onClick={() => setEditingName(!editingName)}
-									/>
-									: undefined
-							}
-						>
-							{MonsterLogic.getMonsterName(monster, props.monsterGroup)}
-						</HeaderText>
-						{
-							editingName && props.updateMonster ?
-								<div>
-									<TextInput
-										placeholder='Name'
-										allowClear={true}
-										value={monster.name}
-										onChange={value => {
-											const copy = Utils.copy(monster);
-											copy.name = value;
-											updateMonster(copy);
-										}}
-									/>
-									<Divider />
-								</div>
-								: null
-						}
-						<MonsterHealthPanel
-							monster={monster}
-							onChange={updateMonster}
-						/>
-					</div>
-				);
-			case 'Stat Block':
-				return (
-					<MonsterPanel
-						monster={monster}
-						monsterGroup={props.monsterGroup}
-						summon={props.summon}
-						sourcebooks={props.sourcebooks}
-						options={props.options}
-						mode={PanelMode.Full}
-					/>
-				);
-			case 'Malice':
-				return (
-					<Space orientation='vertical' style={{ width: '100%', padding: '20px' }}>
-						{
-							MonsterLogic.getMaliceOptions(monster, props.monsterGroup)
-								.map(malice => (
-									<MalicePanel
-										malice={malice}
-										options={props.options}
-										currentMalice={encounter ? encounter.malice : undefined}
-										updateCurrentMalice={
-											encounter ?
-												value => {
-													const copy = Utils.copy(encounter);
-													copy.malice = value;
-													setEncounter(copy);
-													if (props.updateEncounter) {
-														props.updateEncounter(copy);
-													}
-												}
-												: undefined
-										}
-									/>
-								))
-						}
-					</Space>
-				);
-		}
+  const getContent = () => {
+    switch (page) {
+      case 'Vitals':
+        return (
+          <div style={{ padding: '0 20px' }}>
+            <HeaderText
+              level={1}
+              ribbon={
+                <MonsterToken monster={monster} monsterGroup={props.monsterGroup} size={28} />
+              }
+              extra={
+                props.updateMonster ? (
+                  <Button
+                    type="text"
+                    title="Edit the name"
+                    icon={
+                      editingName ? (
+                        <EditFilled style={{ color: 'rgb(64, 150, 255)' }} />
+                      ) : (
+                        <EditOutlined />
+                      )
+                    }
+                    onClick={() => setEditingName(!editingName)}
+                  />
+                ) : undefined
+              }
+            >
+              {MonsterLogic.getMonsterName(monster, props.monsterGroup)}
+            </HeaderText>
+            {editingName && props.updateMonster ? (
+              <div>
+                <TextInput
+                  placeholder="Name"
+                  allowClear={true}
+                  value={monster.name}
+                  onChange={value => {
+                    const copy = Utils.copy(monster);
+                    copy.name = value;
+                    updateMonster(copy);
+                  }}
+                />
+                <Divider />
+              </div>
+            ) : null}
+            <MonsterHealthPanel monster={monster} onChange={updateMonster} />
+          </div>
+        );
+      case 'Stat Block':
+        return (
+          <MonsterPanel
+            monster={monster}
+            monsterGroup={props.monsterGroup}
+            summon={props.summon}
+            sourcebooks={props.sourcebooks}
+            options={props.options}
+            mode={PanelMode.Full}
+          />
+        );
+      case 'Malice':
+        return (
+          <Space orientation="vertical" style={{ width: '100%', padding: '20px' }}>
+            {MonsterLogic.getMaliceOptions(monster, props.monsterGroup).map(malice => (
+              <MalicePanel
+                malice={malice}
+                options={props.options}
+                currentMalice={encounter ? encounter.malice : undefined}
+                updateCurrentMalice={
+                  encounter
+                    ? value => {
+                        const copy = Utils.copy(encounter);
+                        copy.malice = value;
+                        setEncounter(copy);
+                        if (props.updateEncounter) {
+                          props.updateEncounter(copy);
+                        }
+                      }
+                    : undefined
+                }
+              />
+            ))}
+          </Space>
+        );
+    }
 
-		return null;
-	};
+    return null;
+  };
 
-	return (
-		<Modal
-			toolbar={getToolbar()}
-			content={
-				<div className='monster-modal'>
-					{getContent()}
-				</div>
-			}
-			onClose={props.onClose}
-		/>
-	);
+  return (
+    <Modal
+      toolbar={getToolbar()}
+      content={<div className="monster-modal">{getContent()}</div>}
+      onClose={props.onClose}
+    />
+  );
 };

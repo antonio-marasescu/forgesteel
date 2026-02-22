@@ -12,42 +12,46 @@ import { Utils } from '@/utils/utils';
 import './backup-page.scss';
 
 interface Props {
-	heroes: Hero[];
-	homebrewSourcebooks: Sourcebook[];
-	options: Options;
-	highlightAbout: boolean;
-	showReference: () => void;
-	showRoll: () => void;
-	showAbout: () => void;
-	showSettings: () => void;
+  heroes: Hero[];
+  homebrewSourcebooks: Sourcebook[];
+  options: Options;
+  highlightAbout: boolean;
+  showReference: () => void;
+  showRoll: () => void;
+  showAbout: () => void;
+  showSettings: () => void;
 }
 
 export const BackupPage = (props: Props) => {
-	return (
-		<ErrorBoundary>
-			<div className='backup-page'>
-				<div className='backup-page-content'>
-					{
-						props.heroes.map(hero => (
-							<SelectablePanel key={hero.id} onSelect={() => Utils.exportData(hero.name || 'Unnamed Hero', hero, 'hero')}>
-								<HeroPanel hero={hero} sourcebooks={SourcebookLogic.getSourcebooks(props.homebrewSourcebooks)} options={props.options} />
-							</SelectablePanel>
-						))
-					}
-					{
-						props.homebrewSourcebooks.map(sb => (
-							<SelectablePanel key={sb.id} onSelect={() => Utils.exportData(sb.name || 'Unnamed Sourcebook', sb, 'sourcebook')}>
-								<SourcebookPanel sourcebook={sb} />
-							</SelectablePanel>
-						))
-					}
-					{
-						props.heroes.length + props.homebrewSourcebooks.length === 0 ?
-							<Empty text='Nothing to back up' />
-							: null
-					}
-				</div>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="backup-page">
+        <div className="backup-page-content">
+          {props.heroes.map(hero => (
+            <SelectablePanel
+              key={hero.id}
+              onSelect={() => Utils.exportData(hero.name || 'Unnamed Hero', hero, 'hero')}
+            >
+              <HeroPanel
+                hero={hero}
+                sourcebooks={SourcebookLogic.getSourcebooks(props.homebrewSourcebooks)}
+                options={props.options}
+              />
+            </SelectablePanel>
+          ))}
+          {props.homebrewSourcebooks.map(sb => (
+            <SelectablePanel
+              key={sb.id}
+              onSelect={() => Utils.exportData(sb.name || 'Unnamed Sourcebook', sb, 'sourcebook')}
+            >
+              <SourcebookPanel sourcebook={sb} />
+            </SelectablePanel>
+          ))}
+          {props.heroes.length + props.homebrewSourcebooks.length === 0 ? (
+            <Empty text="Nothing to back up" />
+          ) : null}
+        </div>
+      </div>
+    </ErrorBoundary>
+  );
 };

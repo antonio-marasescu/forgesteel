@@ -9,48 +9,48 @@ import { Utils } from '@/utils/utils';
 import { useState } from 'react';
 
 interface InfoProps {
-	data: FeatureMovementModeData;
-	feature: Feature;
-	hero?: Hero;
-	sourcebooks?: Sourcebook[];
-	options: Options;
+  data: FeatureMovementModeData;
+  feature: Feature;
+  hero?: Hero;
+  sourcebooks?: Sourcebook[];
+  options: Options;
 }
 
 export const InfoMovementMode = (props: InfoProps) => {
-	return (
-		<div className='ds-text'>
-			You gain the <b>{props.data.mode}</b> movement mode.
-		</div>
-	);
+  return (
+    <div className="ds-text">
+      You gain the <b>{props.data.mode}</b> movement mode.
+    </div>
+  );
 };
 
 interface EditProps {
-	data: FeatureMovementModeData;
-	sourcebooks: Sourcebook[];
-	options: Options;
-	setData: (data: FeatureMovementModeData) => void;
+  data: FeatureMovementModeData;
+  sourcebooks: Sourcebook[];
+  options: Options;
+  setData: (data: FeatureMovementModeData) => void;
 }
 
 export const EditMovementMode = (props: EditProps) => {
-	const [ data, setData ] = useState<FeatureMovementModeData>(Utils.copy(props.data));
+  const [data, setData] = useState<FeatureMovementModeData>(Utils.copy(props.data));
 
-	const setMode = (value: string) => {
-		const copy = Utils.copy(data);
-		copy.mode = value;
-		setData(copy);
-		props.setData(copy);
-	};
+  const setMode = (value: string) => {
+    const copy = Utils.copy(data);
+    copy.mode = value;
+    setData(copy);
+    props.setData(copy);
+  };
 
-	return (
-		<Space orientation='vertical' style={{ width: '100%' }}>
-			<HeaderText>Mode</HeaderText>
-			<TextInput
-				status={data.mode === '' ? 'warning' : ''}
-				placeholder='Mode'
-				allowClear={true}
-				value={data.mode}
-				onChange={setMode}
-			/>
-		</Space>
-	);
+  return (
+    <Space orientation="vertical" style={{ width: '100%' }}>
+      <HeaderText>Mode</HeaderText>
+      <TextInput
+        status={data.mode === '' ? 'warning' : ''}
+        placeholder="Mode"
+        allowClear={true}
+        value={data.mode}
+        onChange={setMode}
+      />
+    </Space>
+  );
 };

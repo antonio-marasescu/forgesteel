@@ -9,28 +9,28 @@ import { useState } from 'react';
 import './counter-run-panel.scss';
 
 interface Props {
-	counter: Counter;
-	onChange: (counter: Counter) => void;
+  counter: Counter;
+  onChange: (counter: Counter) => void;
 }
 
 export const CounterRunPanel = (props: Props) => {
-	const [ counter, setCounter ] = useState<Counter>(Utils.copy(props.counter));
+  const [counter, setCounter] = useState<Counter>(Utils.copy(props.counter));
 
-	const setValue = (value: number) => {
-		const copy = Utils.copy(counter);
-		copy.value = value;
-		setCounter(copy);
-		props.onChange(copy);
-	};
+  const setValue = (value: number) => {
+    const copy = Utils.copy(counter);
+    copy.value = value;
+    setCounter(copy);
+    props.onChange(copy);
+  };
 
-	return (
-		<ErrorBoundary>
-			<div className='counter-run-panel' id={counter.id}>
-				<HeaderText level={1}>{counter.name || 'Unnamed Counter'}</HeaderText>
-				<StatsRow>
-					<NumberSpin label='Value' min={0} max={100} value={counter.value} onChange={setValue} />
-				</StatsRow>
-			</div>
-		</ErrorBoundary>
-	);
+  return (
+    <ErrorBoundary>
+      <div className="counter-run-panel" id={counter.id}>
+        <HeaderText level={1}>{counter.name || 'Unnamed Counter'}</HeaderText>
+        <StatsRow>
+          <NumberSpin label="Value" min={0} max={100} value={counter.value} onChange={setValue} />
+        </StatsRow>
+      </div>
+    </ErrorBoundary>
+  );
 };
