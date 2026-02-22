@@ -54,14 +54,18 @@ src/
 
 ## Code Style Guidelines
 
-### Formatting (enforced by ESLint)
-- **Indentation**: Tabs (not spaces)
+### Formatting (enforced by Prettier)
+- **Indentation**: 2 spaces
 - **Quotes**: Single quotes for strings, single quotes for JSX attributes
 - **Semicolons**: Required
-- **Trailing commas**: None (no dangling commas)
-- **Array brackets**: Spaces inside `[ item1, item2 ]`
+- **Trailing commas**: All (trailing commas everywhere)
+- **Array brackets**: No spaces inside `[item1, item2]`
 - **Object braces**: Spaces inside `{ key: value }`
 - **Arrow functions**: Omit parens for single param `x => x.id`
+- **Print width**: 100 characters
+
+Run `npm run format` to auto-format files with Prettier.
+Run `npm run format:check` to check formatting without modifying files.
 
 ### Imports
 - Use path alias `@/` for all imports from `src/` directory
@@ -131,7 +135,7 @@ interface Props {
 }
 
 export const HeroPanel = ({ hero, onSave }: Props) => {
-  const [ editing, setEditing ] = useState(false);
+  const [editing, setEditing] = useState(false);
   // ...
 };
 ```
@@ -171,9 +175,9 @@ import { Utils } from '@/utils/utils';
 describe('Utils', () => {
   describe('isNullOrEmpty', () => {
     test.each([
-      [ '', true ],
-      [ null, true ],
-      [ 'a', false ]
+      ['', true],
+      [null, true],
+      ['a', false],
     ])('returns expected result for %s', (value, expected) => {
       expect(Utils.isNullOrEmpty(value)).toBe(expected);
     });
