@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/png" href="/forgesteel/assets/shield-DSm7ywft.png" />
+	<link rel="apple-touch-icon" href="/forgesteel/assets/shield-DSm7ywft.png" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="robots" content="noarchive" />
+	<meta name="clacks-overhead" content="GNU Terry Pratchett" />
+	<meta property="description" content="Heroes, monsters, encounters ... everything you need for Draw Steel." />
+	<meta property="og:description" content="Heroes, monsters, encounters ... everything you need for Draw Steel." />
+	<meta property="og:title" content="Forge Steel" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="/forgesteel/assets/shield-DSm7ywft.png" />
+	<meta property="og:url" content="https://andyaiken.github.io/forgesteel/" />
+	<meta http-equiv="Cache-Control" content="no-store, no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	
+	<!-- PWA Manifest -->
+	<link rel="manifest" href="/forgesteel/manifest.json" />
+	
+	<!-- PWA Meta Tags -->
+	<meta name="theme-color" content="#1890ff" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	<meta name="apple-mobile-web-app-title" content="Forge Steel" />
+	
+	<title>Forge Steel</title>
+  <script type="module" crossorigin src="/forgesteel/main-CLP3zlja.js"></script>
+  <link rel="stylesheet" crossorigin href="/forgesteel/assets/main-9Na3Roet.css">
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RG4VF6ST47"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+	gtag('config', 'G-RG4VF6ST47');
+</script>
+
+<body>
+	<div id="root"></div>
+	<script>
+		// Check for and fix misplaced query parameters, e.g. from an OAuth redirect.
+		// OAuth redirect flows don't handle hash-routing correctly,
+		// So the query parameters get inserted *before* the hash route.
+		// This corrects that and then redirects to the correct url before any
+		// app code gets loaded, making it much faster
+		function normalizeUrl(url) {
+			if (url.match(/^[^?]+(\?[^#]+)#/) != null) {
+				const match = url.match(/(^[^?]+)(\?[^#]+)(#.*)/);
+				if (match) {
+					return `${match[1]}${match[3]}${match[2]}`;
+				}
+			}
+			return url;
+		};
+
+		const url = window.location.toString();
+		const normalized = normalizeUrl(url);
+		
+		if (normalized !== url) {
+			window.location.replace(normalized);
+		}
+	</script>
+</body>
+
+</html>
