@@ -24,7 +24,7 @@ export const AboutModal = (props: Props) => {
 						<LogoPanel />
 					</div>
 					<p>
-						Designed by <a href='mailto:andy.aiken@live.co.uk'>Andy Aiken</a>.
+						Original Design by <a href='mailto:andy.aiken@live.co.uk'>Andy Aiken</a>.
 					</p>
 					<p>
 						To suggest a new feature or improvement, or to report a bug, go <a href='https://github.com/andyaiken/forgesteel/issues' target='_blank'>here</a>.
