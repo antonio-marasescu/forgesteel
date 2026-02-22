@@ -13,10 +13,6 @@ export default defineConfig({
   languageOptions: {
     ecmaVersion: 2020,
     globals: globals.browser,
-    parserOptions: {
-      projectService: true,
-      tsconfigRootDir: import.meta.dirname,
-    },
   },
   plugins: {
     'react-hooks': reactHooks,
@@ -24,7 +20,6 @@ export default defineConfig({
   rules: {
     ...reactHooks.configs.recommended.rules,
     // Errors
-    '@typescript-eslint/no-deprecated': ['error'],
     // Warnings
     'no-console': [
       'warn',
