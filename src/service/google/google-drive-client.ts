@@ -84,12 +84,12 @@ export class GoogleDriveClient {
 
   /**
    * List folders in the user's Drive (or within a specific folder)
+   * If no parentId is provided, lists folders in the root of My Drive
    */
   async listFolders(parentId?: string): Promise<DriveFolder[]> {
-    let query = "mimeType='application/vnd.google-apps.folder' and trashed=false";
-    if (parentId) {
-      query += ` and '${parentId}' in parents`;
-    }
+    // If no parentId specified, use 'root' to get folders at the root of My Drive
+    const parent = parentId || 'root';
+    const query = `mimeType='application/vnd.google-apps.folder' and '${parent}' in parents and trashed=false`;
 
     const params = new URLSearchParams({
       q: query,
