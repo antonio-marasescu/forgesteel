@@ -66,12 +66,14 @@ export const core: Sourcebook = {
 		CareerData.watchOfficer
 	],
 	classes: [
+		ClassData.beastheart,
 		ClassData.censor,
 		ClassData.conduit,
 		ClassData.elementalist,
 		ClassData.fury,
 		ClassData.nullClass,
 		ClassData.shadow,
+		ClassData.summoner,
 		ClassData.tactician,
 		ClassData.talent,
 		ClassData.troubadour
