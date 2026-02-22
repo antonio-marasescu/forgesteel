@@ -1,10 +1,12 @@
-import { Alert, Button, Empty, Flex, Popconfirm, Segmented, Space, Tabs } from 'antd';
+import { Alert, Button, Divider, Empty, Flex, Popconfirm, Segmented, Space, Tabs } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Collections } from '@/utils/collections';
 import { ConnectionSettings } from '@/models/connection-settings';
 import { DataService } from '@/utils/data-service';
+import { DriveSyncStatus } from '@/hooks/use-google-drive-sync';
 import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
 import { Expander } from '@/components/controls/expander/expander';
+import { GoogleDriveConnect } from '@/components/controls/google-drive-connect/google-drive-connect';
 import { HeaderText } from '@/components/controls/header-text/header-text';
 import { Hero } from '@/models/hero';
 import { HeroMergeLogic } from '@/logic/merge/hero-merge-logic';
@@ -26,6 +28,12 @@ interface Props {
   heroes: Hero[];
   homebrewSourcebooks: Sourcebook[];
   options: Options;
+  // Google Drive sync props
+  driveSyncStatus?: DriveSyncStatus;
+  driveLastSyncTime?: Date | null;
+  onGoogleDriveConnect?: (settings: Partial<ConnectionSettings>) => void;
+  onGoogleDriveDisconnect?: () => void;
+  onGoogleDriveForceSync?: () => void;
 }
 
 export const TransferPage = (props: Props) => {
@@ -265,13 +273,37 @@ export const TransferPage = (props: Props) => {
             to you. But it also means that you can't access your data across browsers, and a browser
             reset could wipe all your data.
           </p>
+
+          <Divider />
+
+          <HeaderText level={2}>Google Drive Sync</HeaderText>
           <p>
-            However, once you have connected with the Warehouse, you have access to persistent,
-            remote storage that you can use to keep data and access it across devices, and which
-            won't get wiped if your browser cache clears.
+            Connect to Google Drive to automatically sync your data across devices. Your data is
+            stored in a folder you choose in your own Google Drive - Forge Steel never sees your
+            data.
+          </p>
+          {props.onGoogleDriveConnect && props.onGoogleDriveDisconnect && (
+            <GoogleDriveConnect
+              connectionSettings={settings}
+              syncStatus={props.driveSyncStatus || 'idle'}
+              lastSyncTime={props.driveLastSyncTime || null}
+              onConnect={props.onGoogleDriveConnect}
+              onDisconnect={props.onGoogleDriveDisconnect}
+              onForceSync={props.onGoogleDriveForceSync}
+            />
+          )}
+
+          <Divider />
+
+          <HeaderText level={2}>Warehouse</HeaderText>
+          <p>
+            The Warehouse is an alternative remote storage option. Once you have connected with the
+            Warehouse, you have access to persistent storage that you can use to keep data and
+            access it across devices.
           </p>
           <p>
-            Use this page to transfer data between the browser storage (Local), and the Warehouse.
+            Use the section below to transfer data between the browser storage (Local), and the
+            Warehouse.
           </p>
           <h4>Some important notes:</h4>
           <p>

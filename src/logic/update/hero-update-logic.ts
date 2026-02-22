@@ -85,8 +85,6 @@ export class HeroUpdateLogic {
         hero.culture.type = CultureType.Ancestral;
       }
 
-      /* eslint-disable @typescript-eslint/no-deprecated */
-
       if (hero.culture.language === undefined) {
         hero.culture.language = FactoryLogic.feature.createLanguageChoice({
           id: Utils.guid(),
@@ -95,8 +93,6 @@ export class HeroUpdateLogic {
 
         hero.culture.languages = [];
       }
-
-      /* eslint-enable @typescript-eslint/no-deprecated */
     }
 
     if (hero.career) {
@@ -110,8 +106,6 @@ export class HeroUpdateLogic {
         };
       }
 
-      /* eslint-disable @typescript-eslint/no-deprecated */
-
       if (hero.career.incitingIncidents.selected === undefined) {
         const current = hero.career.incitingIncidents.options.find(
           ii => ii.id === hero.career!.incitingIncidents.selectedID,
@@ -120,8 +114,6 @@ export class HeroUpdateLogic {
           hero.career.incitingIncidents.selected = Utils.copy(current);
         }
       }
-
-      /* eslint-enable @typescript-eslint/no-deprecated */
     }
 
     if (hero.class) {

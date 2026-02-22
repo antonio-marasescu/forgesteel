@@ -16,8 +16,6 @@ export class AbilityUpdateLogic {
       ability.sections = [];
     }
 
-    /* eslint-disable @typescript-eslint/no-deprecated */
-
     if (ability.preEffect) {
       ability.sections.push(FactoryLogic.createAbilitySectionText(ability.preEffect));
       ability.preEffect = '';
@@ -86,7 +84,5 @@ export class AbilityUpdateLogic {
       });
       ability.persistence = [];
     }
-
-    /* eslint-enable @typescript-eslint/no-deprecated */
   };
 }

@@ -17,5 +17,30 @@ export class ConnectionSettingsUpdateLogic {
     if (settings.patreonConnected === undefined) {
       settings.patreonConnected = false;
     }
+
+    // Google Drive settings
+    if (settings.useGoogleDrive === undefined) {
+      settings.useGoogleDrive = false;
+    }
+
+    if (settings.googleDriveFolderId === undefined) {
+      settings.googleDriveFolderId = null;
+    }
+
+    if (settings.googleDriveFolderName === undefined) {
+      settings.googleDriveFolderName = null;
+    }
+
+    if (settings.googleDriveAccessToken === undefined) {
+      settings.googleDriveAccessToken = null;
+    }
+
+    if (settings.googleDriveRefreshToken === undefined) {
+      settings.googleDriveRefreshToken = null;
+    }
+
+    if (settings.googleDriveTokenExpiry === undefined) {
+      settings.googleDriveTokenExpiry = null;
+    }
   };
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-deprecated */
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { ConnectionSettings } from '@/models/connection-settings';
 import { DataService } from '@/utils/data-service';
@@ -23,6 +22,12 @@ const defaultSettings: ConnectionSettings = {
   warehouseHost: '',
   warehouseToken: '',
   patreonConnected: false,
+  useGoogleDrive: false,
+  googleDriveFolderId: null,
+  googleDriveFolderName: null,
+  googleDriveAccessToken: null,
+  googleDriveRefreshToken: null,
+  googleDriveTokenExpiry: null,
 };
 
 const mockOptions = {} as Options;

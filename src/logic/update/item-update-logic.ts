@@ -22,7 +22,6 @@ export class ItemUpdateLogic {
       item.imbuements = [];
     }
 
-    /* eslint-disable @typescript-eslint/no-deprecated */
     if (item.customizationsByLevel && item.customizationsByLevel.length > 0) {
       item.customizationsByLevel.forEach(level => {
         level.features.forEach(feature => {
@@ -40,7 +39,6 @@ export class ItemUpdateLogic {
 
       item.customizationsByLevel = [];
     }
-    /* eslint-enable @typescript-eslint/no-deprecated */
 
     item.imbuements.map(imbuement => imbuement.feature).forEach(FeatureUpdateLogic.updateFeature);
   };

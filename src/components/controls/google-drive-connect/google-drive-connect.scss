@@ -1,0 +1,71 @@
+.google-drive-connect {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+
+  &.connected {
+    .connection-status {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+
+      .status-icon {
+        font-size: 32px;
+        color: var(--color-primary);
+      }
+
+      .status-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .sync-status {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  &.disconnected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+
+    .connect-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+
+      .cloud-icon {
+        font-size: 48px;
+        color: var(--color-text-secondary);
+      }
+
+      .info-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  }
+
+  .loading-folders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+  }
+
+  .selected-folder {
+    margin-top: 16px;
+    padding: 8px 12px;
+    background: var(--color-background-alt);
+    border-radius: 4px;
+  }
+}

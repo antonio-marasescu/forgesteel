@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { Sourcebook, SourcebookElementKind } from '@/models/sourcebook';
 import { Spin, notification } from 'antd';
 import { Ability } from '@/models/ability';
@@ -87,9 +87,12 @@ import { Utils } from '@/utils/utils';
 import { WelcomePage } from '@/components/pages/welcome/welcome-page';
 import localforage from 'localforage';
 import { useErrorListener } from '@/hooks/use-error-listener';
+import { useGoogleDriveSync } from '@/hooks/use-google-drive-sync';
 import { useIsSmall } from '@/hooks/use-is-small';
 import { useNavigation } from '@/hooks/use-navigation';
 import { useSyncStatus } from '@/hooks/use-sync-status';
+
+import { GoogleDriveService } from '@/service/storage/google-drive-service';
 
 import './main.scss';
 
@@ -132,6 +135,119 @@ export const Main = (props: Props) => {
   const [spinning, setSpinning] = useState(false);
 
   useErrorListener(event => setErrors([...errors, event]));
+
+  // #region Persistence (connection settings - needed early for Google Drive)
+
+  const persistConnectionSettings = useCallback(
+    (settings: ConnectionSettings) => {
+      return localforage
+        .setItem<ConnectionSettings>('forgesteel-connection-settings', settings)
+        .then(setConnectionSettings, err => {
+          console.error(err);
+          notify.error({
+            title: 'Error saving connection settings',
+            description: Utils.getErrorMessage(err),
+            placement: 'top',
+          });
+        });
+    },
+    [notify],
+  );
+
+  // #endregion
+
+  // #region Google Drive Sync
+
+  /**
+   * Sync all data to Google Drive
+   * Called by the useGoogleDriveSync hook after debounce
+   */
+  const syncToGoogleDrive = useCallback(async () => {
+    if (!connectionSettings.useGoogleDrive || !connectionSettings.googleDriveFolderId) {
+      return;
+    }
+
+    const driveService = new GoogleDriveService(connectionSettings, updatedSettings => {
+      // Handle token refresh by persisting updated settings
+      persistConnectionSettings(updatedSettings);
+    });
+
+    // Initialize and verify access
+    const initialized = await driveService.initialize();
+    if (!initialized) {
+      throw new Error('Failed to initialize Google Drive connection');
+    }
+
+    // Sync all data using the storage keys
+    await driveService.put('forgesteel-heroes', heroes);
+    await driveService.put('forgesteel-session', session);
+    await driveService.put('forgesteel-homebrew-settings', homebrewSourcebooks);
+    await driveService.put('forgesteel-options', options);
+  }, [
+    connectionSettings,
+    heroes,
+    session,
+    homebrewSourcebooks,
+    options,
+    persistConnectionSettings,
+  ]);
+
+  /**
+   * Google Drive sync hook with 2-second debounce
+   */
+  const {
+    status: driveSyncStatus,
+    lastSyncTime: driveLastSyncTime,
+    triggerSync: triggerDriveSync,
+    forceSync: forceDriveSync,
+  } = useGoogleDriveSync({
+    enabled: connectionSettings.useGoogleDrive && !!connectionSettings.googleDriveFolderId,
+    debounceMs: 2000,
+    onSync: syncToGoogleDrive,
+    onError: error => {
+      console.error('Google Drive sync error:', error);
+      notify.error({
+        title: 'Google Drive sync failed',
+        description: error.message,
+        placement: 'top',
+      });
+    },
+  });
+
+  /**
+   * Handle Google Drive connection (from GoogleDriveConnect component)
+   */
+  const handleGoogleDriveConnect = useCallback(
+    (settings: Partial<ConnectionSettings>) => {
+      const updated = {
+        ...connectionSettings,
+        ...settings,
+      };
+      persistConnectionSettings(updated).then(() => {
+        // Trigger initial sync after connecting
+        setTimeout(() => forceDriveSync(), 500);
+      });
+    },
+    [connectionSettings, forceDriveSync, persistConnectionSettings],
+  );
+
+  /**
+   * Handle Google Drive disconnection
+   */
+  const handleGoogleDriveDisconnect = useCallback(() => {
+    const updated: ConnectionSettings = {
+      ...connectionSettings,
+      useGoogleDrive: false,
+      googleDriveFolderId: null,
+      googleDriveFolderName: null,
+      googleDriveAccessToken: null,
+      googleDriveRefreshToken: null,
+      googleDriveTokenExpiry: null,
+    };
+    persistConnectionSettings(updated);
+  }, [connectionSettings, persistConnectionSettings]);
+
+  // #endregion
 
   // #region Persistence
 
@@ -176,6 +292,7 @@ export const Main = (props: Props) => {
       .then(() => {
         // Trigger sync when data changes
         triggerSyncOnChange();
+        triggerDriveSync();
       });
   };
 
@@ -196,18 +313,25 @@ export const Main = (props: Props) => {
         }
         // Trigger sync when data changes
         triggerSyncOnChange();
+        triggerDriveSync();
       });
   };
 
   const persistHomebrewSourcebooks = (homebrew: Sourcebook[]) => {
-    return props.dataService.saveHomebrew(homebrew).then(setHomebrewSourcebooks, err => {
-      console.error(err);
-      notify.error({
-        title: 'Error saving sourcebooks',
-        description: Utils.getErrorMessage(err),
-        placement: 'top',
+    return props.dataService
+      .saveHomebrew(homebrew)
+      .then(setHomebrewSourcebooks, err => {
+        console.error(err);
+        notify.error({
+          title: 'Error saving sourcebooks',
+          description: Utils.getErrorMessage(err),
+          placement: 'top',
+        });
+      })
+      .then(() => {
+        // Trigger sync when data changes
+        triggerDriveSync();
       });
-    });
   };
 
   const persistHiddenSourcebookIDs = (ids: string[]) => {
@@ -222,26 +346,19 @@ export const Main = (props: Props) => {
   };
 
   const persistOptions = (options: Options) => {
-    return props.dataService.saveOptions(options).then(setOptions, err => {
-      console.error(err);
-      notify.error({
-        title: 'Error saving options',
-        description: Utils.getErrorMessage(err),
-        placement: 'top',
-      });
-    });
-  };
-
-  const persistConnectionSettings = (connectionSettings: ConnectionSettings) => {
-    return localforage
-      .setItem<ConnectionSettings>('forgesteel-connection-settings', connectionSettings)
-      .then(setConnectionSettings, err => {
+    return props.dataService
+      .saveOptions(options)
+      .then(setOptions, err => {
         console.error(err);
         notify.error({
-          title: 'Error saving connection settings',
+          title: 'Error saving options',
           description: Utils.getErrorMessage(err),
           placement: 'top',
         });
+      })
+      .then(() => {
+        // Trigger sync when data changes
+        triggerDriveSync();
       });
   };
 
@@ -2061,6 +2178,11 @@ export const Main = (props: Props) => {
                 heroes={heroes}
                 homebrewSourcebooks={homebrewSourcebooks}
                 options={options}
+                driveSyncStatus={driveSyncStatus}
+                driveLastSyncTime={driveLastSyncTime}
+                onGoogleDriveConnect={handleGoogleDriveConnect}
+                onGoogleDriveDisconnect={handleGoogleDriveDisconnect}
+                onGoogleDriveForceSync={forceDriveSync}
               />
             }
           />
