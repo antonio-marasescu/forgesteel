@@ -31,7 +31,7 @@ interface Props {
 
 export const WelcomePage = (props: Props) => {
 	const isSmall = useMediaQuery('(max-width: 1000px)');
-	const [ showBanner, setShowBanner ] = useState<boolean>(true);
+	const [ showBanner, setShowBanner ] = useState<boolean>(false);
 
 	if (isSmall) {
 		return (
