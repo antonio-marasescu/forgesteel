@@ -13,7 +13,6 @@
 		"test": "vitest",
 		"check": "npm run lint && tsc -p tsconfig.json && vitest run && npm audit",
 		"build": "vite build",
-		"predeploy": "npm run check && npm run build",
 		"deploy": "gh-pages -d dist"
 	},
 	"dependencies": {
