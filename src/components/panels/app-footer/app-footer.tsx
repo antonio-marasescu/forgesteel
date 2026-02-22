@@ -4,6 +4,7 @@ import {
   InfoCircleOutlined,
   PlayCircleOutlined,
   SettingOutlined,
+  SwapOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import { ErrorBoundary } from '@/components/controls/error-boundary/error-boundary';
@@ -78,6 +79,11 @@ export const AppFooter = (props: Props) => {
           <Divider orientation="vertical" />
           <Button type="text" onClick={props.showRoll}>
             Roll
+          </Button>
+          <Divider orientation="vertical" />
+          <Button type="text" onClick={() => navigation.goToTransfer()}>
+            <SwapOutlined />
+            {isSmall ? '' : 'Data Transfer'}
           </Button>
           <Divider orientation="vertical" />
           <Badge dot={props.highlightAbout}>

@@ -14,6 +14,12 @@ const defaultSettings: ConnectionSettings = {
   warehouseHost: 'http://test-fake-host',
   warehouseToken: 'abcd123',
   patreonConnected: false,
+  useGoogleDrive: false,
+  googleDriveFolderId: null,
+  googleDriveFolderName: null,
+  googleDriveAccessToken: null,
+  googleDriveRefreshToken: null,
+  googleDriveTokenExpiry: null,
 };
 
 describe('WarehouseService', () => {

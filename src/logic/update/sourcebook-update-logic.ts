@@ -159,8 +159,6 @@ export class SourcebookUpdateLogic {
     });
 
     sourcebook.cultures.forEach(culture => {
-      /* eslint-disable @typescript-eslint/no-deprecated */
-
       if (culture.language === undefined) {
         culture.language = FactoryLogic.feature.createLanguageChoice({
           id: Utils.guid(),
@@ -169,8 +167,6 @@ export class SourcebookUpdateLogic {
 
         culture.languages = [];
       }
-
-      /* eslint-enable @typescript-eslint/no-deprecated */
     });
 
     sourcebook.domains.forEach(domain => {
@@ -290,7 +286,6 @@ export class SourcebookUpdateLogic {
       }
     });
 
-    /* eslint-disable @typescript-eslint/no-deprecated */
     sourcebook.items.forEach(item => {
       if (item.customizationsByLevel && item.customizationsByLevel.length > 0) {
         item.customizationsByLevel.forEach(level => {
@@ -310,7 +305,6 @@ export class SourcebookUpdateLogic {
       }
       ItemUpdateLogic.updateItem(item);
     });
-    /* eslint-enable @typescript-eslint/no-deprecated */
 
     sourcebook.kits.forEach(kit => {
       if (kit.type === 'Standard') {

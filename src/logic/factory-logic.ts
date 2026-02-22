@@ -1147,6 +1147,12 @@ export class FactoryLogic {
       warehouseHost: '',
       warehouseToken: '',
       patreonConnected: false,
+      useGoogleDrive: false,
+      googleDriveFolderId: null,
+      googleDriveFolderName: null,
+      googleDriveAccessToken: null,
+      googleDriveRefreshToken: null,
+      googleDriveTokenExpiry: null,
     };
   };
 
