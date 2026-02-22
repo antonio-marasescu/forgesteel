@@ -196,9 +196,9 @@ export class GoogleDriveService implements StorageService {
       const fileName = this.getFileName(key);
       const folderId = this.settings.googleDriveFolderId!;
 
-      // Get existing file ID if we have it cached
-      const cachedInfo = this.fileCache[key];
-      const existingFileId = cachedInfo?.fileId;
+      // Get existing file info (from cache or by searching Drive)
+      const existingFile = await this.getFileInfo(key);
+      const existingFileId = existingFile?.id;
 
       // Write the file (creates if new, updates if exists)
       const fileId = await client.writeFile(fileName, value, folderId, existingFileId);

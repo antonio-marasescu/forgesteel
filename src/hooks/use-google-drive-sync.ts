@@ -37,6 +37,12 @@ export const useGoogleDriveSync = (options: UseGoogleDriveSyncOptions) => {
   const isSyncingRef = useRef(false);
   const pendingAfterSyncRef = useRef(false);
 
+  // Use refs for callbacks to avoid dependency changes causing infinite loops
+  const onSyncRef = useRef(onSync);
+  const onErrorRef = useRef(onError);
+  onSyncRef.current = onSync;
+  onErrorRef.current = onError;
+
   // Check online status
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -66,13 +72,15 @@ export const useGoogleDriveSync = (options: UseGoogleDriveSyncOptions) => {
         status: prev.pendingChanges ? 'idle' : 'synced',
       }));
     }
-  }, [isOnline, state.status, state.pendingChanges]);
+    // Only depend on isOnline to avoid infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnline]);
 
   /**
    * Perform the actual sync operation
    */
   const performSync = useCallback(async () => {
-    if (!enabled || !onSync || !isOnline) {
+    if (!enabled || !onSyncRef.current || !isOnline) {
       return;
     }
 
@@ -90,7 +98,7 @@ export const useGoogleDriveSync = (options: UseGoogleDriveSyncOptions) => {
     }));
 
     try {
-      await onSync();
+      await onSyncRef.current();
 
       setState(prev => ({
         ...prev,
@@ -116,13 +124,13 @@ export const useGoogleDriveSync = (options: UseGoogleDriveSyncOptions) => {
         error: errorMessage,
       }));
 
-      if (onError && error instanceof Error) {
-        onError(error);
+      if (onErrorRef.current && error instanceof Error) {
+        onErrorRef.current(error);
       }
     } finally {
       isSyncingRef.current = false;
     }
-  }, [enabled, onSync, onError, isOnline, debounceMs]);
+  }, [enabled, isOnline, debounceMs]);
 
   /**
    * Trigger a sync (with debounce)
@@ -192,11 +200,22 @@ export const useGoogleDriveSync = (options: UseGoogleDriveSyncOptions) => {
   }, []);
 
   // Sync when coming back online if there are pending changes
+  const pendingChangesRef = useRef(state.pendingChanges);
+  pendingChangesRef.current = state.pendingChanges;
+
   useEffect(() => {
-    if (isOnline && state.pendingChanges && enabled) {
-      triggerSync();
+    if (isOnline && pendingChangesRef.current && enabled) {
+      // Use a small delay to avoid sync during state transitions
+      const timer = setTimeout(() => {
+        if (pendingChangesRef.current) {
+          performSync();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [isOnline, state.pendingChanges, enabled, triggerSync]);
+    // Only trigger when coming back online, not when pendingChanges changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnline, enabled]);
 
   return {
     ...state,

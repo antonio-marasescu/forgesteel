@@ -9,13 +9,14 @@ import {
   CloudOutlined,
   CloudSyncOutlined,
   DisconnectOutlined,
+  FolderAddOutlined,
   FolderOpenOutlined,
   GoogleOutlined,
   LoadingOutlined,
   SyncOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Modal, Space, Spin, Tree, Typography } from 'antd';
+import { Alert, Button, Input, Modal, Space, Spin, Tree, Typography } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 
 import { DriveFolder, GoogleDriveClient } from '@/service/google/google-drive-client';
@@ -55,6 +56,8 @@ export const GoogleDriveConnect = (props: Props) => {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [selectedFolderName, setSelectedFolderName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [newFolderName, setNewFolderName] = useState('Forgesteel');
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
 
   const isConnected =
     connectionSettings.useGoogleDrive &&
@@ -224,6 +227,39 @@ export const GoogleDriveConnect = (props: Props) => {
   };
 
   /**
+   * Create a new folder in Google Drive root
+   */
+  const handleCreateFolder = async () => {
+    if (!connectionSettings.googleDriveAccessToken || !newFolderName.trim()) {
+      return;
+    }
+
+    setIsCreatingFolder(true);
+    setError(null);
+
+    try {
+      const client = new GoogleDriveClient(connectionSettings.googleDriveAccessToken);
+      const folderId = await client.createFolder(newFolderName.trim());
+
+      // Add the new folder to the list and select it
+      const newFolder: TreeNode = {
+        title: newFolderName.trim(),
+        key: folderId,
+        isLeaf: false,
+      };
+      setFolders(prev => [newFolder, ...prev]);
+      setSelectedFolderId(folderId);
+      setSelectedFolderName(newFolderName.trim());
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create folder';
+      setError(message);
+      console.error('Error creating folder:', err);
+    } finally {
+      setIsCreatingFolder(false);
+    }
+  };
+
+  /**
    * Get sync status icon
    */
   const getSyncStatusIcon = () => {
@@ -327,16 +363,75 @@ export const GoogleDriveConnect = (props: Props) => {
               <Spin indicator={<LoadingOutlined />} />
               <Text>Loading folders...</Text>
             </div>
+          ) : folders.length === 0 ? (
+            <div className="no-folders">
+              <Alert
+                type="info"
+                message="No folders found"
+                description="Create a new folder to store your Forgesteel data."
+                style={{ marginBottom: 16 }}
+              />
+              <Space.Compact style={{ width: '100%' }}>
+                <Input
+                  placeholder="Folder name"
+                  value={newFolderName}
+                  onChange={e => setNewFolderName(e.target.value)}
+                  onPressEnter={handleCreateFolder}
+                  disabled={isCreatingFolder}
+                />
+                <Button
+                  type="primary"
+                  icon={isCreatingFolder ? <LoadingOutlined /> : <FolderAddOutlined />}
+                  onClick={handleCreateFolder}
+                  disabled={isCreatingFolder || !newFolderName.trim()}
+                >
+                  Create
+                </Button>
+              </Space.Compact>
+            </div>
           ) : (
-            <Tree
-              showIcon
-              defaultExpandAll={false}
-              treeData={folders}
-              loadData={handleLoadData as (node: TreeNode) => Promise<void>}
-              onSelect={
-                handleSelectFolder as (selectedKeys: React.Key[], info: { node: TreeNode }) => void
-              }
-              selectedKeys={selectedFolderId ? [selectedFolderId] : []}
+            <>
+              <Tree
+                showIcon
+                defaultExpandAll={false}
+                treeData={folders}
+                loadData={handleLoadData as (node: TreeNode) => Promise<void>}
+                onSelect={
+                  handleSelectFolder as (
+                    selectedKeys: React.Key[],
+                    info: { node: TreeNode },
+                  ) => void
+                }
+                selectedKeys={selectedFolderId ? [selectedFolderId] : []}
+              />
+              <div className="create-folder-section" style={{ marginTop: 16 }}>
+                <Text type="secondary">Or create a new folder:</Text>
+                <Space.Compact style={{ width: '100%', marginTop: 8 }}>
+                  <Input
+                    placeholder="Folder name"
+                    value={newFolderName}
+                    onChange={e => setNewFolderName(e.target.value)}
+                    onPressEnter={handleCreateFolder}
+                    disabled={isCreatingFolder}
+                  />
+                  <Button
+                    icon={isCreatingFolder ? <LoadingOutlined /> : <FolderAddOutlined />}
+                    onClick={handleCreateFolder}
+                    disabled={isCreatingFolder || !newFolderName.trim()}
+                  >
+                    Create
+                  </Button>
+                </Space.Compact>
+              </div>
+            </>
+          )}
+          {error && (
+            <Alert
+              type="error"
+              message={error}
+              style={{ marginTop: 16 }}
+              closable
+              onClose={() => setError(null)}
             />
           )}
           {selectedFolderName && (
@@ -403,21 +498,71 @@ export const GoogleDriveConnect = (props: Props) => {
             <Text>Loading folders...</Text>
           </div>
         ) : folders.length === 0 ? (
-          <Alert
-            type="info"
-            message="No folders found"
-            description="Your Google Drive root will be used, or create a folder in Google Drive first."
-          />
+          <div className="no-folders">
+            <Alert
+              type="info"
+              message="No folders found"
+              description="Create a new folder to store your Forgesteel data."
+              style={{ marginBottom: 16 }}
+            />
+            <Space.Compact style={{ width: '100%' }}>
+              <Input
+                placeholder="Folder name"
+                value={newFolderName}
+                onChange={e => setNewFolderName(e.target.value)}
+                onPressEnter={handleCreateFolder}
+                disabled={isCreatingFolder}
+              />
+              <Button
+                type="primary"
+                icon={isCreatingFolder ? <LoadingOutlined /> : <FolderAddOutlined />}
+                onClick={handleCreateFolder}
+                disabled={isCreatingFolder || !newFolderName.trim()}
+              >
+                Create
+              </Button>
+            </Space.Compact>
+          </div>
         ) : (
-          <Tree
-            showIcon
-            defaultExpandAll={false}
-            treeData={folders}
-            loadData={handleLoadData as (node: TreeNode) => Promise<void>}
-            onSelect={
-              handleSelectFolder as (selectedKeys: React.Key[], info: { node: TreeNode }) => void
-            }
-            selectedKeys={selectedFolderId ? [selectedFolderId] : []}
+          <>
+            <Tree
+              showIcon
+              defaultExpandAll={false}
+              treeData={folders}
+              loadData={handleLoadData as (node: TreeNode) => Promise<void>}
+              onSelect={
+                handleSelectFolder as (selectedKeys: React.Key[], info: { node: TreeNode }) => void
+              }
+              selectedKeys={selectedFolderId ? [selectedFolderId] : []}
+            />
+            <div className="create-folder-section" style={{ marginTop: 16 }}>
+              <Text type="secondary">Or create a new folder:</Text>
+              <Space.Compact style={{ width: '100%', marginTop: 8 }}>
+                <Input
+                  placeholder="Folder name"
+                  value={newFolderName}
+                  onChange={e => setNewFolderName(e.target.value)}
+                  onPressEnter={handleCreateFolder}
+                  disabled={isCreatingFolder}
+                />
+                <Button
+                  icon={isCreatingFolder ? <LoadingOutlined /> : <FolderAddOutlined />}
+                  onClick={handleCreateFolder}
+                  disabled={isCreatingFolder || !newFolderName.trim()}
+                >
+                  Create
+                </Button>
+              </Space.Compact>
+            </div>
+          </>
+        )}
+        {error && (
+          <Alert
+            type="error"
+            message={error}
+            style={{ marginTop: 16 }}
+            closable
+            onClose={() => setError(null)}
           />
         )}
         {selectedFolderName && (
